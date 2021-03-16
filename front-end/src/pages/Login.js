@@ -21,6 +21,7 @@ const Login = () => {
     };
   }, [dispatch]);
 
+  // TOGGLE SHOW/HIDE PASSWORD
   const togglePasswordVisibility = () => {
     setPasswordShown(!passwordShown);
   };
