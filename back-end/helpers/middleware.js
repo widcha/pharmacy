@@ -1,4 +1,5 @@
 const jwt = require("jsonwebtoken");
+const models = require("../models");
 
 const checkRegister = (req, res, next) => {
   const emailRegex = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
@@ -47,7 +48,40 @@ const checkVerificationToken = async (req, res, next) => {
   });
 };
 
+// PWP-9-17 CHECK IF USERNAME/EMAIL ALREADY REGISTERED
+const checkInputData = async (req, res, next) => {
+  const { username, email } = req.body;
+
+  const usernameResult = await models.User.findAll({
+    where: {
+      user_username: username,
+    },
+  });
+
+  const emailResult = await models.User.findAll({
+    where: {
+      user_email: email,
+    },
+  });
+  if (usernameResult.length !== 0) {
+    console.log(usernameResult);
+    return res.status(500).send({
+      message: "Username already taken",
+      status: "Username taken",
+    });
+  }
+  if (emailResult.length !== 0) {
+    return res.status(500).send({
+      message: "Email already registered",
+      status: "Email registered",
+    });
+  }
+
+  return next();
+};
+
 module.exports = {
   checkRegister,
   checkVerificationToken,
+  checkInputData,
 };

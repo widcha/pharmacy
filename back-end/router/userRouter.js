@@ -6,9 +6,10 @@ const {
 const {
   checkRegister,
   checkVerificationToken,
+  checkInputData,
 } = require("../helpers/middleware");
 
-router.post("/signup", checkRegister, userRegister);
+router.post("/signup", checkRegister, checkInputData, userRegister);
 router.post("/verification", checkVerificationToken, userVerification);
 
 module.exports = router;
