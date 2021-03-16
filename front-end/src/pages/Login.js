@@ -3,6 +3,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { Link, Redirect } from "react-router-dom";
 import { nullifyErrorAction, loginAction } from "../redux/actions";
 
+// EMAIL DAN PASSWORD
 let userData = {
   email: "",
   password: "",
