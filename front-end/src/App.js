@@ -1,25 +1,32 @@
-import logo from './logo.svg';
+import React from 'react';
 import './App.css';
+import { Route } from 'react-router-dom';
+import SideBar from './components/SideBar';
+import {
+  HomeAdmin,
+  ProductAdmin,
+  CategoriesAdmin,
+  RecipesAdmin,
+  PaymentAdmin,
+  ProductFlowAdmin,
+} from './pages';
 
-function App() {
+const App = () => {
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+    <div className="container">
+      <div className="sidebar">
+        <SideBar/>
+      </div>
+      <div style={{ overflowY: 'auto', marginLeft: '210px'}}>
+        <Route path="/" exact component={HomeAdmin} />
+        <Route path="/manage-product" component={ProductAdmin} />
+        <Route path="/category" component={CategoriesAdmin} />
+        <Route path="/recipe" component={RecipesAdmin} />
+        <Route path="/payment-proof" component={PaymentAdmin} />
+        <Route path="/product-flow" component={ProductFlowAdmin} />
+      </div>
     </div>
   );
 }
-
+ 
 export default App;
