@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Redirect } from "react-router";
-import { registerAction } from "../redux/actions";
+import { Link } from "react-router-dom";
+import { nullifyErrorAction, registerAction } from "../redux/actions";
 
 let userData = {
   email: "",
@@ -18,7 +19,7 @@ const SignUp = () => {
 
   useEffect(() => {
     return () => {
-      dispatch({ type: "NULLIFY_ERROR" });
+      dispatch(nullifyErrorAction());
     };
   }, [dispatch]);
 
@@ -136,7 +137,9 @@ const SignUp = () => {
       <div className="flex flex-col overflow-hidden bg-white rounded-md shadow-lg max md:flex-row md:flex-1 lg:max-w-screen-md">
         <div className="p-4 py-6 text-white bg-blue-500 md:w-80 md:flex-shrink-0 md:flex md:flex-col md:items-center md:justify-evenly">
           <div className="my-3 text-4xl font-bold tracking-wider text-center">
-            <a href="localhost:3000">Pharma</a>
+            <Link to="/">
+              <p href="localhost:3000">Pharma</p>
+            </Link>
           </div>
           <p className="mt-6 font-normal text-center text-gray-300 md:mt-0">
             Pharma offers products and services to help you lead a healthy,

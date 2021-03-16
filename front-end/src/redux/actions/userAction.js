@@ -36,7 +36,6 @@ export const loginAction = (data) => {
 
 export const registerAction = (data) => {
   return async (dispatch) => {
-    console.log(data);
     dispatch({ type: "API_USER_START" });
     try {
       await axios.post(`${url}/signup`, data);
@@ -54,5 +53,11 @@ export const registerAction = (data) => {
 export const verificationAction = (token) => {
   return async (dispatch) => {
     await axios.post(`${url}/verification`, { token: token });
+  };
+};
+
+export const nullifyErrorAction = () => {
+  return async (dispatch) => {
+    dispatch({ type: "NULLIFY_ERROR" });
   };
 };
