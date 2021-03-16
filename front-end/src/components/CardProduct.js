@@ -56,6 +56,7 @@ const CardProduct = ({ idProd, name, price, stock, vol, stock_total, desc, cat, 
     let category = useSelector((state) => state.product.category);
     let catt = (category.filter((val) => val.product_category_id === cat))[0].product_category;
 
+    //for selecting category
     const [selectedCategory, setCategory] = useState('');
     const handleChange = (e) => {
         setCategory(e.target.value);
