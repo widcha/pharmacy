@@ -102,6 +102,7 @@ const CardProduct = ({ idProd, name, price, stock, vol, stock_total, desc, cat, 
             }
           })
     }
+    //add new stock
     const saveChangeStock = (id) => {
         dispatch(addStock({id, changeStock}));
         setChangeStock(1);
