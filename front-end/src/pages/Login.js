@@ -93,6 +93,7 @@ const Login = () => {
           >
             Log in
           </button>
+          // ERROR MESSAGE WILL APPEAR HERE
           <p className="text-red-500 pt-2 italic">{user.error}</p>
         </div>
       </form>

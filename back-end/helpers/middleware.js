@@ -80,7 +80,7 @@ const checkInputData = async (req, res, next) => {
   return next();
 };
 
-// PWP-8-16 CHECK EMAIL & PASSWORD
+// PWP-8-16 CHECK EMAIL & PASSWORD (Pesan Error Spesifik)
 const checkUser = async (req, res, next) => {
   const { email, password } = req.body;
   const encryptedPassword = hashPassword(password);
@@ -98,7 +98,7 @@ const checkUser = async (req, res, next) => {
     });
   } else if (emailResult[0].user_password !== encryptedPassword) {
     return res.status(500).send({
-      message: "Password is wrong",
+      message: "Wrong password",
       status: "Wrong password",
     });
   }
