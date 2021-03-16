@@ -1,4 +1,5 @@
 const jwt = require("jsonwebtoken");
+const { hashPassword } = require(".");
 const models = require("../models");
 
 const checkRegister = (req, res, next) => {
@@ -64,7 +65,6 @@ const checkInputData = async (req, res, next) => {
     },
   });
   if (usernameResult.length !== 0) {
-    console.log(usernameResult);
     return res.status(500).send({
       message: "Username already taken",
       status: "Username taken",
@@ -80,8 +80,34 @@ const checkInputData = async (req, res, next) => {
   return next();
 };
 
+// PWP-8-16 CHECK EMAIL & PASSWORD (Pesan Error Spesifik)
+const checkUser = async (req, res, next) => {
+  const { email, password } = req.body;
+  const encryptedPassword = hashPassword(password);
+
+  const emailResult = await models.User.findAll({
+    where: {
+      user_email: email,
+    },
+  });
+
+  if (emailResult.length == 0) {
+    return res.status(500).send({
+      message: "This email is not registered",
+      status: "Not registered",
+    });
+  } else if (emailResult[0].user_password !== encryptedPassword) {
+    return res.status(500).send({
+      message: "Wrong password",
+      status: "Wrong password",
+    });
+  }
+  return next();
+};
+
 module.exports = {
   checkRegister,
   checkVerificationToken,
   checkInputData,
+  checkUser,
 };

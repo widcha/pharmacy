@@ -45,7 +45,27 @@ const userVerification = async (req, res) => {
   return res.send({ message: "Verification success" });
 };
 
+// PWP-8-11-12 LOGIN
+const userLogin = async (req, res) => {
+  const { email, password } = req.body;
+  const encryptedPassword = hashPassword(password);
+  const user = await models.User.findAll({
+    where: {
+      user_email: email,
+      user_password: encryptedPassword,
+    },
+    attributes: { exclude: ["createdAt", "updatedAt", "user_password"] },
+  });
+
+  const responseData = { ...user[0].dataValues };
+  const token = createJWTToken(responseData);
+  responseData.token = token;
+
+  return res.send(responseData);
+};
+
 module.exports = {
   userRegister,
   userVerification,
+  userLogin,
 };

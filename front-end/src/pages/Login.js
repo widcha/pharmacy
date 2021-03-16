@@ -1,17 +1,15 @@
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { Redirect } from "react-router";
-import { Link } from "react-router-dom";
-import { nullifyErrorAction, registerAction } from "../redux/actions";
+import { Link, Redirect } from "react-router-dom";
+import { nullifyErrorAction, loginAction } from "../redux/actions";
 
+// EMAIL DAN PASSWORD
 let userData = {
   email: "",
-  username: "",
   password: "",
-  security_question: "",
 };
 
-const SignUp = () => {
+const Login = () => {
   const [passwordShown, setPasswordShown] = useState(false);
   const [userInput, setUserInput] = useState(userData);
   const dispatch = useDispatch();
@@ -23,6 +21,7 @@ const SignUp = () => {
     };
   }, [dispatch]);
 
+  // TOGGLE SHOW/HIDE PASSWORD
   const togglePasswordVisibility = () => {
     setPasswordShown(!passwordShown);
   };
@@ -35,7 +34,7 @@ const SignUp = () => {
     }));
   };
 
-  const registerForm = () => {
+  const loginForm = () => {
     return (
       <form action="#" className="flex flex-col space-y-5">
         <div className="flex flex-col space-y-1">
@@ -55,22 +54,6 @@ const SignUp = () => {
           />
         </div>
         <div className="flex flex-col space-y-1">
-          <label
-            for="username"
-            className="text-sm font-semibold text-gray-500 self-start"
-          >
-            Username
-          </label>
-          <input
-            type="text"
-            id="username"
-            value={userInput.username}
-            onChange={handleInput}
-            autofocus
-            className="px-4 py-2 transition duration-300 border border-gray-300 rounded focus:border-transparent focus:outline-none focus:ring-4 focus:ring-blue-200"
-          />
-        </div>
-        <div className="flex flex-col space-y-1">
           <div className="flex items-center justify-between">
             <label
               for="password"
@@ -78,6 +61,11 @@ const SignUp = () => {
             >
               Password
             </label>
+            <Link>
+              <p className="text-sm text-blue-600 hover:underline focus:text-blue-800">
+                Forgot Password?
+              </p>
+            </Link>
           </div>
           <input
             type={passwordShown ? "text" : "password"}
@@ -98,30 +86,13 @@ const SignUp = () => {
             Show password
           </label>
         </div>
-        <div className="flex flex-col space-y-1">
-          <label
-            // Security Question Input
-            for="security_question"
-            className="text-sm font-semibold text-gray-500 self-start"
-          >
-            Security Question: What is your favorite animal?
-          </label>
-          <input
-            type="text"
-            id="security_question"
-            value={userInput.security_question}
-            onChange={handleInput}
-            autofocus
-            className="px-4 py-2 transition duration-300 border border-gray-300 rounded focus:border-transparent focus:outline-none focus:ring-4 focus:ring-blue-200"
-          />
-        </div>
         <div>
           <button
             type="submit"
-            onClick={() => dispatch(registerAction(userInput))}
+            onClick={() => dispatch(loginAction(userInput))}
             className="w-full px-4 py-2 text-lg font-semibold text-white transition-colors duration-300 bg-blue-500 rounded-md shadow hover:bg-blue-600 focus:outline-none focus:ring-blue-200 focus:ring-4"
           >
-            Register
+            Log in
           </button>
           <p className="text-red-500 pt-2 italic">{user.error}</p>
         </div>
@@ -129,6 +100,7 @@ const SignUp = () => {
     );
   };
 
+  // AFTER LOGIN WILL BE REDIRECT TO HOME
   if (user.user_id !== 0) {
     return <Redirect to="/" />;
   }
@@ -138,7 +110,7 @@ const SignUp = () => {
         <div className="p-4 py-6 text-white bg-blue-500 md:w-80 md:flex-shrink-0 md:flex md:flex-col md:items-center md:justify-evenly">
           <div className="my-3 text-4xl font-bold tracking-wider text-center">
             <Link to="/">
-              <p href="localhost:3000">Pharma</p>
+              <p>Pharma</p>
             </Link>
           </div>
           <p className="mt-6 font-normal text-center text-gray-300 md:mt-0">
@@ -147,9 +119,9 @@ const SignUp = () => {
             near you.
           </p>
           <p className="flex flex-col items-center justify-center mt-10 text-center">
-            <span>Already have an account?</span>
-            <Link to="/login">
-              <p className="underline cursor-pointer">Log in!</p>
+            <span>Doesn't have an account??</span>
+            <Link to="/signup">
+              <p className="underline cursor-pointer">Register!</p>
             </Link>
           </p>
           <p className="mt-6 text-sm text-center text-gray-300">
@@ -165,13 +137,13 @@ const SignUp = () => {
         </div>
         <div className="p-5 bg-white md:flex-1">
           <h3 className="my-4 text-2xl font-semibold text-gray-700 text-left">
-            Register
+            Login
           </h3>
-          {registerForm()}
+          {loginForm()}
         </div>
       </div>
     </div>
   );
 };
 
-export default SignUp;
+export default Login;
