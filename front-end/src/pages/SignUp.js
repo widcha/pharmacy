@@ -99,7 +99,8 @@ const SignUp = () => {
         </div>
         <div className="flex flex-col space-y-1">
           <label
-            for="username"
+            // Security Question Input
+            for="security_question"
             className="text-sm font-semibold text-gray-500 self-start"
           >
             Security Question: What is your favorite animal?
