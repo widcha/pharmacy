@@ -100,6 +100,7 @@ const Login = () => {
     );
   };
 
+  // AFTER LOGIN WILL BE REDIRECT TO HOME
   if (user.user_id !== 0) {
     return <Redirect to="/" />;
   }
