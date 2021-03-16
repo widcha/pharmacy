@@ -21,6 +21,8 @@ import { addStock, deleteProductAction, editProductAction } from '../redux/actio
 
 const CardProduct = ({ idProd, name, price, stock, vol, stock_total, desc, cat, image }) => {
     const dispatch = useDispatch();
+
+    //state untuk tiap input
     const [showModal, setShowModal] = useState(false);
     const [showMod, setShowMod] = useState(false);
     const [newName, setName] = useState('');
