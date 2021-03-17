@@ -159,6 +159,7 @@ const CategoriesAdmin = () => {
                                                 >
                                                     Edit
                                                 </Button>
+                                                {/* ADMIN DELETE CATEGORY */}
                                                 <Button
                                                     onClick={() => toggle(row.product_category_id)}
                                                     style={{ backgroundColor: 'red', color: 'white', marginLeft: '20px' }}
