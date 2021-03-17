@@ -10,7 +10,6 @@ const Verification = (props) => {
   useEffect(() => {
     const token = props.location.search.split("=").pop();
     dispatch(verificationAction(token));
-    console.log(token);
   }, [props, dispatch]);
 
   if (user.user_isverified === 1 || user.user_id === 0) {

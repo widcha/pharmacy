@@ -42,6 +42,7 @@ export const registerAction = (data) => {
     try {
       await axios.post(`${url}/signup`, data);
       dispatch(loginAction(data));
+      dispatch({ type: "API_USER_SUCCESS" });
     } catch (err) {
       console.log(err);
       dispatch({
@@ -63,5 +64,74 @@ export const verificationAction = (token) => {
 export const nullifyErrorAction = () => {
   return async (dispatch) => {
     dispatch({ type: "NULLIFY_ERROR" });
+  };
+};
+
+// SEND RESET PASSWORD
+export const sendResetEmailAction = (email) => {
+  return async (dispatch) => {
+    try {
+      dispatch({ type: "API_USER_START" });
+      await axios.post(`${url}/reset-password`, { email: email });
+      dispatch({ type: "API_USER_SUCCESS" });
+    } catch (err) {
+      console.log(err);
+      dispatch({
+        type: "API_USER_FAILED",
+        payload: err.response.data.message,
+      });
+    }
+  };
+};
+
+// CHANGE PASSWORD
+export const changePasswordAction = (token, password) => {
+  return async (dispatch) => {
+    try {
+      dispatch({ type: "API_USER_START" });
+      const response = await axios.post(
+        `${url}/change-password`,
+        token,
+        password
+      );
+      dispatch({ type: "API_USER_SUCCESS" });
+      return response.data.message;
+    } catch (err) {
+      console.log(err);
+      dispatch({
+        type: "API_USER_FAILED",
+        payload: err.response.data.message,
+      });
+    }
+  };
+};
+
+// VERIFIED CHECK
+export const verifiedCheckAction = (email) => {
+  return async (dispatch) => {
+    const response = await axios.post(`${url}/verified-check`, email);
+    return response.data.message;
+  };
+};
+
+// SECURITY QUESTION CHECK
+export const securityQuestionAction = (email, answer) => {
+  return async (dispatch) => {
+    try {
+      dispatch({ type: "API_USER_START" });
+      const response = await axios.post(
+        `${url}/security-question`,
+        email,
+        answer
+      );
+      dispatch({ type: "API_USER_SUCCESS" });
+      return response.data.message;
+    } catch (err) {
+      console.log(err);
+      dispatch({
+        type: "API_USER_FAILED",
+        payload: err.response.data.message,
+      });
+    }
   };
 };

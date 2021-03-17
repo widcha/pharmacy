@@ -82,8 +82,40 @@ const checkInputData = async (req, res, next) => {
 
 // PWP-8-16 CHECK EMAIL & PASSWORD (Pesan Error Spesifik)
 const checkUser = async (req, res, next) => {
+  const emailRegex = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
   const { email, password } = req.body;
   const encryptedPassword = hashPassword(password);
+
+  if (email.match(emailRegex)) {
+    const emailResult = await models.User.findAll({
+      where: {
+        user_email: email,
+      },
+    });
+
+    if (emailResult.length == 0) {
+      return res.status(500).send({
+        message: "This email is not registered",
+        status: "Not registered",
+      });
+    } else if (emailResult[0].user_password !== encryptedPassword) {
+      return res.status(500).send({
+        message: "Wrong password",
+        status: "Wrong password",
+      });
+    }
+    return next();
+  } else {
+    return res.status(500).send({
+      message: "Email format is not valid",
+      status: "Email is not valid",
+    });
+  }
+};
+
+// PWP-14-CHECK EMAIL
+const checkEmail = async (req, res, next) => {
+  const { email } = req.body;
 
   const emailResult = await models.User.findAll({
     where: {
@@ -96,13 +128,10 @@ const checkUser = async (req, res, next) => {
       message: "This email is not registered",
       status: "Not registered",
     });
-  } else if (emailResult[0].user_password !== encryptedPassword) {
-    return res.status(500).send({
-      message: "Wrong password",
-      status: "Wrong password",
-    });
+  } else {
+    req.user = emailResult[0];
+    return next();
   }
-  return next();
 };
 
 module.exports = {
@@ -110,4 +139,5 @@ module.exports = {
   checkVerificationToken,
   checkInputData,
   checkUser,
+  checkEmail,
 };

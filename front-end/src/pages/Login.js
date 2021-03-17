@@ -34,9 +34,15 @@ const Login = () => {
     }));
   };
 
+  const loginBtn = () => {
+    if (userInput.email.length !== 0) {
+      dispatch(loginAction(userInput));
+    }
+  };
+
   const loginForm = () => {
     return (
-      <form action="#" className="flex flex-col space-y-5">
+      <div className="flex flex-col space-y-5">
         <div className="flex flex-col space-y-1">
           <label
             for="email"
@@ -61,7 +67,7 @@ const Login = () => {
             >
               Password
             </label>
-            <Link>
+            <Link to="/forgot-password">
               <p className="text-sm text-blue-600 hover:underline focus:text-blue-800">
                 Forgot Password?
               </p>
@@ -89,14 +95,14 @@ const Login = () => {
         <div>
           <button
             type="submit"
-            onClick={() => dispatch(loginAction(userInput))}
+            onClick={loginBtn}
             className="w-full px-4 py-2 text-lg font-semibold text-white transition-colors duration-300 bg-blue-500 rounded-md shadow hover:bg-blue-600 focus:outline-none focus:ring-blue-200 focus:ring-4"
           >
             Log in
           </button>
-          <p className="text-red-500 pt-2 italic">{user.error}</p>
+          <p className="text-red-500 pt-2 italic font-semibold">{user.error}</p>
         </div>
-      </form>
+      </div>
     );
   };
 
