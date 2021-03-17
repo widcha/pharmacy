@@ -37,7 +37,7 @@ const SignUp = () => {
 
   const registerForm = () => {
     return (
-      <form action="#" className="flex flex-col space-y-5">
+      <div className="flex flex-col space-y-5">
         <div className="flex flex-col space-y-1">
           <label
             for="email"
@@ -123,9 +123,10 @@ const SignUp = () => {
           >
             Register
           </button>
-          <p className="text-red-500 pt-2 italic">{user.error}</p>
+
+          <p className="text-red-500 pt-2 italic font-semibold">{user.error}</p>
         </div>
-      </form>
+      </div>
     );
   };
 
