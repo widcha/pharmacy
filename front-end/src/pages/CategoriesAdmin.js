@@ -104,6 +104,7 @@ const CategoriesAdmin = () => {
                     Add New Category
                 </Button>
             </div>
+            {/* ADMIN DAPAT MELIHAT SEMUA CATEGORY */}
             <div style={{ display: 'flex', marginLeft: '210px' }}>
                 <TableContainer component={Paper}>
                     <Table className={classes.table} aria-label="simple table">
@@ -122,6 +123,7 @@ const CategoriesAdmin = () => {
                                     {
                                         clicked && row.product_category_id === idCat ?
                                         (<>
+                                        {/* ADMIN EDIT CATEGORY */}
                                             <TableCell>
                                             <TextField
                                                 placeholder="Category Name"
