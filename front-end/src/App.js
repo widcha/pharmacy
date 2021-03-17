@@ -1,6 +1,6 @@
 import "./App.css";
 import React, { useEffect } from "react";
-import { Route } from "react-router";
+import { Route } from "react-router-dom";
 import {
   Login,
   SignUp,
@@ -10,6 +10,7 @@ import {
 } from "./pages";
 import { useDispatch } from "react-redux";
 import { nullifyErrorAction } from "./redux/actions";
+import { Nav } from "./components";
 
 function App() {
   const dispatch = useDispatch();
@@ -20,6 +21,7 @@ function App() {
 
   return (
     <div className="App">
+      <Nav />
       <Route exact path="/signup" component={SignUp} />
       <Route exact path="/verification" component={Verification} />
       <Route exact path="/login" component={Login} />
