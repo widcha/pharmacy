@@ -3,11 +3,100 @@ const fs = require("fs");
 const pify = require("pify");
 const { uploader } = require('../handlers');
 const { parse } = require('path');
+const { Op } = require('sequelize');
 
 module.exports = {
     getAllProduct: async (req,res) => {
         try {
-            const response = await Product.findAll();
+            const {minPrice, maxPrice, search} = req.query;
+            let response;
+            if(minPrice && maxPrice && search) {
+                response = await Product.findAll({
+                    where: {
+                        [Op.and] : {
+                            product_price: {
+                                [Op.and]: {
+                                    [Op.gte]: minPrice,
+                                    [Op.lte]: maxPrice,
+                                }
+                            },
+                            product_name: {
+                                [Op.substring]: `${search}`
+                            }
+                        }
+                    }
+                })
+            }
+            else if(minPrice && maxPrice){
+                response = await Product.findAll({
+                    where: {
+                        product_price: {
+                            [Op.and]: {
+                                [Op.gte]: minPrice,
+                                [Op.lte]: maxPrice,
+                            }
+                        }
+                    }
+                })
+            }
+            else if(search && maxPrice){
+                response = await Product.findAll({
+                    where: {
+                        [Op.and]: {
+                            product_price: {
+                                [Op.lte]: maxPrice
+                            },
+                            product_name: {
+                                [Op.substring]: `${search}`
+                            }
+                        }
+                    }
+                })
+            }
+            else if(search && minPrice){
+                response = await Product.findAll({
+                    where: {
+                        [Op.and]: {
+                            product_price: {
+                                [Op.gte]: minPrice
+                            },
+                            product_name: {
+                                [Op.substring]: `${search}`
+                            }
+                        }
+                    }
+                })
+            }
+            else if(search){
+                response = await Product.findAll({
+                    where: {
+                        product_name: {
+                            [Op.substring]: `${search}`
+                        }
+                    }
+                })
+            }
+            else if(maxPrice){
+                response = await Product.findAll({
+                    where: {
+                        product_price: {
+                            [Op.lte]: maxPrice
+                        }
+                    }
+                })
+            }
+            else if(minPrice){
+                response = await Product.findAll({
+                    where: {
+                        product_price: {
+                            [Op.gte]: minPrice
+                        }
+                    }
+                })
+            }
+            else{
+                response = await Product.findAll();
+            }     
             return res.status(200).send(response);
         } catch (err) {
             return res.send(err.message);
@@ -22,19 +111,6 @@ module.exports = {
                 }
             });
             return res.status(200).send(response.dataValues);
-        } catch (err) {
-            return res.send(err.message);
-        }
-    },
-    getProductbyCategory: async (req, res) => {
-        try {
-            const {id} = req.params;
-            const response = await Product.findAll({
-                where: {
-                    product_category_id: id,
-                }
-            });
-            return res.status(200).send(response);
         } catch (err) {
             return res.send(err.message);
         }
@@ -90,7 +166,7 @@ module.exports = {
             const old_stock = parseInt(products.dataValues.product_stock);
             const newStock = (old_stock+ parseInt(product_stock));
             const stock_total = parseInt(products.dataValues.product_vol)*parseInt(newStock);
-            
+
             await Product.update({ 
                 product_stock: parseInt(newStock), 
                 product_stock_total: parseInt(stock_total) 
@@ -112,14 +188,14 @@ module.exports = {
 
             const path = "/product";
             const upload = pify(uploader(path, "PRD").fields([{ name: 'image' }]));
-            
+
             const prods = await Product.findOne({
                 where: {
                     product_id: id,
                 }
             });
             const oldImagepath = prods.dataValues.product_image_path;
-            
+
             upload(req, res, async (err) => {
                 const { image } = req.files;
                 const {

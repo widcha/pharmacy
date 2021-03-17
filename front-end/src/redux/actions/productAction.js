@@ -3,10 +3,15 @@ import { api_url } from '../../helpers';
 
 const linkk = `${api_url}/product`;
 
-export const fetchCategoryAction = () => {
+export const fetchCategoryAction = (a) => {
     return async(dispatch) => {
         try {
-            const response = await axios.get(`${api_url}/category`);
+            let response;
+            if(a){
+                response = await axios.get(`${api_url}/category${a}`);
+            } else {
+                response = await axios.get(`${api_url}/category`);
+            }
             dispatch({ type: "FETCH_CATEGORY", payload: response.data });
         } catch (err) {
             dispatch({ type: "FETCH_PRODUCT_FAILED", payload: err.message });
@@ -38,6 +43,47 @@ export const fetchProductAction = () => {
     }
 };
 
+<<<<<<< Updated upstream
+=======
+export const fetchFilterProductAction = ({minPrice, maxPrice, searchWord}) => {
+    return async (dispatch) => {
+        try {
+            dispatch({ type: "FETCH_PRODUCT_START" });
+            let newLink = `${linkk}?`;
+
+            if(minPrice&&maxPrice&&searchWord){
+                newLink += `minPrice=${minPrice}&maxPrice=${maxPrice}&search=${searchWord}`;
+            }
+
+            else if(minPrice&&maxPrice){
+                newLink += `minPrice=${minPrice}&maxPrice=${maxPrice}`;
+            }
+            else if(minPrice&&searchWord){
+                newLink += `minPrice=${minPrice}&search=${searchWord}`;
+            }
+            else if(maxPrice&&searchWord){
+                newLink += `maxPrice=${maxPrice}&search=${searchWord}`;
+            }
+
+            else if(searchWord){
+                newLink += `search=${searchWord}`;
+            }
+            else if(maxPrice){
+                newLink += (`maxPrice=${maxPrice}`);
+            }
+            else if(minPrice){
+                newLink += (`minPrice=${minPrice}`);
+            }
+            let response = await axios.get(`${newLink}`)
+
+            dispatch({ type: "FETCH_PRODUCT_SUCCESS", payload: response.data });
+        } catch (err) {
+            dispatch({ type: "FETCH_PRODUCT_FAILED", payload: err });
+        }
+    }
+};
+
+>>>>>>> Stashed changes
 export const addNewCategoryAction = (product_category) => {
     return async (dispatch) => {
         try {
