@@ -9,22 +9,22 @@ module.exports = (sequelize, DataTypes) => {
      */
     static associate(models) {
       // define association here
-      // this.hasMany(models.Address, {
-      // 	foreignKey: "user_id",
-      // 	onDelete: "cascade",
-      // });
-      // this.hasMany(models.Cart, {
-      // 	foreignKey: "user_id",
-      // 	onDelete: "cascade",
-      // });
-      // this.hasMany(models.Transaction, {
-      // 	foreignKey: "user_id",
-      // 	onDelete: "cascade",
-      // });
-      // this.hasMany(models.Recipes, {
-      // 	foreignKey: "user_id",
-      // 	onDelete: "cascade",
-      // });
+      this.hasMany(models.User_Address, {
+				foreignKey: "user_id",
+				onDelete: "cascade",
+			});
+			this.hasMany(models.Cart, {
+				foreignKey: "user_id",
+				onDelete: "cascade",
+			});
+			this.hasMany(models.Transaction, {
+				foreignKey: "user_id",
+				onDelete: "cascade",
+			});
+			this.hasMany(models.Recipes, {
+				foreignKey: "user_id",
+				onDelete: "cascade",
+			});
     }
   }
   User.init(

@@ -20,7 +20,14 @@ module.exports = (sequelize, DataTypes) => {
 				primaryKey: true,
 				type: DataTypes.INTEGER,
 			},
-			user_id: { allowNull: false, type: DataTypes.INTEGER },
+			user_id: {
+				allowNull: false,
+				type: DataTypes.INTEGER,
+				references: {
+					model: "users",
+					key: "user_id",
+				}
+			},
 			recipes_image_path: { allowNull: false, type: DataTypes.STRING },
 			recipes_status: { allowNull: false, type: DataTypes.STRING },
 		},
