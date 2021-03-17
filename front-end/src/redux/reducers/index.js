@@ -5,8 +5,8 @@ import { transactionReducer } from "./transactionReducer";
 import { combineReducers } from "@reduxjs/toolkit";
 
 export default combineReducers({
-	user: userReducer,
-	cart: cartReducer,
-	product: productReducer,
-	transaction: transactionReducer,
+  user: userReducer,
+  cart: cartReducer,
+  product: productReducer,
+  transaction: transactionReducer,
 });

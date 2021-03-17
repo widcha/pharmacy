@@ -14,9 +14,21 @@ module.exports = (sequelize, DataTypes) => {
     }
   };
   Custom_Order.init({
-    custom_order_uid: DataTypes.INTEGER,
-    product_id: DataTypes.INTEGER,
-    product_qty: DataTypes.INTEGER
+    id: {
+      allowNull: false,
+      autoIncrement: true,
+      primaryKey: true,
+      type: DataTypes.INTEGER,
+    },
+    custom_product_uid: {
+      type: DataTypes.STRING,
+    },
+    product_id: {
+      type: DataTypes.INTEGER,
+    },
+    product_qty: {
+      type: DataTypes.INTEGER,
+    }
   }, {
     sequelize,
     modelName: 'Custom_Order',

@@ -34,20 +34,19 @@ module.exports = (sequelize, DataTypes) => {
 				primaryKey: true,
 				type: DataTypes.INTEGER,
 			},
-			product_name: {
-				type: DataTypes.STRING,
-			},
-			product_price: {
+			product_name: { allowNull: false, type: DataTypes.STRING },
+			product_price: { allowNull: false, type: DataTypes.INTEGER },
+			product_stock: { allowNull: false, type: DataTypes.INTEGER },
+			product_vol: {
+				allowNull: false,
 				type: DataTypes.INTEGER,
 			},
-			product_stock: {
+			product_stock_total: {
+				allowNull: false,
 				type: DataTypes.INTEGER,
 			},
 			product_desc: {
-				type: DataTypes.STRING,
-			},
-			product_date_uploaded: {
-				type: DataTypes.STRING,
+				type: DataTypes.STRING(500),
 			},
 			product_category_id: {
 				type: DataTypes.INTEGER,
@@ -57,7 +56,7 @@ module.exports = (sequelize, DataTypes) => {
 				},
 			},
 			product_image_path: {
-				type: DataTypes.STRING,
+				type: DataTypes.STRING(500),
 			},
 		},
 		{
