@@ -3,6 +3,10 @@ import {
     Button,
     makeStyles,
     Paper,
+    FormControl,
+    InputLabel,
+    MenuItem,
+    Select,
     Table,
     TableBody,
     TableCell,
@@ -23,7 +27,7 @@ import Swal from 'sweetalert2';
 
 const CategoriesAdmin = () => {
     const dispatch = useDispatch();
-    const {category} = useSelector((state) => state.product);
+    const category = useSelector((state) => state.product.category);
     const {product_list} = useSelector((state) => state.product);
 
     useEffect(() => {
@@ -42,6 +46,7 @@ const CategoriesAdmin = () => {
         },
     });
     const classes = useStyles();
+    const [searchWord, setSearch] = useState('');
 
     const toggle = (id) => {
         let catCheck = product_list.find((val) => val.product_category_id === id);
@@ -84,129 +89,197 @@ const CategoriesAdmin = () => {
             setClick(false);
         }
     };
-    
-    const saveAddBtn = (product_category) => {
-        dispatch(addNewCategoryAction(product_category))
-        setAddClick(false);
-    };
 
     const cancelButton = () => {
         setClick(false);
         setAddClick(false);
     }
+
+    const searchBtn = () => {
+        const a = `?search=${searchWord}`;
+        dispatch(fetchCategoryAction(a))
+    }
+    
+    const saveAddBtn = (product_category) => {
+        if(product_category){
+            dispatch(addNewCategoryAction(product_category))
+            setAddClick(false);
+        }else{
+            Swal.fire({
+                icon: 'warning',
+                title: "Can't add a blank category",
+                text: 'You need to fill category name!'
+            })
+        }
+    };
+    const [filterCategory, setFilterCategory] = useState('');
+    const [openn, setOpenn] = useState(false);
+
+    const handleFilterCategory = (e) => {
+        setFilterCategory(e.target.value);
+    };
+    const handleOpenn = () => {
+        setOpenn(true);
+    }
+    const handleClosee = () => {
+        setOpenn(false);
+    };
+
+    const renderRow = () => {
+        let newCat;
+        if(filterCategory){
+            newCat = category.filter((val) => val.product_category_id === filterCategory);
+        }else{
+            newCat = category;
+        }
+        return (
+            newCat.map((row,index) => (
+                <TableRow key={row.product_category_id}>
+                    <TableCell>{index+1}</TableCell>
+                {
+                    clicked && row.product_category_id === idCat && addClick === false ?
+                    (<>
+                        <TableCell>
+                        <TextField
+                            placeholder="Category Name"
+                            label="Category Name"
+                            id="category-name"
+                            defaultValue={row.product_category}
+                            size="small"
+                            onChange={(e) => setCategory(e.target.value)}
+                        />
+                        </TableCell>
+                        <TableCell align="center">
+                            <Button
+                                onClick={() => saveButton(row.product_category_id)}
+                                style={{ backgroundColor: 'grey', color: 'black' }}
+                            >
+                                Save
+                            </Button>
+                            <Button
+                                onClick={() => cancelButton(row.product_category_id)}
+                                style={{ backgroundColor: 'red', color: 'white', marginLeft: '20px' }}
+                            >
+                                Cancel
+                            </Button>
+                        </TableCell></>
+                    )
+                    :
+                    (   <>
+                        <TableCell>{row.product_category}</TableCell>
+                        <TableCell align="center">
+                            <Button
+                                onClick={() => editButton(row.product_category_id)}
+                                style={{ backgroundColor: 'grey', color: 'black' }}
+                                disabled={addClick}
+                            >
+                                Edit
+                            </Button>
+                            <Button
+                                onClick={() => toggle(row.product_category_id)}
+                                style={{ backgroundColor: 'red', color: 'white', marginLeft: '20px' }}
+                                disabled={addClick}
+                            >
+                                Delete
+                            </Button>
+                        </TableCell>
+                        </>)
+                }
+                </TableRow>
+            ))
+        )
+    };
+    const renderNewRow = () => {
+        return (
+            addClick ?
+            <TableRow>
+                <TableCell></TableCell>
+                <TableCell>
+                    <TextField
+                        placeholder="Category Name"
+                        label="Category Name"
+                        id="category-name"
+                        size="small"
+                        onChange={(e) => setCategory(e.target.value)}
+                    />
+                </TableCell>
+                <TableCell align="center">
+                    <Button
+                        onClick={() => saveAddBtn(product_category)}
+                        style={{ backgroundColor: 'grey', color: 'black' }}
+                    >
+                        Save
+                    </Button>
+                    <Button
+                        onClick={cancelButton}
+                        style={{ backgroundColor: 'red', color: 'white', marginLeft: '20px' }}
+                    >
+                        Cancel
+                    </Button>
+                </TableCell>
+            </TableRow>
+            :
+            null
+        )
+    }
+
     return (
         <div>
-            <div style={{ paddingTop: '10px' }}>
-                <Button
-                    style={{ backgroundColor: 'black', color: 'white' }}
-                    onClick={()=> setAddClick(true)}
-                >
-                    Add New Category
-                </Button>
-            </div>
-            {/* ADMIN DAPAT MELIHAT SEMUA CATEGORY */}
-            <div style={{ display: 'flex', marginLeft: '210px' }}>
-                <TableContainer component={Paper}>
-                    <Table className={classes.table} aria-label="simple table">
-                        <TableHead>
-                            <TableRow>
-                                <TableCell>#</TableCell>
-                                <TableCell>Category</TableCell>
-                                <TableCell align="center">Action</TableCell>
-                            </TableRow>
-                        </TableHead>
-                        <TableBody>
-                            {
-                                category.map((row,index) => (
-                                    <TableRow key={row.product_category_id}>
-                                        <TableCell>{index+1}</TableCell>
-                                    {
-                                        clicked && row.product_category_id === idCat ?
-                                        (<>
-                                        {/* ADMIN EDIT CATEGORY */}
-                                            <TableCell>
-                                            <TextField
-                                                placeholder="Category Name"
-                                                label="Category Name"
-                                                id="category-name"
-                                                defaultValue={row.product_category}
-                                                size="small"
-                                                onChange={(e) => setCategory(e.target.value)}
-                                            />
-                                            </TableCell>
-                                            <TableCell align="center">
-                                                <Button
-                                                    onClick={() => saveButton(row.product_category_id)}
-                                                    style={{ backgroundColor: 'grey', color: 'black' }}
-                                                >
-                                                    Save
-                                                </Button>
-                                                <Button
-                                                    onClick={() => cancelButton(row.product_category_id)}
-                                                    style={{ backgroundColor: 'red', color: 'white', marginLeft: '20px' }}
-                                                >
-                                                    Cancel
-                                                </Button>
-                                            </TableCell></>
-                                        )
-                                        :
-                                        (   <>
-                                            <TableCell>{row.product_category}</TableCell>
-                                            <TableCell align="center">
-                                                <Button
-                                                    onClick={() => editButton(row.product_category_id)}
-                                                    style={{ backgroundColor: 'grey', color: 'black' }}
-                                                >
-                                                    Edit
-                                                </Button>
-                                                {/* ADMIN DELETE CATEGORY */}
-                                                <Button
-                                                    onClick={() => toggle(row.product_category_id)}
-                                                    style={{ backgroundColor: 'red', color: 'white', marginLeft: '20px' }}
-                                                >
-                                                    Delete
-                                                </Button>
-                                            </TableCell>
-                                            </>)
-                                    }
-                                    </TableRow>
-                                ))
-                            }
-                            {
-                                addClick ?
-                                // ADMIN MENAMBAH CATEGORY
+            <div style={{ display: 'flex', flexDirection: 'row' }}>
+                <div style={{ display: 'flex' }}>
+                    <TableContainer component={Paper}>
+                        <Table className={classes.table} aria-label="simple table">
+                            <TableHead>
                                 <TableRow>
-                                    <TableCell></TableCell>
-                                    <TableCell>
-                                        <TextField
-                                            placeholder="Category Name"
-                                            label="Category Name"
-                                            id="category-name"
-                                            size="small"
-                                            onChange={(e) => setCategory(e.target.value)}
-                                        />
-                                    </TableCell>
-                                    <TableCell align="center">
-                                        <Button
-                                            onClick={() => saveAddBtn(product_category)}
-                                            style={{ backgroundColor: 'grey', color: 'black' }}
-                                        >
-                                            Save
-                                        </Button>
-                                        <Button
-                                            onClick={cancelButton}
-                                            style={{ backgroundColor: 'red', color: 'white', marginLeft: '20px' }}
-                                        >
-                                            Cancel
-                                        </Button>
-                                    </TableCell>
+                                    <TableCell>#</TableCell>
+                                    <TableCell>Category</TableCell>
+                                    <TableCell align="center">Action</TableCell>
                                 </TableRow>
-                                :
-                                null
-                            }
-                        </TableBody>
-                    </Table>
-                </TableContainer>
+                            </TableHead>
+                            <TableBody>
+                                {renderRow()}
+                                {renderNewRow()}
+                            </TableBody>
+                        </Table>
+                    </TableContainer>
+                </div>
+                <div style={{ display: 'flex', flexDirection: 'column', width: '275px', paddingTop: '17px', maxHeight: '50px', position: 'fixed', left: '78%' }}>
+                    <Button
+                        style={{ backgroundColor: 'black', color: 'white' }}
+                        onClick={()=> setAddClick(true)}
+                    >
+                        Add New Category
+                    </Button>
+                    <FormControl style={{ width: '275px' }}>
+                        <InputLabel id="demo-controlled-open-select-label">Filter By Category</InputLabel>
+                        <Select
+                            labelId="demo-controlled-open-select-label"
+                            id="category"
+                            open={openn}
+                            onClose={handleClosee}
+                            onOpen={handleOpenn}
+                            onChange={handleFilterCategory}
+                        >
+                            <MenuItem value="">All</MenuItem>
+                        {category.map((val) => <MenuItem value={val.product_category_id}>{val.product_category}</MenuItem>)}
+                        </Select>
+                    </FormControl>
+                    <div>
+                        <TextField
+                            placeholder="Search..."
+                            label="Search"
+                            id="search"
+                            onChange={(e) => setSearch(e.target.value)}
+                            style={{ width: '275px', paddingBottom: '10px' }}
+                        />
+                    </div>
+                    <Button
+                        onClick={searchBtn}
+                        style={{ backgroundColor: 'teal' }}
+                    >
+                        Search
+                    </Button>
+                </div>
             </div>
         </div>
     );

@@ -95,29 +95,43 @@ const ProductAdmin = () => {
         setOpenn(false);
     }
     const renderProduct = () => {
-        let fil;
         if(filterCategory){
-            fil = product_list.filter((val) => val.product_category_id === filterCategory)
+            return product_list.filter((val) => val.product_category_id === filterCategory).map((val) => {
+                return (
+                    <div className="mt-3">
+                        <CardProduct
+                            idProd={val.product_id}
+                            name={val.product_name}
+                            price={val.product_price}
+                            stock={val.product_stock}
+                            vol={val.product_vol}
+                            stock_total={val.product_stock_total}
+                            desc={val.product_desc}
+                            cat={val.product_category_id}
+                            image={val.product_image_path}
+                        />
+                    </div>
+                )
+            })
         }else{
-            fil = product_list;
+            return product_list.map((val) => {
+                return (
+                    <div className="mt-3">
+                        <CardProduct
+                            idProd={val.product_id}
+                            name={val.product_name}
+                            price={val.product_price}
+                            stock={val.product_stock}
+                            vol={val.product_vol}
+                            stock_total={val.product_stock_total}
+                            desc={val.product_desc}
+                            cat={val.product_category_id}
+                            image={val.product_image_path}
+                        />
+                    </div>
+                )
+            })
         }
-        return fil.map((val) => {
-            return (
-                <div className="mt-3">
-                    <CardProduct
-                        idProd={val.product_id}
-                        name={val.product_name}
-                        price={val.product_price}
-                        stock={val.product_stock}
-                        vol={val.product_vol}
-                        stock_total={val.product_stock_total}
-                        desc={val.product_desc}
-                        cat={val.product_category_id}
-                        image={val.product_image_path}
-                    />
-                </div>
-            )
-        })
     }
     const saveChange = () => {
         if(newName && newPrice && newVol && newDesc && selectedCategory && pict && stock){

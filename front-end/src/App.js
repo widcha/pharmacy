@@ -15,29 +15,31 @@ import {
   PaymentAdmin,
   ProductFlowAdmin,
 } from "./pages";
-import { useDispatch } from "react-redux";
-import { nullifyErrorAction } from "./redux/actions";
+// import { useDispatch } from "react-redux";
+// import { nullifyErrorAction } from "./redux/actions";
 
 function App() {
-  const dispatch = useDispatch();
+  // const dispatch = useDispatch();
 
-  const userRole = 1;
-  useEffect(() => {
-    dispatch(nullifyErrorAction());
-  }, [dispatch]);
+  // const userRole = 1;
+  // useEffect(() => {
+  //   dispatch(nullifyErrorAction());
+  // }, [dispatch]);
 
-  return (<>
-    {
-      userRole ?
-      (<div className="App">
-        <Route path="/signup" component={SignUp} />
-        <Route path="/verification" component={Verification} />
-        <Route path="/login" component={Login} />
-        <Route path="/forgot-password" component={ForgotPassword} />
-        <Route path="/change-password" component={ChangePassword} />
-      </div>)
-      :
-      (<div className="container">
+  return (
+  // <>
+  //   {
+  //     userRole ?
+  //     (<div className="App">
+  //       <Route path="/signup" exact component={SignUp} />
+  //       <Route path="/verification" component={Verification} />
+  //       <Route path="/login" component={Login} />
+  //       <Route path="/forgot-password" component={ForgotPassword} />
+  //       <Route path="/change-password" component={ChangePassword} />
+  //     </div>)
+  //     :
+  //     (
+      <div className="container">
         <div className="sidebar">
           <SideBar/>
         </div>
@@ -50,9 +52,9 @@ function App() {
           <Route path="/product-flow" component={ProductFlowAdmin} />
         </div>
       </div>
-      )
-    }
-    </>
+    //   )
+    // }
+    // </>
   );
 }
 

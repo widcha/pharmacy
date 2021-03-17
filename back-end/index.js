@@ -9,10 +9,10 @@ const {
     categoryRouter
 } = require("./router");
 
+app.use(cors());
 app.use(express.static("public"));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
-app.use(cors());
 
 app.get("/", (req, res) => {
     return res.status(200).send("Commerce API");
