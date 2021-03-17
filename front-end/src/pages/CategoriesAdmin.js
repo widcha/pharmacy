@@ -174,6 +174,7 @@ const CategoriesAdmin = () => {
                             }
                             {
                                 addClick ?
+                                // ADMIN MENAMBAH CATEGORY
                                 <TableRow>
                                     <TableCell></TableCell>
                                     <TableCell>
