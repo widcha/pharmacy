@@ -1,6 +1,6 @@
 import "./App.css";
 import React, { useEffect } from "react";
-import { Route } from "react-router";
+import { Route } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import { nullifyErrorAction } from "./redux/actions";
 import SideBar from "./components/SideBar";
