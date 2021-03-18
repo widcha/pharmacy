@@ -196,3 +196,37 @@ export const fetchProductsByCategoryAction = (idx) => {
 		}
 	};
 };
+
+export const fetchHighestProductPriceAction = () => {
+	return async (dispatch) => {
+		try {
+			dispatch({ type: "FETCH_PRODUCT_START" });
+			const max_price = await axios.get(`${linkk}?highest_price=true`);
+			// console.log(max_price.data[0].maxPrice);
+			dispatch({
+				type: "FETCH_PRODUCT_MAXPRICE",
+				payload: max_price.data[0].maxPrice,
+			});
+		} catch (err) {
+			dispatch({ type: "FETCH_PRODUCT_FAILED", payload: err });
+		}
+	};
+};
+
+export const fetchProductsFilteredByPrice = (from, to, category) => {
+	return async (dispatch) => {
+		try {
+			dispatch({ type: "FETCH_PRODUCT_START" });
+
+			const price_filter = await axios.get(
+				`${linkk}?price_from=${from}&price_to=${to}&category=${category}`
+			);
+			dispatch({
+				type: "FETCH_PRODUCT_SUCCESS",
+				payload: price_filter.data,
+			});
+		} catch (err) {
+			dispatch({ type: "FETCH_PRODUCT_FAILED", payload: err });
+		}
+	};
+};

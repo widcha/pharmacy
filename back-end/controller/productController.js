@@ -4,14 +4,57 @@ const pify = require("pify");
 const { uploader } = require("../handlers");
 const { parse } = require("path");
 const { Op } = require("sequelize");
+const sequelize = require("sequelize");
 
 module.exports = {
 	getAllProduct: async (req, res) => {
 		try {
-			const response = await Product.findAll({
-				order: [["createdAt", "DESC"]],
-			});
-			return res.status(200).send(response);
+			const { highest_price, price_from, price_to, category } = req.query;
+			if (highest_price === "true") {
+				const response = await Product.findAll({
+					attributes: [
+						[sequelize.fn("max", sequelize.col("product_price")), "maxPrice"],
+					],
+					raw: true,
+				});
+				return res.status(200).send(response);
+			} else if (price_from && price_to && category) {
+				if (category > 0) {
+					const response = await Product.findAll({
+						where: {
+							[Op.and]: {
+								product_price: {
+									[Op.and]: {
+										[Op.gte]: price_from,
+										[Op.lte]: price_to,
+									},
+								},
+								product_category_id: {
+									[Op.eq]: category,
+								},
+							},
+						},
+					});
+					return res.status(200).send(response);
+				} else {
+					const response = await Product.findAll({
+						where: {
+							product_price: {
+								[Op.and]: {
+									[Op.gte]: price_from,
+									[Op.lte]: price_to,
+								},
+							},
+						},
+					});
+					return res.status(200).send(response);
+				}
+			} else {
+				const response = await Product.findAll({
+					order: [["createdAt", "DESC"]],
+				});
+				return res.status(200).send(response);
+			}
 		} catch (err) {
 			return res.send(err.message);
 		}
@@ -219,7 +262,7 @@ module.exports = {
 	getProductCategories: async (req, res) => {
 		try {
 			const { category } = req.query;
-			if (category) {
+			if (category > 0) {
 				const response = await Product.findAll({
 					where: {
 						product_category_id: {
@@ -236,4 +279,11 @@ module.exports = {
 			return res.send(err.message);
 		}
 	},
+	// getHighestProductPrice :async(req, res)=>{
+	//   try {
+
+	//   } catch (err) {
+	//     return res.send(err.message);
+	//   }
+	// }
 };

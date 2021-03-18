@@ -1,73 +1,73 @@
 .App {
-  text-align: center;
+	text-align: center;
 }
 
 .App-logo {
-  height: 40vmin;
-  pointer-events: none;
+	height: 40vmin;
+	pointer-events: none;
 }
 
 @media (prefers-reduced-motion: no-preference) {
-  .App-logo {
-    animation: App-logo-spin infinite 20s linear;
-  }
+	.App-logo {
+		animation: App-logo-spin infinite 20s linear;
+	}
 }
 
 .App-header {
-  background-color: #282c34;
-  min-height: 100vh;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  font-size: calc(10px + 2vmin);
-  color: white;
+	background-color: #282c34;
+	min-height: 100vh;
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: center;
+	font-size: calc(10px + 2vmin);
+	color: white;
 }
 
 .App-link {
-  color: #61dafb;
+	color: #61dafb;
 }
 
 .container {
-  display: flex;
-  flex-direction: row;
+	display: flex;
+	flex-direction: row;
 }
 
 .sidebar {
-  position: fixed;
-  background-color: #696969;
-  color: #ffffff;
-  width: 100%;
-  max-width: 195px;
-  min-height: 100vh;
-  border: 1px solid rgba(0, 0, 0, 0.1);
+	position: fixed;
+	background-color: #696969;
+	color: #ffffff;
+	width: 100%;
+	max-width: 195px;
+	min-height: 100vh;
+	border: 1px solid rgba(0, 0, 0, 0.1);
 }
 
 @keyframes App-logo-spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
+	from {
+		transform: rotate(0deg);
+	}
+	to {
+		transform: rotate(360deg);
+	}
 }
 
 .pagination {
-  margin: 15px auto;
-  display: flex;
-  list-style: none;
-  outline: none;
+	margin: 15px auto;
+	display: flex;
+	list-style: none;
+	outline: none;
 }
 .pagination > .active > a {
-  background-color: #47ccde;
-  border-color: #47ccde;
-  color: #fff;
+	background-color: #47ccde;
+	border-color: #47ccde;
+	color: #fff;
 }
 .pagination > li > a {
-  border: none;
-  padding: 5px 10px;
-  outline: none;
-  cursor: pointer;
+	border: none;
+	padding: 5px 10px;
+	outline: none;
+	cursor: pointer;
 }
 .pagination > .active > a,
 .pagination > .active > span,
@@ -75,17 +75,24 @@
 .pagination > .active > span:hover,
 .pagination > .active > a:focus,
 .pagination > .active > span:focus {
-  background-color: #47ccde;
-  border-color: #47ccde;
-  outline: none;
+	background-color: #47ccde;
+	border-color: #47ccde;
+	outline: none;
 }
 .pagination > li > a,
 .pagination > li > span {
-  color: #000;
+	color: #000;
 }
 .pagination > li:first-child > a,
 .pagination > li:first-child > span,
 .pagination > li:last-child > a,
 .pagination > li:last-child > span {
-  border-radius: unset;
+	border-radius: unset;
+}
+input[type="range"]::-webkit-slider-thumb {
+	pointer-events: all;
+	width: 24px;
+	height: 24px;
+	-webkit-appearance: none;
+	/* @apply w-6 h-6 appearance-none pointer-events-auto; */
 }

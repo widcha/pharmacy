@@ -3,6 +3,7 @@ import CardProductUser from "../components/CardProductUser";
 import ReactPaginate from "react-paginate";
 import { useDispatch, useSelector } from "react-redux";
 import {
+	fetchHighestProductPriceAction,
 	fetchProductAction,
 	fetchProductCategoryAction,
 	fetchProductsByCategoryAction,
@@ -15,6 +16,7 @@ import {
 	MenuItem,
 	Select,
 } from "@material-ui/core";
+import PriceSlider from "../components/PriceSlider";
 
 const Products = () => {
 	const useStyles = makeStyles((theme) => ({
@@ -27,16 +29,19 @@ const Products = () => {
 	}));
 	const classes = useStyles();
 	const [categorySelected, setCategorySelected] = useState("");
-	const [categorySelectedIndex, setCategorySelectedIndex] = useState(null);
+	const [categorySelectedIndex, setCategorySelectedIndex] = useState(0);
 
 	const [perPage] = useState(10);
 	const [page, setPage] = useState(0);
 	const from = page * perPage;
 	const to = (page + 1) * perPage;
 	const dispatch = useDispatch();
-	const { product_list, loading, category } = useSelector(
-		(state) => state.product
-	);
+	const {
+		product_list,
+		loading,
+		category,
+		product_price_highest,
+	} = useSelector((state) => state.product);
 	const [pageCount, setPageCount] = useState(product_list.length / perPage);
 
 	const data = product_list.filter((val, index) => {
@@ -67,6 +72,7 @@ const Products = () => {
 	useEffect(() => {
 		dispatch(fetchProductAction());
 		dispatch(fetchProductCategoryAction());
+		dispatch(fetchHighestProductPriceAction());
 	}, [dispatch]);
 
 	const handlePageClick = (e) => {
@@ -84,7 +90,7 @@ const Products = () => {
 			return (
 				<label
 					onClick={() => handleProductsByCategory(val.product_category_id)}
-					className="cursor-pointer text-gray-700"
+					className="cursor-pointer text-gray-700 hover:text-black hover:bg-gray-100 transition duration-300 rounded-sm"
 				>
 					{val.product_category}
 				</label>
@@ -104,15 +110,25 @@ const Products = () => {
 	return (
 		<div className="flex flex-row items-start justify-items-auto">
 			<div className="mt-10 ml-5 w-28 space-y-3 flex flex-col">
-				<label className="text-lg font-bold">Categories</label>
+				<div className="w-max space-y-3 flex flex-col mb-5">
+					<label className="text-lg font-bold">Categories</label>
 
-				<label
-					className="cursor-pointer text-gray-700"
-					onClick={renderAllProducts}
-				>
-					All Products
-				</label>
-				{renderCategories()}
+					<label
+						className="cursor-pointer text-gray-700 hover:text-black hover:bg-gray-100 transition duration-300 rounded-sm"
+						onClick={renderAllProducts}
+					>
+						All Products
+					</label>
+					{renderCategories()}
+				</div>
+				<div className="border-t-2 border-gray-300 w-max pt-5">
+					<label className="text-lg font-bold ">Filter By:</label>
+
+					<PriceSlider
+						max_price={product_price_highest}
+						category_id={categorySelectedIndex}
+					/>
+				</div>
 			</div>
 			<div className="flex flex-col mx-2 justify-center justify-items-center items-start w-full">
 				<div className="flex flex-row items-center justify-between w-full">
