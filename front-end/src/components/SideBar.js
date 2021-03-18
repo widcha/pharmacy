@@ -31,7 +31,7 @@ const SideBar = () => {
                 </ListItem>
                 <Collapse in={open} timeout="auto" unmountOnExit>
                     <List component="div" disablePadding dense>
-                        <Link to="/manage-product">
+                        <Link to="/product">
                             <ListItem button className={classes.nested}>
                                 <ListItemText primary="Manage Product"/>
                             </ListItem>

@@ -31,35 +31,74 @@ export const fetchProductByIdAction = (id) => {
     }
 }
 
-export const fetchFilterProductAction = ({minPrice, maxPrice, searchWord}) => {
+export const fetchFilterProductAction = ({minPrice, maxPrice, searchWord, sortChosen}) => {
     return async (dispatch) => {
         try {
             dispatch({ type: "FETCH_PRODUCT_START" });
             let newLink = `${linkk}?`;
 
-            if(minPrice&&maxPrice&&searchWord){
-                newLink += `minPrice=${minPrice}&maxPrice=${maxPrice}&search=${searchWord}`;
+            if(searchWord && minPrice && maxPrice && sortChosen){
+                newLink += `search=${searchWord}`;
+                newLink += (`&minPrice=${minPrice}`);
+                newLink += (`&maxPrice=${maxPrice}`);
+                newLink += (`&sortChosen=${sortChosen}`);
+            }
+            
+            if(minPrice && maxPrice && sortChosen){
+                newLink += (`minPrice=${minPrice}`);
+                newLink += (`&maxPrice=${maxPrice}`);
+                newLink += (`&sortChosen=${sortChosen}`);
+            }if(searchWord && maxPrice && sortChosen){
+                newLink += `search=${searchWord}`;
+                newLink += (`&maxPrice=${maxPrice}`);
+                newLink += (`&sortChosen=${sortChosen}`);
+            }if(searchWord && minPrice && sortChosen){
+                newLink += `search=${searchWord}`;
+                newLink += (`&minPrice=${minPrice}`);
+                newLink += (`&sortChosen=${sortChosen}`);
+            }if(searchWord && minPrice && maxPrice){
+                newLink += `search=${searchWord}`;
+                newLink += (`&minPrice=${minPrice}`);
+                newLink += (`&maxPrice=${maxPrice}`);
             }
 
-            else if(minPrice&&maxPrice){
-                newLink += `minPrice=${minPrice}&maxPrice=${maxPrice}`;
+            if(searchWord && minPrice){
+                newLink += `search=${searchWord}`;
+                newLink += (`&minPrice=${minPrice}`);
             }
-            else if(minPrice&&searchWord){
-                newLink += `minPrice=${minPrice}&search=${searchWord}`;
+            if(searchWord && maxPrice){
+                newLink += `search=${searchWord}`;
+                newLink += (`&maxPrice=${maxPrice}`);
             }
-            else if(maxPrice&&searchWord){
-                newLink += `maxPrice=${maxPrice}&search=${searchWord}`;
+            if(searchWord && sortChosen){
+                newLink += `search=${searchWord}`;
+                newLink += (`&sortChosen=${sortChosen}`);
             }
-
-            else if(searchWord){
+            if(minPrice && maxPrice){
+                newLink += (`minPrice=${minPrice}`);
+                newLink += (`&maxPrice=${maxPrice}`);
+            }
+            if(minPrice && sortChosen){
+                newLink += (`minPrice=${minPrice}`);
+                newLink += (`&sortChosen=${sortChosen}`);
+            }
+            if(maxPrice && sortChosen){
+                newLink += (`maxPrice=${maxPrice}`);
+                newLink += (`&sortChosen=${sortChosen}`);
+            }
+            if(searchWord){
                 newLink += `search=${searchWord}`;
             }
-            else if(maxPrice){
+            if(maxPrice){
                 newLink += (`maxPrice=${maxPrice}`);
             }
-            else if(minPrice){
+            if(minPrice){
                 newLink += (`minPrice=${minPrice}`);
             }
+            if(sortChosen){
+                newLink += (`sortChosen=${sortChosen}`);
+            }
+
             let response = await axios.get(`${newLink}`)
 
             dispatch({ type: "FETCH_PRODUCT_SUCCESS", payload: response.data });
@@ -93,7 +132,7 @@ export const addNewCategoryAction = (product_category) => {
     }
 }
 
-export const addProductAction = ({newName, newPrice, newVol, stock, newDesc, selectedCategory, pict}) => {
+export const addProductAction = ({newName, newPrice, newVol, newStock, newDesc, selectedCategory, pict}) => {
     return async (dispatch) => {
         try {
             dispatch({ type: "FETCH_PRODUCT_START" });
@@ -105,7 +144,7 @@ export const addProductAction = ({newName, newPrice, newVol, stock, newDesc, sel
                 newVol,
                 newDesc,
                 selectedCategory,
-                stock
+                newStock
             });
             
             formData.append("image", pict);
@@ -151,7 +190,7 @@ export const editCategoryAction = ({id, product_category}) => {
     }
 }
 
-export const editProductAction = ({ id, newName, newPrice, newVol, newStock, newDesc, selectedCategory, pict }) => {
+export const editProductAction = ({ idProd, newName, newPrice, newVol, oldStock, newDesc, selectedCategory, pict }) => {
     return async (dispatch) => {
         try {
             dispatch({ type: "FETCH_PRODUCT_START" });
@@ -161,7 +200,7 @@ export const editProductAction = ({ id, newName, newPrice, newVol, newStock, new
                 newName,
                 newPrice,
                 newVol,
-                newStock,
+                oldStock,
                 newDesc,
                 selectedCategory
             });
@@ -174,7 +213,7 @@ export const editProductAction = ({ id, newName, newPrice, newVol, newStock, new
                     "Content-Type": "multipart/form-data",
                 }
             };
-            await axios.patch(`${linkk}/${id}`, formData, headers);
+            await axios.patch(`${linkk}/${idProd}`, formData, headers);
             dispatch(fetchProductAction());
         } catch (err) {
             dispatch({ type: "FETCH_PRODUCT_FAILED", payload: err });

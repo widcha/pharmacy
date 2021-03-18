@@ -23,16 +23,26 @@ import {
     fetchProductAction
 } from '../redux/actions';
 import { useDispatch, useSelector } from 'react-redux';
+import ReactPaginate from 'react-paginate';
 import Swal from 'sweetalert2';
 
 const CategoriesAdmin = () => {
     const dispatch = useDispatch();
     const category = useSelector((state) => state.product.category);
-    const {product_list} = useSelector((state) => state.product);
+    
+    const [perPage] = useState(10);
+    const [page, setPage] = useState(0);
+    const from = page * perPage;
+    const to = (page + 1) * perPage;
+    const { product_list, loading } = useSelector((state) => state.product);
+    const [pageCount, setPageCount] = useState(category.length / perPage);
+
+    const data = category.filter((val, index) => {
+        return index >= from && index < to;
+    });
 
     useEffect(() => {
         dispatch(fetchProductAction());
-        dispatch(fetchCategoryAction());
     }, [dispatch]);
 
     const [product_category, setCategory] = useState('');
@@ -128,9 +138,9 @@ const CategoriesAdmin = () => {
     const renderRow = () => {
         let newCat;
         if(filterCategory){
-            newCat = category.filter((val) => val.product_category_id === filterCategory);
+            newCat = data.filter((val) => val.product_category_id === filterCategory);
         }else{
-            newCat = category;
+            newCat = data;
         }
         return (
             newCat.map((row,index) => (
@@ -222,66 +232,100 @@ const CategoriesAdmin = () => {
             null
         )
     }
+    useEffect(() => {
+        setPageCount(category.length / perPage);
+    }, [perPage, category]);
 
-    return (
-        <div>
-            <div style={{ display: 'flex', flexDirection: 'row' }}>
-                <div style={{ display: 'flex' }}>
-                    <TableContainer component={Paper}>
-                        <Table className={classes.table} aria-label="simple table">
-                            <TableHead>
-                                <TableRow>
-                                    <TableCell>#</TableCell>
-                                    <TableCell>Category</TableCell>
-                                    <TableCell align="center">Action</TableCell>
-                                </TableRow>
-                            </TableHead>
-                            <TableBody>
-                                {renderRow()}
-                                {renderNewRow()}
-                            </TableBody>
-                        </Table>
-                    </TableContainer>
-                </div>
-                <div style={{ display: 'flex', flexDirection: 'column', width: '275px', paddingTop: '17px', maxHeight: '50px', position: 'fixed', left: '78%' }}>
-                    <Button
-                        style={{ backgroundColor: 'black', color: 'white' }}
-                        onClick={()=> setAddClick(true)}
-                    >
-                        Add New Category
-                    </Button>
-                    <FormControl style={{ width: '275px' }}>
-                        <InputLabel id="demo-controlled-open-select-label">Filter By Category</InputLabel>
-                        <Select
-                            labelId="demo-controlled-open-select-label"
-                            id="category"
-                            open={openn}
-                            onClose={handleClosee}
-                            onOpen={handleOpenn}
-                            onChange={handleFilterCategory}
-                        >
-                            <MenuItem value="">All</MenuItem>
-                        {category.map((val) => <MenuItem value={val.product_category_id}>{val.product_category}</MenuItem>)}
-                        </Select>
-                    </FormControl>
-                    <div>
-                        <TextField
-                            placeholder="Search..."
-                            label="Search"
-                            id="search"
-                            onChange={(e) => setSearch(e.target.value)}
-                            style={{ width: '275px', paddingBottom: '10px' }}
-                        />
+    useEffect(() => {
+    dispatch(fetchCategoryAction());
+    }, [dispatch]);
+
+    const handlePageClick = (e) => {
+        const selectedPage = e.selected;
+        setPage(selectedPage);
+    };    
+
+    const renderAll = () => {
+        return (
+            <div>
+                <div style={{ display: 'flex', flexDirection: 'row' }}>
+                    <div style={{ display: 'flex' }}>
+                        <TableContainer component={Paper}>
+                            <Table className={classes.table} aria-label="simple table">
+                                <TableHead>
+                                    <TableRow>
+                                        <TableCell>#</TableCell>
+                                        <TableCell>Category</TableCell>
+                                        <TableCell align="center">Action</TableCell>
+                                    </TableRow>
+                                </TableHead>
+                                <TableBody>
+                                    {renderRow()}
+                                    {renderNewRow()}
+                                </TableBody>
+                            </Table>
+                        </TableContainer>
                     </div>
-                    <Button
-                        onClick={searchBtn}
-                        style={{ backgroundColor: 'teal' }}
-                    >
-                        Search
-                    </Button>
+                    <div style={{ display: 'flex', flexDirection: 'column', width: '275px', paddingTop: '17px', maxHeight: '50px', position: 'fixed', left: '78%' }}>
+                        <Button
+                            style={{ backgroundColor: 'black', color: 'white' }}
+                            onClick={()=> setAddClick(true)}
+                        >
+                            Add New Category
+                        </Button>
+                        <FormControl style={{ width: '275px' }}>
+                            <InputLabel id="demo-controlled-open-select-label">Filter By Category</InputLabel>
+                            <Select
+                                labelId="demo-controlled-open-select-label"
+                                id="category"
+                                open={openn}
+                                onClose={handleClosee}
+                                onOpen={handleOpenn}
+                                onChange={handleFilterCategory}
+                            >
+                                <MenuItem value="">All</MenuItem>
+                            {data.map((val) => <MenuItem value={val.product_category_id}>{val.product_category}</MenuItem>)}
+                            </Select>
+                        </FormControl>
+                        <div>
+                            <TextField
+                                placeholder="Search..."
+                                label="Search"
+                                id="search"
+                                onChange={(e) => setSearch(e.target.value)}
+                                style={{ width: '275px', paddingBottom: '10px' }}
+                            />
+                        </div>
+                        <Button
+                            onClick={searchBtn}
+                            style={{ backgroundColor: 'teal' }}
+                        >
+                            Search
+                        </Button>
+                    </div>
                 </div>
             </div>
-        </div>
+        )
+    }
+    return (
+        <div className="flex flex-col mx-2">
+            <div className="flex flex-wrap">{loading ? null : renderAll()}</div>
+            <div className="flex-row align-baseline">
+            <ReactPaginate
+                previousLabel={"Prev"}
+                nextLabel={"Next"}
+                breakLabel={"..."}
+                breakClassName={"break-me"}
+                pageCount={pageCount}
+                marginPagesDisplayed={2}
+                pageRangeDisplayed={5}
+                onPageChange={handlePageClick}
+                containerClassName={"pagination"}
+                subContainerClassName={"pages pagination"}
+                activeClassName={"active"}
+            />
+            </div>
+      </div>
     );
 }
  

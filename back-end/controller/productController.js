@@ -8,23 +8,44 @@ const { Op } = require('sequelize');
 module.exports = {
     getAllProduct: async (req,res) => {
         try {
-            const {minPrice, maxPrice, search} = req.query;
+            const {minPrice, maxPrice, search, sortChosen} = req.query;
             let response;
+
+            let orderSort;
+            if(sortChosen){
+                if(sortChosen === "DateOld"){
+                    orderSort = [['createdAt','ASC']]
+                }
+                else if(sortChosen === "DateNew"){
+                    orderSort = [['createdAt','DESC']]
+                }
+            }
+            let minFilter;
+            let maxFilter;
+            let searchFilter;
+            if(search){
+                searchFilter = {[Op.substring]: `${search}`}
+            }
+            if(minPrice){
+                minFilter = { [Op.gte]: minPrice }
+            }
+            if(maxPrice){
+                maxFilter = { [Op.lte]: maxPrice }
+            }
+
             if(minPrice && maxPrice && search) {
                 response = await Product.findAll({
                     where: {
                         [Op.and] : {
                             product_price: {
                                 [Op.and]: {
-                                    [Op.gte]: minPrice,
-                                    [Op.lte]: maxPrice,
+                                    ...minFilter, ...maxFilter
                                 }
                             },
-                            product_name: {
-                                [Op.substring]: `${search}`
-                            }
+                            product_name: searchFilter
                         }
-                    }
+                    },
+                    order: orderSort
                 })
             }
             else if(minPrice && maxPrice){
@@ -32,66 +53,62 @@ module.exports = {
                     where: {
                         product_price: {
                             [Op.and]: {
-                                [Op.gte]: minPrice,
-                                [Op.lte]: maxPrice,
+                                ...minFilter, ...maxFilter
                             }
                         }
-                    }
+                    },
+                    order: orderSort
                 })
             }
             else if(search && maxPrice){
                 response = await Product.findAll({
                     where: {
                         [Op.and]: {
-                            product_price: {
-                                [Op.lte]: maxPrice
-                            },
-                            product_name: {
-                                [Op.substring]: `${search}`
-                            }
+                            product_price: maxFilter,
+                            product_name: searchFilter
                         }
-                    }
+                    },
+                    order: orderSort
                 })
             }
             else if(search && minPrice){
                 response = await Product.findAll({
                     where: {
                         [Op.and]: {
-                            product_price: {
-                                [Op.gte]: minPrice
-                            },
-                            product_name: {
-                                [Op.substring]: `${search}`
-                            }
+                            product_price: minFilter,
+                            product_name: searchFilter
                         }
-                    }
+                    },
+                    order: orderSort
                 })
             }
             else if(search){
                 response = await Product.findAll({
                     where: {
-                        product_name: {
-                            [Op.substring]: `${search}`
-                        }
-                    }
+                        product_name: searchFilter
+                    },
+                    order: orderSort
                 })
             }
             else if(maxPrice){
                 response = await Product.findAll({
                     where: {
-                        product_price: {
-                            [Op.lte]: maxPrice
-                        }
-                    }
+                        product_price: maxFilter
+                    },
+                    order: orderSort
                 })
             }
             else if(minPrice){
                 response = await Product.findAll({
                     where: {
-                        product_price: {
-                            [Op.gte]: minPrice
-                        }
-                    }
+                        product_price: minFilter
+                    },
+                    order: orderSort
+                })
+            }
+            else if(sortChosen){
+                response = await Product.findAll({
+                    order: orderSort
                 })
             }
             else{
@@ -128,15 +145,15 @@ module.exports = {
                     newVol,
                     newDesc,
                     selectedCategory,
-                    stock
+                    newStock
                 } = JSON.parse(req.body.data);
                 const imagepath = image ? `${path}/${image[0].filename}` : null;
 
-                const stock_total = parseInt(newVol) * parseInt(stock);
+                const stock_total = parseInt(newVol) * parseInt(newStock);
                 const response = await Product.create({
                     product_name: newName,
                     product_price: parseInt(newPrice),
-                    product_stock: parseInt(stock),
+                    product_stock: parseInt(newStock),
                     product_vol: parseInt(newVol),
                     product_stock_total: stock_total,
                     product_desc: newDesc,
@@ -202,11 +219,11 @@ module.exports = {
                     newName,
                     newPrice,
                     newVol,
-                    newStock,
+                    oldStock,
                     newDesc,
                     selectedCategory
                 } = JSON.parse(req.body.data);
-                const stock_total = parseInt(newStock)*parseInt(newVol);
+                const stock_total = parseInt(oldStock)*parseInt(newVol);
 
                 const imagePath = image ? `${path}/${image[0].filename}` : oldImagepath;
 
@@ -214,7 +231,7 @@ module.exports = {
                     product_name: newName,
                     product_price: parseInt(newPrice),
                     product_vol: parseInt(newVol),
-                    product_stock: parseInt(newStock),
+                    product_stock: parseInt(oldStock),
                     product_stock_total: parseInt(stock_total),
                     product_desc: newDesc,
                     product_category_id: parseInt(selectedCategory),
