@@ -36,6 +36,7 @@ export const productReducer = (state = INITIAL_STATE, action) => {
 			return {
 				...state,
 				category: action.payload,
+				loading: false,
 			};
 		case "NULLIFY_ERROR":
 			return {

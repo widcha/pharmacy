@@ -2,7 +2,6 @@ const {
 	productController: {
 		getAllProduct,
 		getProductById,
-		getProductbyCategory,
 		addNewProduct,
 		addProductStock,
 		editProduct,

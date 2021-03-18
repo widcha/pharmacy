@@ -177,6 +177,75 @@ const userSecurityQuestion = async (req, res) => {
   }
 };
 
+
+// PWP-47 USER ADDRESS
+const addNewUserAddress = async(req,res) => {
+  try {
+    const { user_address, user_id } = req.body;
+    await User_Address.create({
+      user_address: user_address, 
+      user_id: user_id,
+    });
+    return res.status(200).send({ message: "New Address Successfully Added" });
+  } catch (err) {
+    return res.status(500).send({ message: "Failed to Add New Address" });
+  }
+}
+
+const getUserAddress = async(req,res) => {
+  try {
+    let response;
+    const {id} = req.params;
+    const {search} = req.query;
+    if(search) {
+      response = await User_Address.findAll({
+        where: {
+          [Op.and]: {
+            user_id: id,
+            user_address: {[Op.substring]: `${search}`}
+          }
+        }
+      })
+    } else {
+      response = await User_Address.findAll({
+        where: {
+          user_id: id,
+        }
+      });
+    }
+
+    return res.status(200).send(response);
+  } catch (err) {
+    return res.status(500).send({
+      message: "Failed to Get the Address"
+    });
+  }
+}
+const editUserAddress = async (req,res) => {
+  try {
+    const { id } = req.params;
+    const { user_address } = req.body;
+    await User_Address.update({ user_address }, {
+      where : { user_address_id: id }
+    })
+    return res.status(200).send({ message: "Address Updated" });
+  } catch (err) {
+    return res.status(500).send({ message: "Failed to Update the Selected Address" });
+  }
+};
+
+const deleteUserAddress = async (req,res) => {
+  try {
+    const { id } = req.params;
+    await User_Address.destroy({
+      where: { user_address_id: id }
+    });
+    return res.status(200).send({ message: "Address deleted" });
+  } catch (err) {
+    return res.status(500).send({ message: "Failed to Delete the Selected Address" });
+  }
+}
+
 module.exports = {
   userRegister,
   userVerification,
@@ -185,4 +254,8 @@ module.exports = {
   userChangePassword,
   userCheck,
   userSecurityQuestion,
+  getUserAddress,
+  addNewUserAddress,
+  editUserAddress,
+  deleteUserAddress,
 };

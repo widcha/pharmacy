@@ -7,6 +7,10 @@ const {
   userChangePassword,
   userCheck,
   userSecurityQuestion,
+  getUserAddress,
+  addNewUserAddress,
+  editUserAddress,
+  deleteUserAddress,
 } = require("../controller/UserController");
 const {
   checkRegister,
@@ -23,5 +27,10 @@ router.post("/reset-password", checkEmail, userSendReset);
 router.post("/change-password", checkVerificationToken, userChangePassword);
 router.post("/verified-check", userCheck);
 router.post("/security-question", userSecurityQuestion);
+
+router.get("/address/:id", getUserAddress);
+router.post("/address/:id", addNewUserAddress);
+router.patch("/address/:id", editUserAddress);
+router.delete("/address/:id", deleteUserAddress);
 
 module.exports = router;

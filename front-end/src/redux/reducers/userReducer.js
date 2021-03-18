@@ -28,6 +28,12 @@ export const userReducer = (state = INITIAL_STATE, action) => {
         ...state,
         loading: false,
       };
+    case "API_GET_ADDRESS_SUCCESS":
+      return {
+        ...state,
+        loading: false,
+        user_address: action.payload,
+      };
     case "LOGIN":
       return {
         ...state,

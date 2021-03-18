@@ -7,64 +7,49 @@ import SideBar from "./components/SideBar";
 import { Nav } from "./components/Navbar";
 import {
 	HomeAdmin,
-	// ProductAdmin,
-	// CategoriesAdmin,
-	// RecipesAdmin,
-	// PaymentAdmin,
-	// ProductFlowAdmin,
-	Login,
-	SignUp,
-	Verification,
-	ForgotPassword,
-	ChangePassword,
 	ProductAdmin,
 	CategoriesAdmin,
 	RecipesAdmin,
 	PaymentAdmin,
 	ProductFlowAdmin,
+	Login,
+	SignUp,
+	Verification,
+	ForgotPassword,
+	ChangePassword,
 	Products,
+	UserAddress,
 } from "./pages";
 // import { useDispatch } from "react-redux";
 // import { nullifyErrorAction } from "./redux/actions";
 
 function App() {
-	// const dispatch = useDispatch();
+	const dispatch = useDispatch();
+  	const { user_role_id } = useSelector((state) => state.user);
 
-	// const userRole = 1;
-	// useEffect(() => {
-	//   dispatch(nullifyErrorAction());
-	// }, [dispatch]);
+	useEffect(() => {
+		dispatch(nullifyErrorAction());
+	}, [dispatch]);
 
-	return (
-		// <>
-		//   {
-		//     userRole ?
-		//     (<div className="App">
-		//       <Route path="/signup" exact component={SignUp} />
-		//       <Route path="/verification" component={Verification} />
-		//       <Route path="/login" component={Login} />
-		//       <Route path="/forgot-password" component={ForgotPassword} />
-		//       <Route path="/change-password" component={ChangePassword} />
-		//     </div>)
-		//     :
-		//     (
-		//     <div className="container">
-		//       <div className="sidebar">
-		//         <SideBar/>
-		//       </div>
-		//       <div style={{ overflowY: 'auto', marginLeft: '210px'}}>
-		//         <Route path="/" exact component={HomeAdmin} />
-		//         <Route path="/product" component={ProductAdmin} />
-		//         <Route path="/category" component={CategoriesAdmin} />
-		//         <Route path="/recipe" component={RecipesAdmin} />
-		//         <Route path="/payment-proof" component={PaymentAdmin} />
-		//         <Route path="/product-flow" component={ProductFlowAdmin} />
-		//       </div>
-		//     </div>
-		//   );
-		// } else {
-		//   return (
-		<div>
+	if (user_role_id === 1) {
+		return (
+		  <div className="container">
+			<div className="sidebar">
+			  <SideBar />
+			</div>
+			<div style={{ overflowY: "auto", marginLeft: "210px" }}>
+			  <Route path="/" exact component={HomeAdmin} />
+			  <Route path="/product" component={ProductAdmin} />
+			  <Route path="/category" component={CategoriesAdmin} />
+			  <Route path="/recipe" component={RecipesAdmin} />
+			  <Route path="/payment-proof" component={PaymentAdmin} />
+			  <Route path="/product-flow" component={ProductFlowAdmin} />
+			</div>
+		  </div>
+		);
+	} else {
+		return (
+		  <div>
 			<Nav />
 			<Route exact path="/signup" component={SignUp} />
 			<Route exact path="/verification" component={Verification} />
@@ -72,9 +57,10 @@ function App() {
 			<Route exact path="/forgot-password" component={ForgotPassword} />
 			<Route exact path="/change-password" component={ChangePassword} />
 			<Route exact path="/product" component={Products} />
-		</div>
-	);
-	// }
+			<Route exact path="/user/address" component={UserAddress} />
+		  </div>
+		);
+	}
 }
 
 export default App;
