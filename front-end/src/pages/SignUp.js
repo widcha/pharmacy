@@ -51,7 +51,7 @@ const SignUp = () => {
             value={userInput.email}
             onChange={handleInput}
             autofocus
-            className="px-4 py-2 transition duration-300 border border-gray-300 rounded focus:border-transparent focus:outline-none focus:ring-4 focus:ring-blue-200"
+            className="text-gray-700 font-semibold px-4 py-2 transition duration-300 border border-gray-300 rounded focus:border-transparent focus:outline-none focus:ring-4 focus:ring-blue-200"
           />
         </div>
         <div className="flex flex-col space-y-1">
@@ -67,7 +67,7 @@ const SignUp = () => {
             value={userInput.username}
             onChange={handleInput}
             autofocus
-            className="px-4 py-2 transition duration-300 border border-gray-300 rounded focus:border-transparent focus:outline-none focus:ring-4 focus:ring-blue-200"
+            className="text-gray-700 font-semibold px-4 py-2 transition duration-300 border border-gray-300 rounded focus:border-transparent focus:outline-none focus:ring-4 focus:ring-blue-200"
           />
         </div>
         <div className="flex flex-col space-y-1">
@@ -84,7 +84,7 @@ const SignUp = () => {
             id="password"
             value={userInput.password}
             onChange={handleInput}
-            className="px-4 py-2 transition duration-300 border border-gray-300 rounded focus:border-transparent focus:outline-none focus:ring-4 focus:ring-blue-200"
+            className="text-gray-700 font-semibold px-4 py-2 transition duration-300 border border-gray-300 rounded focus:border-transparent focus:outline-none focus:ring-4 focus:ring-blue-200"
           />
         </div>
         <div className="flex items-center space-x-2">
@@ -92,7 +92,7 @@ const SignUp = () => {
             type="checkbox"
             id="remember"
             onClick={togglePasswordVisibility}
-            className="w-4 h-4 transition duration-300 rounded focus:ring-2 focus:ring-offset-0 focus:outline-none focus:ring-blue-200"
+            className="border-gray-500 w-4 h-4 transition duration-300 rounded focus:ring-2 focus:ring-offset-0 focus:outline-none focus:ring-blue-200"
           />
           <label for="remember" className="text-sm font-semibold text-gray-500">
             Show password
@@ -112,7 +112,7 @@ const SignUp = () => {
             value={userInput.security_question}
             onChange={handleInput}
             autofocus
-            className="px-4 py-2 transition duration-300 border border-gray-300 rounded focus:border-transparent focus:outline-none focus:ring-4 focus:ring-blue-200"
+            className="text-gray-700 font-semibold px-4 py-2 transition duration-300 border border-gray-300 rounded focus:border-transparent focus:outline-none focus:ring-4 focus:ring-blue-200"
           />
         </div>
         <div>

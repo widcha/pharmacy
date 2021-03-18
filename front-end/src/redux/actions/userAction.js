@@ -135,3 +135,20 @@ export const securityQuestionAction = (email, answer) => {
     }
   };
 };
+
+// PWP-15 LOGOUT
+export const logoutAction = () => {
+  return async (dispatch) => {
+    try {
+      dispatch({ type: "API_USER_START" });
+      await dispatch({ type: "LOGOUT" });
+      dispatch({ type: "API_USER_SUCCESS" });
+    } catch (err) {
+      console.log(err);
+      dispatch({
+        type: "API_USER_FAILED",
+        payload: err.response.data.message,
+      });
+    }
+  };
+};
