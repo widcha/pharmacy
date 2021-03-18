@@ -51,6 +51,10 @@ module.exports = (sequelize, DataTypes) => {
 			user_isverified: {
 				type: DataTypes.INTEGER,
 			},
+			user_security_question: {
+				allowNull: false,
+				type: DataTypes.STRING,
+			},
 		},
 		{
 			sequelize,
