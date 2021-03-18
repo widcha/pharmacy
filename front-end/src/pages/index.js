@@ -9,6 +9,7 @@ import PaymentAdmin from "./PaymentAdmin";
 import ProductAdmin from "./ProductAdmin";
 import ProductFlowAdmin from "./ProductFlowAdmin";
 import RecipesAdmin from "./RecipesAdmin";
+import Products from "./Products";
 
 export {
   HomeAdmin,
@@ -22,4 +23,5 @@ export {
   Login,
   ForgotPassword,
   ChangePassword,
+  Products,
 };

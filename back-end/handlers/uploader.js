@@ -23,7 +23,7 @@ const uploader = (destination, fileNamePrefix) => {
   });
 
   const fileFilter = (req, file, cb) => {
-    const ext = /\.(jpg|jpeg|png|gif|pdf|doc|docx|xlsx)$/;
+    const ext = /\.(jpg|jpeg|png|gif|pdf|doc|docx|xlsx|svg)$/;
     if (!file.originalname.toLowerCase().match(ext)) {
       return cb(new Error("Only Selected file types are allowed"), false);
     }
