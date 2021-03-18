@@ -2,12 +2,10 @@ const {
   productController: {
     getAllProduct,
     getProductById,
-    getProductbyCategory,
     addNewProduct,
     addProductStock,
     editProduct,
     deleteProduct,
-    productPagination,
   },
 } = require("../controller");
 const express = require("express");

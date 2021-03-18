@@ -1,9 +1,22 @@
 const { Product_Category } = require('../models');
+const { Op } = require('sequelize');
 
 module.exports = {
     getCategory: async (req,res) => {
         try {
-            const response = await Product_Category.findAll()
+            let response;
+            const {search} = req.query;
+            if(search){
+                response = await Product_Category.findAll({
+                    where: {
+                        product_category: {
+                            [Op.substring]: `${search}`
+                        }
+                    }
+                })
+            }else{
+                response = await Product_Category.findAll()
+            }
             return res.status(200).send(response);
         } catch (err) {
             return res.send(err.message);
@@ -11,9 +24,9 @@ module.exports = {
     },
     addNewCategory: async (req, res) => {
         try {
-            const { category_name } = req.body;
+            const { product_category } = req.body;
             const response = await Product_Category.create({
-                product_category: category_name,
+                product_category
             });
             return res.status(200).send(response);
         } catch (err) {
@@ -23,8 +36,8 @@ module.exports = {
     editCategory: async (req, res) => {
         try {
             const { id } = req.params;
-            const { name } = req.body;
-            await Product_Category.update({ product_category: name }, { 
+            const { product_category } = req.body;
+            await Product_Category.update({ product_category }, { 
                 where: { 
                     product_category_id: id
                 }

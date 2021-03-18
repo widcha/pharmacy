@@ -18,6 +18,7 @@ import { api_url } from '../helpers';
 import { useDispatch, useSelector } from 'react-redux';
 import Swal from 'sweetalert2';
 import { addStock, deleteProductAction, editProductAction } from '../redux/actions';
+import ModalProduct from './ModalProduct';
 
 const CardProduct = ({ idProd, name, price, stock, vol, stock_total, desc, cat, image }) => {
     const dispatch = useDispatch();
@@ -31,6 +32,12 @@ const CardProduct = ({ idProd, name, price, stock, vol, stock_total, desc, cat, 
     const [newDesc, setDesc] = useState('');
     const [pictName, setPictName] = useState('');
     const [pict, setPict] = useState();
+    let category = useSelector((state) => state.product.category);
+    const catt = (category.filter((val) => val.product_category_id === cat))[0].product_category;
+    
+    //state untuk modal tiap input
+    const [showModal, setShowModal] = useState(false);
+    const [showMod, setShowMod] = useState(false);
 
     const [changeStock, setChangeStock] = useState(1);
 
@@ -88,6 +95,19 @@ const CardProduct = ({ idProd, name, price, stock, vol, stock_total, desc, cat, 
     const toggle = (id) => {
         Swal.fire({
             title: `Are you sure to delete ${id} this product?`,
+        }
+    }));
+    const classes = useStyles();
+
+    
+
+    const toggleModal = () => {
+        setShowModal(!showModal);
+    }
+
+    const toggle = (id) => {
+        Swal.fire({
+            title: `Are you sure to delete ${name}?`,
             text: "You won't be able to revert this",
             icon: 'warning',
             showCancelButton: true,
@@ -300,6 +320,14 @@ const CardProduct = ({ idProd, name, price, stock, vol, stock_total, desc, cat, 
                 <div className="opacity-25 fixed inset-0 z-40 bg-black"></div>
               </>
             ) : null}
+        <ModalProduct
+            categoryList={category}
+            toggle={toggleModal}
+            showModal={showModal}
+            modalName="Edit Product"
+            idProd={idProd}
+            data={{name,price,stock,vol,desc,catt}}
+        />
         <Card className={classes.root}>
             <CardActionArea>
                 <CardMedia

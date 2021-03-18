@@ -3,10 +3,15 @@ import { api_url } from "../../helpers";
 
 const linkk = `${api_url}/product`;
 
-export const fetchCategoryAction = () => {
+export const fetchCategoryAction = (a) => {
   return async (dispatch) => {
     try {
-      const response = await axios.get(`${api_url}/category`);
+      let response;
+      if (a) {
+        response = await axios.get(`${api_url}/category${a}`);
+      } else {
+        response = await axios.get(`${api_url}/category`);
+      }
       dispatch({ type: "FETCH_CATEGORY", payload: response.data });
     } catch (err) {
       dispatch({ type: "FETCH_PRODUCT_FAILED", payload: err.message });
@@ -26,15 +31,114 @@ export const fetchProductByIdAction = (id) => {
   };
 };
 
+export const fetchFilterProductAction = ({
+  minPrice,
+  maxPrice,
+  searchWord,
+  sortChosen,
+}) => {
+  return async (dispatch) => {
+    try {
+      dispatch({ type: "FETCH_PRODUCT_START" });
+      let newLink = `${linkk}?`;
+
+      if (searchWord && minPrice && maxPrice && sortChosen) {
+        newLink += `search=${searchWord}`;
+        newLink += `&minPrice=${minPrice}`;
+        newLink += `&maxPrice=${maxPrice}`;
+        newLink += `&sortChosen=${sortChosen}`;
+      }
+
+      if (minPrice && maxPrice && sortChosen) {
+        newLink += `minPrice=${minPrice}`;
+        newLink += `&maxPrice=${maxPrice}`;
+        newLink += `&sortChosen=${sortChosen}`;
+      }
+      if (searchWord && maxPrice && sortChosen) {
+        newLink += `search=${searchWord}`;
+        newLink += `&maxPrice=${maxPrice}`;
+        newLink += `&sortChosen=${sortChosen}`;
+      }
+      if (searchWord && minPrice && sortChosen) {
+        newLink += `search=${searchWord}`;
+        newLink += `&minPrice=${minPrice}`;
+        newLink += `&sortChosen=${sortChosen}`;
+      }
+      if (searchWord && minPrice && maxPrice) {
+        newLink += `search=${searchWord}`;
+        newLink += `&minPrice=${minPrice}`;
+        newLink += `&maxPrice=${maxPrice}`;
+      }
+
+      if (searchWord && minPrice) {
+        newLink += `search=${searchWord}`;
+        newLink += `&minPrice=${minPrice}`;
+      }
+      if (searchWord && maxPrice) {
+        newLink += `search=${searchWord}`;
+        newLink += `&maxPrice=${maxPrice}`;
+      }
+      if (searchWord && sortChosen) {
+        newLink += `search=${searchWord}`;
+        newLink += `&sortChosen=${sortChosen}`;
+      }
+      if (minPrice && maxPrice) {
+        newLink += `minPrice=${minPrice}`;
+        newLink += `&maxPrice=${maxPrice}`;
+      }
+      if (minPrice && sortChosen) {
+        newLink += `minPrice=${minPrice}`;
+        newLink += `&sortChosen=${sortChosen}`;
+      }
+      if (maxPrice && sortChosen) {
+        newLink += `maxPrice=${maxPrice}`;
+        newLink += `&sortChosen=${sortChosen}`;
+      }
+      if (searchWord) {
+        newLink += `search=${searchWord}`;
+      }
+      if (maxPrice) {
+        newLink += `maxPrice=${maxPrice}`;
+      }
+      if (minPrice) {
+        newLink += `minPrice=${minPrice}`;
+      }
+      if (sortChosen) {
+        newLink += `sortChosen=${sortChosen}`;
+      }
+
+      let response = await axios.get(`${newLink}`);
+
+      dispatch({ type: "FETCH_PRODUCT_SUCCESS", payload: response.data });
+    } catch (err) {
+      dispatch({ type: "FETCH_PRODUCT_FAILED", payload: err });
+    }
+  };
+};
+
 export const fetchProductAction = () => {
   return async (dispatch) => {
     try {
       dispatch({ type: "FETCH_PRODUCT_START" });
       const response = await axios.get(linkk);
-      console.log(response.data);
       dispatch({ type: "FETCH_PRODUCT_SUCCESS", payload: response.data });
     } catch (err) {
       dispatch({ type: "FETCH_PRODUCT_FAILED", payload: err });
+    }
+  };
+};
+
+export const addNewCategoryAction = (product_category) => {
+  return async (dispatch) => {
+    try {
+      dispatch({ type: "FETCH_PRODUCT_START" });
+      await axios.post(`${api_url}/category`, { product_category });
+      dispatch(fetchCategoryAction());
+    } catch (err) {
+      dispatch({
+        type: "FETCH_PRODUCT_FAILED",
+        payload: "Failed to add new category " + err.message,
+      });
     }
   };
 };
@@ -43,7 +147,7 @@ export const addProductAction = ({
   newName,
   newPrice,
   newVol,
-  stock,
+  newStock,
   newDesc,
   selectedCategory,
   pict,
@@ -59,7 +163,7 @@ export const addProductAction = ({
         newVol,
         newDesc,
         selectedCategory,
-        stock,
+        newStock,
       });
 
       formData.append("image", pict);
@@ -93,11 +197,27 @@ export const addStock = ({ id, changeStock }) => {
   };
 };
 
+export const editCategoryAction = ({ id, product_category }) => {
+  return async (dispatch) => {
+    try {
+      dispatch({ type: "FETCH_PRODUCT_START" });
+      await axios.patch(`${api_url}/category/${id}`, { product_category });
+      dispatch(fetchCategoryAction());
+    } catch (err) {
+      dispatch({
+        type: "FETCH_PRODUCT_FAILED",
+        payload: "Failed to edit Category " + err.message,
+      });
+    }
+  };
+};
+
 export const editProductAction = ({
-  id,
+  idProd,
   newName,
   newPrice,
   newVol,
+  oldStock,
   newDesc,
   selectedCategory,
   pict,
@@ -111,6 +231,7 @@ export const editProductAction = ({
         newName,
         newPrice,
         newVol,
+        oldStock,
         newDesc,
         selectedCategory,
       });
@@ -123,10 +244,25 @@ export const editProductAction = ({
           "Content-Type": "multipart/form-data",
         },
       };
-      await axios.patch(`${linkk}/${id}`, formData, headers);
+      await axios.patch(`${linkk}/${idProd}`, formData, headers);
       dispatch(fetchProductAction());
     } catch (err) {
       dispatch({ type: "FETCH_PRODUCT_FAILED", payload: err });
+    }
+  };
+};
+
+export const deleteCategoryAction = (id) => {
+  return async (dispatch) => {
+    try {
+      dispatch({ type: "FETCH_PRODUCT_START" });
+      await axios.delete(`${api_url}/category/${id}`);
+      dispatch(fetchCategoryAction());
+    } catch (err) {
+      dispatch({
+        type: "FETCH_PRODUCT_FAILED",
+        payload: "Failed to delete category" + err.message,
+      });
     }
   };
 };
@@ -135,7 +271,6 @@ export const deleteProductAction = (id) => {
   return async (dispatch) => {
     try {
       dispatch({ type: "FETCH_PRODUCT_START" });
-      console.log("cekcekDELETEE");
       await axios.delete(`${linkk}/${id}`);
       dispatch(fetchProductAction());
     } catch (err) {

@@ -16,27 +16,44 @@ import {
   Verification,
   ForgotPassword,
   ChangePassword,
-  Products,
+  HomeAdmin,
+  ProductAdmin,
+  CategoriesAdmin,
+  RecipesAdmin,
+  PaymentAdmin,
+  ProductFlowAdmin,
 } from "./pages";
-import { Nav } from "./components/Navbar";
+// import { useDispatch } from "react-redux";
+// import { nullifyErrorAction } from "./redux/actions";
 
-const App = () => {
-  const dispatch = useDispatch();
-  const { user_role_id } = useSelector((state) => state.user);
+function App() {
+  // const dispatch = useDispatch();
 
-  useEffect(() => {
-    dispatch(nullifyErrorAction());
-  }, [dispatch]);
+  // const userRole = 1;
+  // useEffect(() => {
+  //   dispatch(nullifyErrorAction());
+  // }, [dispatch]);
 
-  if (user_role_id === 1) {
-    return (
+  return (
+  // <>
+  //   {
+  //     userRole ?
+  //     (<div className="App">
+  //       <Route path="/signup" exact component={SignUp} />
+  //       <Route path="/verification" component={Verification} />
+  //       <Route path="/login" component={Login} />
+  //       <Route path="/forgot-password" component={ForgotPassword} />
+  //       <Route path="/change-password" component={ChangePassword} />
+  //     </div>)
+  //     :
+  //     (
       <div className="container">
         <div className="sidebar">
-          <SideBar />
+          <SideBar/>
         </div>
-        <div style={{ overflowY: "auto", marginLeft: "210px" }}>
+        <div style={{ overflowY: 'auto', marginLeft: '210px'}}>
           <Route path="/" exact component={HomeAdmin} />
-          <Route path="/manage-product" component={ProductAdmin} />
+          <Route path="/product" component={ProductAdmin} />
           <Route path="/category" component={CategoriesAdmin} />
           <Route path="/recipe" component={RecipesAdmin} />
           <Route path="/payment-proof" component={PaymentAdmin} />
