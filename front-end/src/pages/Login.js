@@ -56,7 +56,7 @@ const Login = () => {
             value={userInput.email}
             onChange={handleInput}
             autofocus
-            className="px-4 py-2 transition duration-300 border border-gray-300 rounded focus:border-transparent focus:outline-none focus:ring-4 focus:ring-blue-200"
+            className="text-gray-700 font-semibold px-4 py-2 transition duration-300 border border-gray-300 rounded focus:border-transparent focus:outline-none focus:ring-4 focus:ring-blue-200"
           />
         </div>
         <div className="flex flex-col space-y-1">
@@ -78,7 +78,7 @@ const Login = () => {
             id="password"
             value={userInput.password}
             onChange={handleInput}
-            className="px-4 py-2 transition duration-300 border border-gray-300 rounded focus:border-transparent focus:outline-none focus:ring-4 focus:ring-blue-200"
+            className="text-gray-700 font-semibold px-4 py-2 transition duration-300 border border-gray-300 rounded focus:border-transparent focus:outline-none focus:ring-4 focus:ring-blue-200"
           />
         </div>
         <div className="flex items-center space-x-2">

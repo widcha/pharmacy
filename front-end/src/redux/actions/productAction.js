@@ -143,3 +143,15 @@ export const deleteProductAction = (id) => {
     }
   };
 };
+
+export const searchProductAction = (name) => {
+  return async (dispatch) => {
+    try {
+      dispatch({ type: "FETCH_PRODUCT_START" });
+      const response = await axios.get(`${linkk}/search?search=${name}`);
+      dispatch({ type: "FETCH_PRODUCT_SUCCESS", payload: response.data });
+    } catch (err) {
+      dispatch({ type: "FETCH_PRODUCT_FAILED", payload: err });
+    }
+  };
+};

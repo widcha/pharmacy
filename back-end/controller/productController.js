@@ -3,6 +3,7 @@ const fs = require("fs");
 const pify = require("pify");
 const { uploader } = require("../handlers");
 const { parse } = require("path");
+const { Op } = require("sequelize");
 
 module.exports = {
   getAllProduct: async (req, res) => {
@@ -188,6 +189,21 @@ module.exports = {
       }
       console.log("deleted");
       return res.status(200).send({ message: "Product deleted" });
+    } catch (err) {
+      return res.send(err.message);
+    }
+  },
+  searchProduct: async (req, res) => {
+    try {
+      const { search, limit } = req.query;
+      let response = await Product.findAll({
+        where: {
+          product_name: {
+            [Op.substring]: search,
+          },
+        },
+      });
+      return res.status(200).send(response);
     } catch (err) {
       return res.send(err.message);
     }

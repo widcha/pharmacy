@@ -11,9 +11,11 @@ const {
   },
 } = require("../controller");
 const express = require("express");
+const { searchProduct } = require("../controller/productController");
 const router = express.Router();
 
 router.get("/", getAllProduct);
+router.get("/search", searchProduct);
 router.get("/:id", getProductById);
 router.post("/", addNewProduct);
 router.patch("/:id", editProduct);

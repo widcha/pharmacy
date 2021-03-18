@@ -1,23 +1,32 @@
+import { ClickAwayListener } from "@material-ui/core";
 import { useState } from "react";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { Link } from "react-router-dom";
 import Logo from "../assets/icons/medicine.svg";
+import { logoutAction, searchProductAction } from "../redux/actions";
 
 export const Nav = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [profile, setProfile] = useState(false);
-
+  const [notif, setNotif] = useState(false);
+  const [name, setName] = useState("");
+  const dispatch = useDispatch();
   const user = useSelector((state) => state.user);
+
+  const logoutBtn = () => {
+    setProfile(false);
+    dispatch(logoutAction());
+  };
 
   const loginBtn = () => {
     return (
-      <ul class="flex items-center hidden space-x-8 lg:flex">
+      <ul class="flex items-center hidden space-x-5 lg:flex">
         <li>
           <Link to="/login">
             <p
               aria-label="Sign in"
               title="Sign in"
-              class="font-medium tracking-wide text-gray-700 transition-colors duration-200 hover:text-deep-purple-accent-400"
+              class="font-medium tracking-wide text-gray-700 transition-colors duration-200 hover:text-blue-500"
             >
               Sign in
             </p>
@@ -26,7 +35,7 @@ export const Nav = () => {
         <li>
           <Link to="/signup">
             <p
-              class="inline-flex items-center justify-center h-12 px-6 font-medium tracking-wide text-white transition duration-200 rounded shadow-md bg-deep-purple-accent-400 hover:bg-deep-purple-accent-700 focus:shadow-outline focus:outline-none"
+              class="inline-flex items-center justify-center h-9 px-4 font-medium tracking-wide text-white transition duration-200 rounded shadow-md bg-blue-500 hover:bg-blue-700 focus:shadow-outline focus:outline-none"
               aria-label="Sign up"
               title="Sign up"
             >
@@ -40,12 +49,12 @@ export const Nav = () => {
 
   const profileBtn = () => {
     return (
-      <div class="relative inline-block text-left focus:border-none">
+      <div class="relative inline-block text-left focus:border-none ">
         <div>
           <button
             onClick={() => setProfile(!profile)}
             type="button"
-            class="inline-flex justify-center w-full rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-100 focus:ring-indigo-500"
+            class="transition duration-300 inline-flex justify-center w-full rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-100"
             id="options-menu"
             aria-expanded="true"
             aria-haspopup="true"
@@ -67,40 +76,138 @@ export const Nav = () => {
           </button>
         </div>
         {profile ? (
-          <div
-            class="origin-top-right absolute right-0 mt-2 w-56 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 focus:outline-none"
-            role="menu"
-            aria-orientation="vertical"
-            aria-labelledby="options-menu"
-          >
-            <div class="py-1" role="none">
-              <p
-                className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 hover:text-gray-900 cursor-pointer"
-                role="menuitem"
-              >
-                Account settings
-              </p>
-              <p
-                className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 hover:text-gray-900 cursor-pointer"
-                role="menuitem"
-              >
-                Transaction
-              </p>
-              <p
-                className="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 hover:text-gray-900 cursor-pointer"
-                onClick
-              >
-                Sign Out
-              </p>
+          <ClickAwayListener onClickAway={handleClickAway}>
+            <div
+              class="z-10 origin-top-right absolute right-0 mt-2 w-56 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 focus:outline-none"
+              role="menu"
+              aria-orientation="vertical"
+              aria-labelledby="options-menu"
+            >
+              <div class="py-1" role="none">
+                <p
+                  className="transition duration-200 font-semibold block px-4 py-2 text-sm text-gray-600 hover:bg-gray-100 hover:text-blue-500 cursor-pointer"
+                  role="menuitem"
+                >
+                  Account settings
+                </p>
+                <p
+                  className="transition duration-200 font-semibold block px-4 py-2 text-sm text-gray-600 hover:bg-gray-100 hover:text-blue-500 cursor-pointer"
+                  role="menuitem"
+                >
+                  Transaction
+                </p>
+                <p
+                  className="transition duration-200 font-semibold block w-full text-left px-4 py-2 text-sm text-gray-600 hover:bg-gray-100 hover:text-blue-500 cursor-pointer"
+                  onClick={logoutBtn}
+                >
+                  Sign Out
+                </p>
+              </div>
             </div>
-          </div>
+          </ClickAwayListener>
         ) : null}
       </div>
     );
   };
 
+  const handleClickAway = () => {
+    setProfile(false);
+    setNotif(false);
+  };
+
+  const notificationBtn = () => {
+    return (
+      <div
+        className="mr-5 relative align-middle rounded-md focus:outline-none focus:shadow-outline-purple"
+        onClick={() => setNotif(!notif)}
+        aria-label="Notifications"
+        aria-haspopup="true"
+      >
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          fill="none"
+          viewBox="0 0 24 24"
+          stroke="currentColor"
+          className="text-gray-700 w-7 h-7 cursor-pointer hover:text-blue-400 hover:bg-gray-200 rounded-2xl focus:bg-gray-200"
+        >
+          <path
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            strokeWidth={2}
+            d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"
+          />
+        </svg>
+        {/* <!-- Notification badge --> */}
+        <span
+          aria-hidden="true"
+          className="absolute top-0 right-0 inline-block w-3 h-3 transform translate-x-1 -translate-y-1 bg-red-600 border-2 border-white rounded-full dark:border-gray-800"
+        ></span>
+        {notif ? (
+          <ClickAwayListener onClickAway={handleClickAway}>
+            <div
+              class="z-10 origin-top-right absolute right-0 mt-2 w-56 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 focus:outline-none"
+              role="menu"
+              aria-orientation="vertical"
+              aria-labelledby="options-menu"
+            >
+              <div class="py-1" role="none">
+                <p className="transition duration-200 font-semibold block px-4 py-2 text-sm text-gray-600 hover:bg-gray-100 hover:text-blue-500 cursor-pointer">
+                  Notif 1
+                </p>
+                <p className="transition duration-200 font-semibold block px-4 py-2 text-sm text-gray-600 hover:bg-gray-100 hover:text-blue-500 cursor-pointer">
+                  Notif 2
+                </p>
+                <p className="transition duration-200 font-semibold block w-full text-left px-4 py-2 text-sm text-gray-600 hover:bg-gray-100 hover:text-blue-500 cursor-pointer">
+                  Notif 3
+                </p>
+              </div>
+            </div>
+          </ClickAwayListener>
+        ) : null}
+      </div>
+    );
+  };
+
+  const rightComponent = () => {
+    return (
+      <div className="flex flex-row items-center">
+        {notificationBtn()}
+        {profileBtn()}
+      </div>
+    );
+  };
+
+  const searchComponent = () => {
+    return (
+      <form
+        className="bg-white shadow flex rounded-xl border border-gray-50 focus:border-transparent"
+        onSubmit={searchBtn}
+      >
+        <input
+          className="w-96 rounded-lg focus:outline-none focus:ring-blue-100 focus:ring-4 pl-3 font-semibold text-gray-700 transition duration-300"
+          type="text"
+          placeholder="Search antacids"
+          onChange={(e) => setName(e.target.value)}
+        />
+        <span className="w-auto flex justify-end items-center text-gray-500 p-1 hover:bg-blue-100 rounded-xl transition duration-300">
+          <i
+            className="material-icons text-2xl cursor-pointer"
+            onClick={searchBtn}
+          >
+            search
+          </i>
+        </span>
+      </form>
+    );
+  };
+
+  const searchBtn = (e) => {
+    e.preventDefault();
+    dispatch(searchProductAction(name));
+  };
+
   return (
-    <div class="px-4 py-5 sm:max-w-xl md:max-w-full md:px-24 lg:px-8 shadow p-4">
+    <div class="px-4 py-2 sm:max-w-xl md:max-w-full md:px-24 lg:px-8 shadow p-4">
       <div class="relative flex items-center justify-between">
         <div class="flex items-center">
           <Link
@@ -121,24 +228,15 @@ export const Nav = () => {
                 to="/product"
                 aria-label="Our product"
                 title="Our product"
-                class="font-medium tracking-wide text-gray-700 transition-colors duration-200 hover:text-deep-purple-accent-400"
+                class="font-medium tracking-wide text-gray-700 transition-colors duration-300 hover:text-blue-500"
               >
                 Product
               </Link>
             </li>
           </ul>
         </div>
-        <div className="bg-white shadow flex mr-40 ">
-          <span className="w-auto flex justify-end items-center text-gray-500 p-2">
-            <i className="material-icons text-3xl">search</i>
-          </span>
-          <input
-            className="w-96 rounded-lg p-2 focus:outline-none"
-            type="text"
-            placeholder="Search ..."
-          />
-        </div>
-        {user.user_id === 0 ? loginBtn() : profileBtn()}
+        {searchComponent()}
+        {user.user_id === 0 ? loginBtn() : rightComponent()}
         <div class="lg:hidden">
           <button
             aria-label="Open Menu"
@@ -173,7 +271,7 @@ export const Nav = () => {
                       class="inline-flex items-center"
                     >
                       <svg
-                        class="w-8 text-deep-purple-accent-400"
+                        class="w-8 text-blue-500"
                         viewBox="0 0 24 24"
                         strokeLinejoin="round"
                         strokeWidth="2"
@@ -215,7 +313,7 @@ export const Nav = () => {
                         href="/"
                         aria-label="Our product"
                         title="Our product"
-                        class="font-medium tracking-wide text-gray-700 transition-colors duration-200 hover:text-deep-purple-accent-400"
+                        class="font-medium tracking-wide text-gray-700 transition-colors duration-200 hover:text-blue-500"
                       >
                         Product
                       </a>
@@ -225,7 +323,7 @@ export const Nav = () => {
                         href="/"
                         aria-label="Our product"
                         title="Our product"
-                        class="font-medium tracking-wide text-gray-700 transition-colors duration-200 hover:text-deep-purple-accent-400"
+                        class="font-medium tracking-wide text-gray-700 transition-colors duration-200 hover:text-blue-500"
                       >
                         Features
                       </a>
@@ -235,7 +333,7 @@ export const Nav = () => {
                         href="/"
                         aria-label="Product pricing"
                         title="Product pricing"
-                        class="font-medium tracking-wide text-gray-700 transition-colors duration-200 hover:text-deep-purple-accent-400"
+                        class="font-medium tracking-wide text-gray-700 transition-colors duration-200 hover:text-blue-500"
                       >
                         Pricing
                       </a>
@@ -245,7 +343,7 @@ export const Nav = () => {
                         href="/"
                         aria-label="About us"
                         title="About us"
-                        class="font-medium tracking-wide text-gray-700 transition-colors duration-200 hover:text-deep-purple-accent-400"
+                        class="font-medium tracking-wide text-gray-700 transition-colors duration-200 hover:text-blue-500"
                       >
                         About us
                       </a>
@@ -255,7 +353,7 @@ export const Nav = () => {
                         href="/"
                         aria-label="Sign in"
                         title="Sign in"
-                        class="font-medium tracking-wide text-gray-700 transition-colors duration-200 hover:text-deep-purple-accent-400"
+                        class="font-medium tracking-wide text-gray-700 transition-colors duration-200 hover:text-blue-500"
                       >
                         Sign in
                       </a>
