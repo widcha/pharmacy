@@ -4,6 +4,8 @@ import ReactPaginate from "react-paginate";
 import { useDispatch, useSelector } from "react-redux";
 import {
 	fetchProductAction,
+	fetchProductCategoryAction,
+	fetchProductsByCategoryAction,
 	sortProductAction,
 } from "../redux/actions/productAction";
 import {
@@ -17,8 +19,6 @@ import {
 const Products = () => {
 	const useStyles = makeStyles((theme) => ({
 		formControl: {
-			// margin: theme.spacing(1),
-			color: "red",
 			minWidth: 120,
 		},
 		selectEmpty: {
@@ -26,14 +26,17 @@ const Products = () => {
 		},
 	}));
 	const classes = useStyles();
-	const [age, setAge] = useState("");
+	const [categorySelected, setCategorySelected] = useState("");
+	const [categorySelectedIndex, setCategorySelectedIndex] = useState(null);
 
 	const [perPage] = useState(10);
 	const [page, setPage] = useState(0);
 	const from = page * perPage;
 	const to = (page + 1) * perPage;
 	const dispatch = useDispatch();
-	const { product_list, loading } = useSelector((state) => state.product);
+	const { product_list, loading, category } = useSelector(
+		(state) => state.product
+	);
 	const [pageCount, setPageCount] = useState(product_list.length / perPage);
 
 	const data = product_list.filter((val, index) => {
@@ -63,6 +66,7 @@ const Products = () => {
 
 	useEffect(() => {
 		dispatch(fetchProductAction());
+		dispatch(fetchProductCategoryAction());
 	}, [dispatch]);
 
 	const handlePageClick = (e) => {
@@ -70,47 +74,75 @@ const Products = () => {
 		setPage(selectedPage);
 	};
 
-	const handleChange = (event) => {
-		setAge(event.target.value);
-		console.log(event.target.value);
-		dispatch(sortProductAction(event.target.value));
+	const handleChange = (e) => {
+		setCategorySelected(e.target.value);
+		console.log(categorySelected);
+		dispatch(sortProductAction(e.target.value, categorySelectedIndex));
 	};
-	return (
-		<div className="flex flex-row">
-			<div>
-				Categories
-				<div>All Products</div>
-				<div>a</div>
-				<div>a</div>
-				<div>a</div>
-				<div>a</div>
-			</div>
-			<div className="flex flex-col mx-2 justify-center justify-items-center items-start">
-				<div className="ml-6 flex justify-center justify-items-center items-center mt-5">
-					<FormControl className={classes.formControl}>
-						<InputLabel style={{ color: "black" }}>SORT BY</InputLabel>
-						<Select value={age} onChange={handleChange}>
-							<MenuItem value={"DESC"}>Newest</MenuItem>
-							<MenuItem value={"ASC"}>Latest</MenuItem>
-						</Select>
-					</FormControl>
-				</div>
+	const renderCategories = () => {
+		return category.map((val) => {
+			return (
+				<label
+					onClick={() => handleProductsByCategory(val.product_category_id)}
+					className="cursor-pointer text-gray-700"
+				>
+					{val.product_category}
+				</label>
+			);
+		});
+	};
 
-				<div className="flex flex-wrap">{loading ? null : renderProduct()}</div>
-				<div className="flex-row align-baseline">
-					<ReactPaginate
-						previousLabel={"Prev"}
-						nextLabel={"Next"}
-						breakLabel={"..."}
-						breakClassName={"break-me"}
-						pageCount={pageCount}
-						marginPagesDisplayed={2}
-						pageRangeDisplayed={5}
-						onPageChange={handlePageClick}
-						containerClassName={"pagination"}
-						subContainerClassName={"pages pagination"}
-						activeClassName={"active"}
-					/>
+	const handleProductsByCategory = (idx) => {
+		dispatch(fetchProductsByCategoryAction(idx));
+		setCategorySelectedIndex(idx);
+	};
+	const renderAllProducts = () => {
+		dispatch(fetchProductAction());
+		setCategorySelectedIndex(null);
+	};
+
+	return (
+		<div className="flex flex-row items-start justify-items-auto">
+			<div className="mt-10 ml-5 w-28 space-y-3 flex flex-col">
+				<label className="text-lg font-bold">Categories</label>
+
+				<label
+					className="cursor-pointer text-gray-700"
+					onClick={renderAllProducts}
+				>
+					All Products
+				</label>
+				{renderCategories()}
+			</div>
+			<div className="flex flex-col mx-2 justify-center justify-items-center items-start w-full">
+				<div className="flex flex-row items-center justify-between w-full">
+					<div className="ml-32 flex justify-center justify-items-center items-center mt-5">
+						<FormControl className={classes.formControl}>
+							<InputLabel style={{ color: "black" }}>SORT BY</InputLabel>
+							<Select value={categorySelected} onChange={handleChange}>
+								<MenuItem value={"DESC"}>Newest</MenuItem>
+								<MenuItem value={"ASC"}>Latest</MenuItem>
+							</Select>
+						</FormControl>
+					</div>
+					<div className="flex-row pt-8 pr-32">
+						<ReactPaginate
+							previousLabel={"Prev"}
+							nextLabel={"Next"}
+							breakLabel={"..."}
+							breakClassName={"break-me"}
+							pageCount={pageCount}
+							marginPagesDisplayed={2}
+							pageRangeDisplayed={5}
+							onPageChange={handlePageClick}
+							containerClassName={"pagination"}
+							subContainerClassName={"pages pagination"}
+							activeClassName={"active"}
+						/>
+					</div>
+				</div>
+				<div className="flex flex-wrap justify-center w-full">
+					{loading ? null : renderProduct()}
 				</div>
 			</div>
 		</div>

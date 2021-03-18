@@ -1,13 +1,16 @@
-const { Product } = require("../models");
+const { Product, Product_Category } = require("../models");
 const fs = require("fs");
 const pify = require("pify");
 const { uploader } = require("../handlers");
 const { parse } = require("path");
+const { Op } = require("sequelize");
 
 module.exports = {
 	getAllProduct: async (req, res) => {
 		try {
-			const response = await Product.findAll();
+			const response = await Product.findAll({
+				order: [["createdAt", "DESC"]],
+			});
 			return res.status(200).send(response);
 		} catch (err) {
 			return res.send(err.message);
@@ -194,11 +197,41 @@ module.exports = {
 	},
 	sortProduct: async (req, res) => {
 		try {
-			const { order } = req.query;
-			const sort_res = await Product.findAll({
-				order: [["createdAt", `${order}`]],
-			});
-			return res.send(sort_res);
+			const { order, id } = req.query;
+			if (id) {
+				const sort_res = await Product.findAll({
+					order: [["createdAt", `${order}`]],
+					where: {
+						product_category_id: id,
+					},
+				});
+				return res.send(sort_res);
+			} else {
+				const sort_res = await Product.findAll({
+					order: [["createdAt", `${order}`]],
+				});
+				return res.send(sort_res);
+			}
+		} catch (err) {
+			return res.send(err.message);
+		}
+	},
+	getProductCategories: async (req, res) => {
+		try {
+			const { category } = req.query;
+			if (category) {
+				const response = await Product.findAll({
+					where: {
+						product_category_id: {
+							[Op.eq]: category,
+						},
+					},
+				});
+				return res.send(response);
+			} else {
+				const cat_response = await Product_Category.findAll();
+				return res.send(cat_response);
+			}
 		} catch (err) {
 			return res.send(err.message);
 		}

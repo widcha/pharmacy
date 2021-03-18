@@ -144,13 +144,53 @@ export const deleteProductAction = (id) => {
 	};
 };
 
-export const sortProductAction = (str) => {
+export const sortProductAction = (str, idx) => {
 	return async (dispatch) => {
 		try {
 			dispatch({ type: "FETCH_PRODUCT_START" });
-			const sort_res = await axios.get(`${linkk}/sort?order=${str}`);
-			dispatch({ type: "FETCH_PRODUCT_SUCCESS", payload: sort_res.data });
-			console.log(sort_res.data);
+			if (idx) {
+				const sort_res = await axios.get(
+					`${linkk}/sort?order=${str}&id=${idx}`
+				);
+				dispatch({ type: "FETCH_PRODUCT_SUCCESS", payload: sort_res.data });
+			} else {
+				const sort_res = await axios.get(`${linkk}/sort?order=${str}`);
+				dispatch({ type: "FETCH_PRODUCT_SUCCESS", payload: sort_res.data });
+			}
+		} catch (err) {
+			dispatch({ type: "FETCH_PRODUCT_FAILED", payload: err });
+		}
+	};
+};
+
+export const fetchProductCategoryAction = () => {
+	return async (dispatch) => {
+		try {
+			dispatch({ type: "FETCH_PRODUCT_START" });
+
+			const cat_response = await axios.get(`${linkk}/categories`);
+			dispatch({
+				type: "FETCH_CATEGORY",
+				payload: cat_response.data,
+			});
+		} catch (err) {
+			dispatch({ type: "FETCH_PRODUCT_FAILED", payload: err });
+		}
+	};
+};
+
+export const fetchProductsByCategoryAction = (idx) => {
+	return async (dispatch) => {
+		try {
+			dispatch({ type: "FETCH_PRODUCT_START" });
+
+			const prd_cat_res = await axios.get(
+				`${linkk}/categories?category=${idx}`
+			);
+			dispatch({
+				type: "FETCH_PRODUCT_SUCCESS",
+				payload: prd_cat_res.data,
+			});
 		} catch (err) {
 			dispatch({ type: "FETCH_PRODUCT_FAILED", payload: err });
 		}

@@ -8,6 +8,7 @@ const {
 		editProduct,
 		deleteProduct,
 		productPagination,
+		getProductCategories,
 		sortProduct,
 	},
 } = require("../controller");
@@ -16,6 +17,7 @@ const router = express.Router();
 
 router.get("/", getAllProduct);
 router.get("/sort", sortProduct);
+router.get("/categories", getProductCategories);
 router.get("/:id", getProductById);
 router.post("/", addNewProduct);
 router.patch("/:id", editProduct);
