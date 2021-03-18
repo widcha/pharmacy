@@ -5,6 +5,7 @@ import { useDispatch, useSelector } from "react-redux";
 import {
 	fetchHighestProductPriceAction,
 	fetchProductAction,
+	fetchProductByUserAction,
 	fetchProductCategoryAction,
 	fetchProductsByCategoryAction,
 	sortProductAction,
@@ -70,7 +71,7 @@ const Products = () => {
 	}, [perPage, product_list]);
 
 	useEffect(() => {
-		dispatch(fetchProductAction());
+		dispatch(fetchProductByUserAction());
 		dispatch(fetchProductCategoryAction());
 		dispatch(fetchHighestProductPriceAction());
 	}, [dispatch]);
@@ -82,7 +83,6 @@ const Products = () => {
 
 	const handleChange = (e) => {
 		setCategorySelected(e.target.value);
-		console.log(categorySelected);
 		dispatch(sortProductAction(e.target.value, categorySelectedIndex));
 	};
 	const renderCategories = () => {
