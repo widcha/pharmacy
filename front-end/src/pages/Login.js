@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Link, Redirect } from "react-router-dom";
-import { nullifyErrorAction, loginAction } from "../redux/actions";
+import { loginAction, nullifyErrorAction } from "../redux/actions";
+import spinner from "../assets/spinner/oval.svg";
 
 // EMAIL DAN PASSWORD
 let userData = {
@@ -16,9 +17,7 @@ const Login = () => {
   const user = useSelector((state) => state.user);
 
   useEffect(() => {
-    return () => {
-      dispatch(nullifyErrorAction());
-    };
+    dispatch(nullifyErrorAction());
   }, [dispatch]);
 
   // TOGGLE SHOW/HIDE PASSWORD
@@ -34,7 +33,8 @@ const Login = () => {
     }));
   };
 
-  const loginBtn = () => {
+  const loginBtn = (e) => {
+    e.preventDefault();
     if (userInput.email.length !== 0) {
       dispatch(loginAction(userInput));
     }
@@ -42,7 +42,7 @@ const Login = () => {
 
   const loginForm = () => {
     return (
-      <div className="flex flex-col space-y-5">
+      <form className="flex flex-col space-y-5" onSubmit={loginBtn}>
         <div className="flex flex-col space-y-1">
           <label
             for="email"
@@ -93,16 +93,25 @@ const Login = () => {
           </label>
         </div>
         <div>
-          <button
-            type="submit"
-            onClick={loginBtn}
-            className="w-full px-4 py-2 text-lg font-semibold text-white transition-colors duration-300 bg-blue-500 rounded-md shadow hover:bg-blue-600 focus:outline-none focus:ring-blue-200 focus:ring-4"
-          >
-            Log in
-          </button>
+          {user.loading ? (
+            <button
+              disabled="true"
+              className="w-full px-48 py-2 cursor-not-allowed text-white transition-colors duration-300 bg-blue-400 rounded-md shadow hover:bg-blue-400 focus:outline-none focus:ring-blue-200 focus:ring-4"
+            >
+              <img src={spinner} alt="" className="w-7 h-7 object-center" />
+            </button>
+          ) : (
+            <button
+              type="submit"
+              onClick={loginBtn}
+              className="w-full px-4 py-2 text-lg font-semibold text-white transition-colors duration-300 bg-blue-500 rounded-md shadow hover:bg-blue-600 focus:outline-none focus:ring-blue-200 focus:ring-4"
+            >
+              Log in
+            </button>
+          )}
           <p className="text-red-500 pt-2 italic font-semibold">{user.error}</p>
         </div>
-      </div>
+      </form>
     );
   };
 
@@ -125,7 +134,7 @@ const Login = () => {
             near you.
           </p>
           <p className="flex flex-col items-center justify-center mt-10 text-center">
-            <span>Doesn't have an account??</span>
+            <span>Doesn't have an account?</span>
             <Link to="/signup">
               <p className="underline cursor-pointer">Register!</p>
             </Link>

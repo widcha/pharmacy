@@ -11,6 +11,7 @@ const {
   addNewUserAddress,
   editUserAddress,
   deleteUserAddress,
+  userAddRecipes,
 } = require("../controller/UserController");
 const {
   checkRegister,
@@ -32,5 +33,7 @@ router.get("/address/:id", getUserAddress);
 router.post("/address/:id", addNewUserAddress);
 router.patch("/address/:id", editUserAddress);
 router.delete("/address/:id", deleteUserAddress);
+
+router.post("/upload", userAddRecipes);
 
 module.exports = router;

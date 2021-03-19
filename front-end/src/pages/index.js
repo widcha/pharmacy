@@ -10,7 +10,8 @@ import ProductAdmin from "./ProductAdmin";
 import ProductFlowAdmin from "./ProductFlowAdmin";
 import RecipesAdmin from "./RecipesAdmin";
 import Products from "./Products";
-import UserAddress from './UserAddress';
+import UserAddress from "./UserAddress";
+import Landing from "./Landing";
 
 export {
   HomeAdmin,
@@ -26,4 +27,5 @@ export {
   ChangePassword,
   Products,
   UserAddress,
+  Landing,
 };
