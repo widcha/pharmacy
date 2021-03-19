@@ -20,6 +20,7 @@ import {
 import PriceSlider from "../components/PriceSlider";
 import { Redirect } from "react-router";
 import { Link } from "react-router-dom";
+import { ToastContainer, Zoom } from "react-toastify";
 
 const Products = () => {
 	const useStyles = makeStyles((theme) => ({
@@ -57,15 +58,12 @@ const Products = () => {
 				{data
 					? data.map((val, index) => {
 							return (
-								<Link
-									to={`product/detail?id=${val.product_id}`}
-									className="hover:bg-gray-100 rounded-md transition duration-300"
-								>
-									<CardProductUser
-										name={val.product_name}
-										price={val.product_price}
-									/>
-								</Link>
+								<CardProductUser
+									name={val.product_name}
+									price={val.product_price}
+									id={val.product_id}
+									img={val.product_image_path}
+								/>
 							);
 					  })
 					: null}
@@ -116,7 +114,20 @@ const Products = () => {
 
 	return (
 		<div className="flex flex-row items-start justify-items-auto">
-			<div className="mt-10 ml-5 w-28 space-y-3 flex flex-col">
+			<ToastContainer
+				position="bottom-right"
+				autoClose={2000}
+				hideProgressBar
+				newestOnTop={false}
+				closeOnClick
+				rtl={false}
+				pauseOnFocusLoss
+				draggable
+				pauseOnHover
+				transition={Zoom}
+				limit={3}
+			/>
+			<div className="mt-10 ml-5 w-auto space-y-3 mx-auto flex flex-col">
 				<div className="w-max space-y-3 flex flex-col mb-5">
 					<label className="text-lg font-bold">Categories</label>
 
@@ -139,7 +150,7 @@ const Products = () => {
 			</div>
 			<div className="flex flex-col mx-2 justify-center justify-items-center items-start w-full">
 				<div className="flex flex-row items-center justify-between w-full">
-					<div className="ml-32 flex justify-center justify-items-center items-center mt-5">
+					<div className="ml-7 flex justify-center justify-items-center items-center mt-5">
 						<FormControl className={classes.formControl}>
 							<InputLabel style={{ color: "black" }}>SORT BY</InputLabel>
 							<Select value={categorySelected} onChange={handleChange}>
@@ -164,7 +175,7 @@ const Products = () => {
 						/>
 					</div>
 				</div>
-				<div className="flex flex-wrap justify-center w-full">
+				<div className="flex flex-wrap w-auto">
 					{loading ? null : renderProduct()}
 				</div>
 			</div>

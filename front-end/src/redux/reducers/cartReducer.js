@@ -1,12 +1,29 @@
 const INITIAL_STATE = {
-  cart_list: [],
-  loading: false,
-  error: "",
+	cart_list: [],
+	loading: false,
+	error: "",
 };
 
 export const cartReducer = (state = INITIAL_STATE, action) => {
-  switch (action.type) {
-    default:
-      return state;
-  }
+	switch (action.type) {
+		case "API_CART_START":
+			return {
+				...state,
+				loading: true,
+			};
+		case "API_CART_FAILED":
+			return {
+				...state,
+				loading: false,
+				error: action.payload,
+			};
+		case "API_CART_SUCCESS":
+			return {
+				...state,
+				loading: false,
+				cart_list: [...state.cart_list, action.payload],
+			};
+		default:
+			return state;
+	}
 };
