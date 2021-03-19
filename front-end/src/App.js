@@ -21,6 +21,7 @@ import {
 	UserAddress,
 	ProductDetail,
 	Landing,
+	Cart,
 } from "./pages";
 // import { useDispatch } from "react-redux";
 // import { nullifyErrorAction } from "./redux/actions";
@@ -62,6 +63,7 @@ function App() {
 				<Route exact path="/product" component={Products} />
 				<Route exact path="/product/detail" component={ProductDetail} />
 				<Route exact path="/user/address" component={UserAddress} />
+				<Route exact path="/user/cart" component={Cart} />
 			</div>
 		);
 	}

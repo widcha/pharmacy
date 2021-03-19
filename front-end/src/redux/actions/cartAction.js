@@ -6,13 +6,14 @@ const api = `${api_url}/carts`;
 export const userAddProductToCartAction = (obj) => {
 	return async (dispatch) => {
 		try {
+			console.log(obj);
 			dispatch({
 				type: "API_CART_START",
 			});
 			const response = await axios.post(`${api}/add`, obj);
 			console.log(response.data);
 			dispatch({
-				type: "API_CART_SUCCESS",
+				type: "USER_FETCH_CART",
 				payload: response.data,
 			});
 			toast("Added to Cart!", {

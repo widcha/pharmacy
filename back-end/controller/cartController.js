@@ -1,6 +1,6 @@
 const { Op } = require("sequelize");
 
-const { Cart } = require("../models");
+const { Cart, Product } = require("../models");
 module.exports = {
 	userAddProductToCart: async (req, res) => {
 		try {
@@ -26,21 +26,66 @@ module.exports = {
 						},
 					}
 				);
+				// const response = await Cart.findAll({
+				// 	where: {
+				// 		cart_id: { [Op.eq]: cart_check[0].cart_id },
+				// 	},
+				// });
 				const response = await Cart.findAll({
 					where: {
-						cart_id: { [Op.eq]: cart_check[0].cart_id },
+						user_id: {
+							[Op.eq]: user_id,
+						},
 					},
+					attributes: { exclude: ["createdAt", "updatedAt"] },
+					include: [
+						{
+							model: Product,
+							attributes: {
+								exclude: [
+									"createdAt",
+									"updatedAt",
+									"product_desc",
+									"product_id",
+									"product_price",
+									"product_category_id",
+								],
+							},
+						},
+					],
 				});
-
-				return res.send(response[0]);
+				return res.send(response);
 			} else {
-				const response = await Cart.create({
+				await Cart.create({
 					user_id,
 					product_id,
 					product_qty,
 					product_price,
 				});
-				return res.status(201).send(response);
+				const response = await Cart.findAll({
+					where: {
+						user_id: {
+							[Op.eq]: user_id,
+						},
+					},
+					attributes: { exclude: ["createdAt", "updatedAt"] },
+					include: [
+						{
+							model: Product,
+							attributes: {
+								exclude: [
+									"createdAt",
+									"updatedAt",
+									"product_desc",
+									"product_id",
+									"product_price",
+									"product_category_id",
+								],
+							},
+						},
+					],
+				});
+				return res.send(response);
 			}
 		} catch (err) {
 			return res.status(500).send({ message: err.message });

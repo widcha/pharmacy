@@ -23,6 +23,14 @@ export const cartReducer = (state = INITIAL_STATE, action) => {
 				loading: false,
 				cart_list: [...state.cart_list, action.payload],
 			};
+		case "CLEAR_CART":
+			return INITIAL_STATE;
+
+		case "USER_FETCH_CART":
+			return {
+				...state,
+				cart_list: action.payload,
+			};
 		default:
 			return state;
 	}
