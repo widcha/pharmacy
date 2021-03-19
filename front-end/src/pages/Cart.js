@@ -1,13 +1,37 @@
-import React, { useState } from "react";
+import { queryByTestId } from "@testing-library/dom";
+import React, { useEffect, useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
+import {
+	fetchUserCartByIdAction,
+	userAddProductToCartAction,
+	userSubProductFromCartAction,
+} from "../redux/actions";
 export const Cart = () => {
 	const dispatch = useDispatch();
 	const { cart_list } = useSelector((state) => state.cart);
-
-	const [userCart, setUserCart] = useState(cart_list);
-
+	const { user_id } = useSelector((state) => state.user);
+	useEffect(() => {
+		dispatch(fetchUserCartByIdAction(user_id));
+	}, [dispatch, user_id]);
+	// const [userCart, setUserCart] = useState(cart_list);
+	const handleIncrement = (idx, qty, price) => {
+		dispatch(
+			userAddProductToCartAction({
+				user_id,
+				product_id: idx,
+				product_qty: 1,
+				product_price: price,
+			})
+		);
+	};
+	const handleDecrement = (idx, currQty) => {
+		dispatch(
+			userSubProductFromCartAction({ user_id, product_id: idx, currQty })
+		);
+	};
 	const renderCart = () => {
-		return userCart.map((val) => {
+		return cart_list.map((val, index) => {
+			let total = val.product_price * val.product_qty;
 			return (
 				<tr>
 					<td className="hidden pb-4 md:table-cell">
@@ -32,11 +56,54 @@ export const Cart = () => {
 					<td className="justify-center md:justify-end md:flex mt-6">
 						<div className="w-20 h-10">
 							<div className="relative flex flex-col w-full h-8 items-center">
-								<input
-									type="number"
-									value={val.product_qty}
-									className="w-full font-semibold text-center text-gray-700 bg-gray-200 outline-none focus:outline-none hover:text-black focus:text-black"
-								/>
+								<div class="flex justify-center">
+									<button
+										onClick={() =>
+											handleDecrement(val.product_id, val.product_qty)
+										}
+										disabled={val.product_qty === 1}
+									>
+										<svg
+											class="w-6 h-6 fill-current text-gray-600 "
+											fill="currentColor"
+											viewBox="0 0 20 20"
+											xmlns="http://www.w3.org/2000/svg"
+										>
+											<path
+												fill-rule="evenodd"
+												d="M3 10a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1z"
+												clip-rule="evenodd"
+											></path>
+										</svg>
+									</button>
+									<input
+										value={val.product_qty}
+										className="w-full font-semibold text-center text-gray-700 bg-gray-200 outline-none focus:outline-none hover:text-black focus:text-black"
+									/>
+									<button
+										onClick={() =>
+											handleIncrement(
+												val.product_id,
+												val.product_qty,
+												val.product_price
+											)
+										}
+										disabled={val.product_qty === val.Product.product_stock}
+									>
+										<svg
+											class="w-6 h-6"
+											fill="currentColor"
+											viewBox="0 0 20 20"
+											xmlns="http://www.w3.org/2000/svg"
+										>
+											<path
+												fill-rule="evenodd"
+												d="M10 5a1 1 0 011 1v3h3a1 1 0 110 2h-3v3a1 1 0 11-2 0v-3H6a1 1 0 110-2h3V6a1 1 0 011-1z"
+												clip-rule="evenodd"
+											></path>
+										</svg>
+									</button>
+								</div>
 								<span className="text-sm text-gray-500">
 									({val.Product.product_stock} left)
 								</span>
@@ -45,18 +112,19 @@ export const Cart = () => {
 					</td>
 					<td className="hidden text-right md:table-cell">
 						<span className="text-sm lg:text-base font-medium">
-							{val.product_price}
+							Rp. {val.product_price.toLocaleString()}
 						</span>
 					</td>
 					<td className="text-right">
 						<span className="text-sm lg:text-base font-medium">
-							{val.product_price * val.product_qty}
+							RP. {total.toLocaleString()}
 						</span>
 					</td>
 				</tr>
 			);
 		});
 	};
+
 	return (
 		<div className="flex justify-center my-6">
 			<div className="flex flex-col w-full p-8 text-gray-800 bg-white shadow-lg pin-r pin-y md:w-4/5 lg:w-4/5">
@@ -75,7 +143,7 @@ export const Cart = () => {
 									</span>
 									<span className="hidden lg:inline">Quantity</span>
 								</th>
-								<th className="hidden text-right md:table-cell">Unit price</th>
+								<th className="hidden text-right md:table-cell">Item price</th>
 								<th className="text-right">Total price</th>
 							</tr>
 						</thead>

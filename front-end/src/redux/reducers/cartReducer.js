@@ -10,6 +10,7 @@ export const cartReducer = (state = INITIAL_STATE, action) => {
 			return {
 				...state,
 				loading: true,
+				error: "",
 			};
 		case "API_CART_FAILED":
 			return {

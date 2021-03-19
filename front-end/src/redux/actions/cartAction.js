@@ -1,3 +1,4 @@
+import { TrackChanges } from "@material-ui/icons";
 import axios from "axios";
 import { toast, Zoom } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
@@ -16,7 +17,7 @@ export const userAddProductToCartAction = (obj) => {
 				type: "USER_FETCH_CART",
 				payload: response.data,
 			});
-			toast("Added to Cart!", {
+			toast("Product Added!", {
 				position: "bottom-right",
 				autoClose: 2000,
 				hideProgressBar: true,
@@ -40,6 +41,48 @@ export const userAddProductToCartAction = (obj) => {
 				pauseOnHover: true,
 				draggable: true,
 				progress: undefined,
+			});
+		}
+	};
+};
+
+export const fetchUserCartByIdAction = (idx) => {
+	return async (dispatch) => {
+		try {
+			dispatch({
+				type: "API_CART_START",
+			});
+			const response = await axios.get(`${api}/${idx}`);
+			console.log(response.data);
+			dispatch({
+				type: "USER_FETCH_CART",
+				payload: response.data,
+			});
+		} catch (err) {
+			dispatch({
+				type: "API_CART_FAILED",
+				payload: err.response.data.message,
+			});
+		}
+	};
+};
+
+export const userSubProductFromCartAction = (obj) => {
+	return async (dispatch) => {
+		try {
+			dispatch({
+				type: "API_CART_START",
+			});
+
+			const response = await axios.post(`${api}/sub`, obj);
+			dispatch({
+				type: "USER_FETCH_CART",
+				payload: response.data,
+			});
+		} catch (err) {
+			dispatch({
+				type: "API_CART_FAILED",
+				payload: err.response.data.message,
 			});
 		}
 	};

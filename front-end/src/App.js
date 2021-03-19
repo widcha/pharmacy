@@ -23,6 +23,7 @@ import {
 	Landing,
 	Cart,
 } from "./pages";
+import { ToastContainer, Zoom } from "react-toastify";
 // import { useDispatch } from "react-redux";
 // import { nullifyErrorAction } from "./redux/actions";
 
@@ -53,6 +54,19 @@ function App() {
 	} else {
 		return (
 			<div>
+				<ToastContainer
+					position="bottom-right"
+					autoClose={2000}
+					hideProgressBar
+					newestOnTop={false}
+					closeOnClick
+					rtl={false}
+					pauseOnFocusLoss
+					draggable
+					pauseOnHover
+					transition={Zoom}
+					limit={3}
+				/>
 				<Nav />
 				<Route exact path="/" component={Landing} />
 				<Route exact path="/signup" component={SignUp} />
