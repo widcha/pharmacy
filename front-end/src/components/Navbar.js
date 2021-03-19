@@ -1,4 +1,4 @@
-import { CircularProgress, ClickAwayListener } from "@material-ui/core";
+import { ClickAwayListener } from "@material-ui/core";
 import { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Link } from "react-router-dom";

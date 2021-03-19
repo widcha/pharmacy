@@ -30,6 +30,7 @@ export const cartReducer = (state = INITIAL_STATE, action) => {
 			return {
 				...state,
 				cart_list: action.payload,
+				loading: false,
 			};
 		default:
 			return state;

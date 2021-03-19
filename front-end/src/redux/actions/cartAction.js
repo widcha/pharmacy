@@ -11,7 +11,7 @@ export const userAddProductToCartAction = (obj) => {
 				type: "API_CART_START",
 			});
 			const response = await axios.post(`${api}/add`, obj);
-			console.log(response.data);
+			console.log(response);
 			dispatch({
 				type: "USER_FETCH_CART",
 				payload: response.data,
@@ -27,8 +27,19 @@ export const userAddProductToCartAction = (obj) => {
 				transition: Zoom,
 			});
 		} catch (err) {
+			// console.log(err);
 			dispatch({
 				type: "API_CART_FAILED",
+				payload: err.response.data.message,
+			});
+			toast.error(`${err.response.data.message}`, {
+				position: "bottom-right",
+				autoClose: 2000,
+				hideProgressBar: false,
+				closeOnClick: true,
+				pauseOnHover: true,
+				draggable: true,
+				progress: undefined,
 			});
 		}
 	};

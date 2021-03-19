@@ -12,49 +12,63 @@ module.exports = {
 						product_id: product_id,
 					},
 				},
-			});
-			if (cart_check.length > 0) {
-				await Cart.update(
-					{ product_qty: cart_check[0].product_qty + product_qty },
+				include: [
 					{
-						where: {
-							[Op.and]: {
-								user_id: user_id,
-								product_id: product_id,
-								cart_id: cart_check[0].cart_id,
-							},
-						},
-					}
-				);
-				// const response = await Cart.findAll({
-				// 	where: {
-				// 		cart_id: { [Op.eq]: cart_check[0].cart_id },
-				// 	},
-				// });
-				const response = await Cart.findAll({
-					where: {
-						user_id: {
-							[Op.eq]: user_id,
-						},
+						model: Product,
+						attributes: { exclude: ["createdAt", "updatedAt"] },
 					},
-					attributes: { exclude: ["createdAt", "updatedAt"] },
-					include: [
+				],
+			});
+			// console.log(cart_check);
+			if (cart_check.length > 0) {
+				if (
+					cart_check[0].product_qty + product_qty <=
+					cart_check[0].Product.product_stock
+				) {
+					await Cart.update(
+						{ product_qty: cart_check[0].product_qty + product_qty },
 						{
-							model: Product,
-							attributes: {
-								exclude: [
-									"createdAt",
-									"updatedAt",
-									"product_desc",
-									"product_id",
-									"product_price",
-									"product_category_id",
-								],
+							where: {
+								[Op.and]: {
+									user_id: user_id,
+									product_id: product_id,
+									cart_id: cart_check[0].cart_id,
+								},
+							},
+						}
+					);
+					// const response = await Cart.findAll({
+					// 	where: {
+					// 		cart_id: { [Op.eq]: cart_check[0].cart_id },
+					// 	},
+					// });
+					const response = await Cart.findAll({
+						where: {
+							user_id: {
+								[Op.eq]: user_id,
 							},
 						},
-					],
-				});
-				return res.send(response);
+						attributes: { exclude: ["createdAt", "updatedAt"] },
+						include: [
+							{
+								model: Product,
+								attributes: {
+									exclude: [
+										"createdAt",
+										"updatedAt",
+										"product_desc",
+										"product_id",
+										"product_price",
+										"product_category_id",
+									],
+								},
+							},
+						],
+					});
+					return res.send(response);
+				} else {
+					return res.status(404).send({ message: "Excessive Quantity" });
+				}
 			} else {
 				await Cart.create({
 					user_id,

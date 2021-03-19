@@ -18,8 +18,6 @@ import {
 	Select,
 } from "@material-ui/core";
 import PriceSlider from "../components/PriceSlider";
-import { Redirect } from "react-router";
-import { Link } from "react-router-dom";
 import { ToastContainer, Zoom } from "react-toastify";
 import ExtendedNavbar from "../components/ExtendedNavbar";
 
