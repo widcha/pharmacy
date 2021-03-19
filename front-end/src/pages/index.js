@@ -10,20 +10,22 @@ import ProductAdmin from "./ProductAdmin";
 import ProductFlowAdmin from "./ProductFlowAdmin";
 import RecipesAdmin from "./RecipesAdmin";
 import Products from "./Products";
-import UserAddress from './UserAddress';
+import UserAddress from "./UserAddress";
+import { ProductDetail } from "./ProductDetail";
 
 export {
-  HomeAdmin,
-  CategoriesAdmin,
-  PaymentAdmin,
-  ProductAdmin,
-  ProductFlowAdmin,
-  RecipesAdmin,
-  SignUp,
-  Verification,
-  Login,
-  ForgotPassword,
-  ChangePassword,
-  Products,
-  UserAddress,
+	HomeAdmin,
+	CategoriesAdmin,
+	PaymentAdmin,
+	ProductAdmin,
+	ProductFlowAdmin,
+	RecipesAdmin,
+	SignUp,
+	Verification,
+	Login,
+	ForgotPassword,
+	ChangePassword,
+	Products,
+	UserAddress,
+	ProductDetail,
 };

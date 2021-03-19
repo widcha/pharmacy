@@ -18,6 +18,8 @@ import {
 	Select,
 } from "@material-ui/core";
 import PriceSlider from "../components/PriceSlider";
+import { Redirect } from "react-router";
+import { Link } from "react-router-dom";
 
 const Products = () => {
 	const useStyles = makeStyles((theme) => ({
@@ -55,10 +57,15 @@ const Products = () => {
 				{data
 					? data.map((val, index) => {
 							return (
-								<CardProductUser
-									name={val.product_name}
-									price={val.product_price}
-								/>
+								<Link
+									to={`product/detail?id=${val.product_id}`}
+									className="hover:bg-gray-100 rounded-md transition duration-300"
+								>
+									<CardProductUser
+										name={val.product_name}
+										price={val.product_price}
+									/>
+								</Link>
 							);
 					  })
 					: null}
