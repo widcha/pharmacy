@@ -12,6 +12,7 @@ import RecipesAdmin from "./RecipesAdmin";
 import Products from "./Products";
 import UserAddress from "./UserAddress";
 import { ProductDetail } from "./ProductDetail";
+import Landing from "./Landing";
 
 export {
 	HomeAdmin,
@@ -28,4 +29,5 @@ export {
 	Products,
 	UserAddress,
 	ProductDetail,
+	Landing,
 };

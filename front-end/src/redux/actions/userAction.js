@@ -153,48 +153,56 @@ export const logoutAction = () => {
   };
 };
 
-export const fetchAddressAction = ({a,user_id}) => {
+export const fetchAddressAction = ({ a, user_id }) => {
   return async (dispatch) => {
     try {
       dispatch({ type: "API_USER_START" });
       let response;
-      if(a){
-        response = await axios.get(`${url}/address/${user_id}${a}`)
-      }else{
+      if (a) {
+        response = await axios.get(`${url}/address/${user_id}${a}`);
+      } else {
         response = await axios.get(`${url}/address/${user_id}`);
       }
-      return dispatch({ type: "API_GET_ADDRESS_SUCCESS", payload: response.data });
+      return dispatch({
+        type: "API_GET_ADDRESS_SUCCESS",
+        payload: response.data,
+      });
     } catch (err) {
-      dispatch({ type: "API_USER_FAILED" , payload: err.response });
+      dispatch({ type: "API_USER_FAILED", payload: err.response });
     }
-  }
-}
+  };
+};
 
-export const addNewAddressAction = ({user_address, user_id}) => {
-  return async(dispatch) => {
+export const addNewAddressAction = ({ user_address, user_id }) => {
+  return async (dispatch) => {
     try {
       dispatch({ type: "API_USER_START" });
       await axios.post(`${url}/address/${user_id}`, {
-        user_address, user_id
+        user_address,
+        user_id,
       });
       dispatch(fetchAddressAction());
     } catch (err) {
       dispatch({ type: "API_USER_FAILED", payload: err.message });
     }
-  }
-}
-export const editAddressAction = ({ user_address, user_address_id, user_id }) => {
-  return async(dispatch) => {
+  };
+};
+export const editAddressAction = ({
+  user_address,
+  user_address_id,
+  user_id,
+}) => {
+  return async (dispatch) => {
     try {
       dispatch({ type: "API_USER_START" });
-      await axios.patch(`${url}/address/${user_address_id}`, { user_address })
-      dispatch(fetchAddressAction(user_id));      
+      await axios.patch(`${url}/address/${user_address_id}`, { user_address });
+      dispatch(fetchAddressAction(user_id));
     } catch (err) {
       dispatch({ type: "API_USER_FAILED", payload: err.message });
     }
-  }
-}
-export const deleteAddressAction = ({id, user_id}) => {
+  };
+};
+export const deleteAddressAction = ({ id, user_id }) => {
   return async (dispatch) => {
     try {
       dispatch({ type: "API_USER_START" });
@@ -203,5 +211,32 @@ export const deleteAddressAction = ({id, user_id}) => {
     } catch (err) {
       dispatch({ type: "API_USER_FAILED", payload: err.message });
     }
-  }
-}
+  };
+};
+
+export const uploadRecipesAction = ({ user_id, pict }) => {
+  return async (dispatch) => {
+    try {
+      dispatch({ type: "API_USER_START" });
+      let formData = new FormData();
+      const val = JSON.stringify({
+        user_id,
+      });
+
+      formData.append("image", pict);
+      formData.append("data", val);
+
+      const headers = {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      };
+
+      await axios.post(`${url}/upload`, formData, headers);
+
+      dispatch({ type: "API_USER_SUCCESS" });
+    } catch (err) {
+      dispatch({ type: "API_USER_FAILED", payload: err.message });
+    }
+  };
+};

@@ -20,7 +20,7 @@ export const Nav = () => {
 
   const loginBtn = () => {
     return (
-      <ul class="flex items-center hidden space-x-5 lg:flex">
+      <ul class="flex items-center space-x-5 lg:flex">
         <li>
           <Link to="/login">
             <p
@@ -96,12 +96,14 @@ export const Nav = () => {
                 >
                   Transaction
                 </p>
-                <p
-                  className="transition duration-200 font-semibold block w-full text-left px-4 py-2 text-sm text-gray-600 hover:bg-gray-100 hover:text-blue-500 cursor-pointer"
-                  onClick={logoutBtn}
-                >
-                  Sign Out
-                </p>
+                <Link to="/">
+                  <p
+                    className="transition duration-200 font-semibold block w-full text-left px-4 py-2 text-sm text-gray-600 hover:bg-gray-100 hover:text-blue-500 cursor-pointer"
+                    onClick={logoutBtn}
+                  >
+                    Sign Out
+                  </p>
+                </Link>
               </div>
             </div>
           </ClickAwayListener>
@@ -128,7 +130,7 @@ export const Nav = () => {
           fill="none"
           viewBox="0 0 24 24"
           stroke="currentColor"
-          className="text-gray-700 w-7 h-7 cursor-pointer hover:text-blue-400 hover:bg-gray-200 rounded-2xl focus:bg-gray-200"
+          className="text-gray-700 w-7 h-7 cursor-pointer hover:text-blue-400 hover:bg-gray-200 rounded-2xl focus:bg-gray-200 transition duration-300"
         >
           <path
             strokeLinecap="round"
@@ -186,7 +188,7 @@ export const Nav = () => {
         <input
           className="w-96 rounded-lg focus:outline-none focus:ring-blue-100 focus:ring-4 pl-3 font-semibold text-gray-700 transition duration-300"
           type="text"
-          placeholder="Search antacids"
+          placeholder="Search rulox"
           onChange={(e) => setName(e.target.value)}
         />
         <span className="w-auto flex justify-end items-center text-gray-500 p-1 hover:bg-blue-100 rounded-xl transition duration-300">
@@ -210,8 +212,7 @@ export const Nav = () => {
     <div class="px-4 py-2 sm:max-w-xl md:max-w-full md:px-24 lg:px-8 shadow p-4">
       <div class="relative flex items-center justify-between">
         <div class="flex items-center">
-          <Link
-            to="/"
+          <a
             href="/"
             aria-label="Company"
             title="Company"
@@ -221,8 +222,8 @@ export const Nav = () => {
             <span class="ml-2 text-xl font-bold tracking-wide text-gray-800 uppercase">
               Pharma
             </span>
-          </Link>
-          <ul class="flex items-center hidden space-x-8 lg:flex">
+          </a>
+          <ul class="flex items-center space-x-8 lg:flex">
             <li>
               <Link
                 to="/product"

@@ -20,6 +20,7 @@ import {
 	Products,
 	UserAddress,
 	ProductDetail,
+	Landing,
 } from "./pages";
 // import { useDispatch } from "react-redux";
 // import { nullifyErrorAction } from "./redux/actions";
@@ -52,6 +53,7 @@ function App() {
 		return (
 			<div>
 				<Nav />
+				<Route exact path="/" component={Landing} />
 				<Route exact path="/signup" component={SignUp} />
 				<Route exact path="/verification" component={Verification} />
 				<Route exact path="/login" component={Login} />
