@@ -1,10 +1,11 @@
 import React, { useState } from "react";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import {
   securityQuestionAction,
   sendResetEmailAction,
   verifiedCheckAction,
 } from "../redux/actions";
+import spinner from "../assets/spinner/oval.svg";
 
 const ForgotPassword = () => {
   const [form, setForm] = useState(true);
@@ -15,6 +16,7 @@ const ForgotPassword = () => {
   const [sent, setSent] = useState("");
   const dispatch = useDispatch();
   const url = "http://localhost:3000";
+  const user = useSelector((state) => state.user);
 
   const changeForm = async () => {
     if (email.length === 0) {
@@ -88,23 +90,34 @@ const ForgotPassword = () => {
             className="px-4 py-2 transition duration-300 border border-gray-300 rounded focus:border-transparent focus:outline-none focus:ring-4 focus:ring-blue-200"
           />
         </div>
-
-        <button
-          onClick={resetBtn}
-          className="w-full px-4 py-2 text-lg font-semibold text-white transition-colors duration-300 bg-blue-500 rounded-md shadow hover:bg-blue-600 focus:outline-none focus:ring-blue-200 focus:ring-4"
-        >
-          Reset Password
-        </button>
-
+        {user.loading ? (
+          <button
+            disabled="true"
+            className="w-full px-72 py-2 cursor-not-allowed text-white transition-colors duration-300 bg-blue-400 rounded-md shadow hover:bg-blue-400 focus:outline-none focus:ring-blue-200 focus:ring-4"
+          >
+            <img src={spinner} alt="" className="w-7 h-7 object-center" />
+          </button>
+        ) : (
+          <button
+            onClick={resetBtn}
+            className="w-full px-4 py-2 text-lg font-semibold text-white transition-colors duration-300 bg-blue-500 rounded-md shadow hover:bg-blue-600 focus:outline-none focus:ring-blue-200 focus:ring-4"
+          >
+            Reset Password
+          </button>
+        )}
         <div className="flex-row">
+          <p className="text-green-500 italic font-semibold text-center">
+            {sent}
+          </p>
           <h4
             className="text-gray-600 font-semibold text-left text-sm cursor-pointer hover:text-blue-300 transition duration-300"
             onClick={changeForm}
           >
             Security Question
           </h4>
-          <p className="text-red-500 italic font-semibold">{verified}</p>
-          <p className="text-green-500 italic font-semibold">{sent}</p>
+          <p className="text-red-500 italic font-semibold text-center">
+            {verified}
+          </p>
         </div>
       </div>
     );
@@ -129,21 +142,33 @@ const ForgotPassword = () => {
             className="px-4 py-2 transition duration-300 border border-gray-300 rounded focus:border-transparent focus:outline-none focus:ring-4 focus:ring-blue-200"
           />
         </div>
-        <button
-          type="submit"
-          onClick={continueBtn}
-          className="w-full px-4 py-2 text-lg font-semibold text-white transition-colors duration-300 bg-blue-500 rounded-md shadow hover:bg-blue-600 focus:outline-none focus:ring-blue-200 focus:ring-4"
-        >
-          Continue
-        </button>
+        {user.loading ? (
+          <button
+            disabled="true"
+            className="w-full px-72 py-2 cursor-not-allowed text-white transition-colors duration-300 bg-blue-400 rounded-md shadow hover:bg-blue-400 focus:outline-none focus:ring-blue-200 focus:ring-4"
+          >
+            <img src={spinner} alt="" className="w-7 h-7 object-center" />
+          </button>
+        ) : (
+          <button
+            type="submit"
+            onClick={continueBtn}
+            className="w-full px-4 py-2 text-lg font-semibold text-white transition-colors duration-300 bg-blue-500 rounded-md shadow hover:bg-blue-600 focus:outline-none focus:ring-blue-200 focus:ring-4"
+          >
+            Continue
+          </button>
+        )}
+
         <div>
+          <p className="text-red-500 italic font-semibold text-center">
+            {answerResponse}
+          </p>
           <h2
             className="text-gray-600 font-semibold text-left text-md cursor-pointer hover:text-blue-300 transition duration-300"
             onClick={backBtn}
           >
             Back
           </h2>
-          <p className="text-red-500 italic">{answerResponse}</p>
         </div>
       </div>
     );
@@ -153,7 +178,7 @@ const ForgotPassword = () => {
     <div className="flex items-center min-h-screen p-4 bg-gray-100 lg:justify-center">
       <div className="flex flex-col overflow-hidden bg-white rounded-md shadow-lg max md:flex-row md:flex-1 lg:max-w-screen-sm">
         <div className="p-5 bg-white md:flex-1">
-          <h5 className="my-4 text-xl font-semibold text-gray-700 text-left">
+          <h5 className="mb-4 text-xl font-semibold text-gray-700 text-left">
             Forgot Password
           </h5>
           {form ? sendEmail() : securityQuestion()}
