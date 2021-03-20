@@ -1,21 +1,25 @@
-import { queryByTestId } from "@testing-library/dom";
-import React, { useEffect, useState } from "react";
+import React, { useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import Swal from "sweetalert2";
+import { CartCard } from "../components/CartCard";
 import {
 	fetchUserCartByIdAction,
 	userAddProductToCartAction,
 	userDeleteProductInCart,
+	userGetSubTotal,
 	userSubProductFromCartAction,
 } from "../redux/actions";
 export const Cart = () => {
 	const dispatch = useDispatch();
-	const { cart_list } = useSelector((state) => state.cart);
+	const { cart_list, available_products, subTotal, tax, total } = useSelector(
+		(state) => state.cart
+	);
 	const { user_id } = useSelector((state) => state.user);
+
 	useEffect(() => {
 		dispatch(fetchUserCartByIdAction(user_id));
+		dispatch(userGetSubTotal(user_id));
 	}, [dispatch, user_id]);
-	// const [userCart, setUserCart] = useState(cart_list);
 	const handleIncrement = (idx, qty, price) => {
 		dispatch(
 			userAddProductToCartAction({
@@ -52,107 +56,32 @@ export const Cart = () => {
 		return cart_list.map((val, index) => {
 			let total = val.product_price * val.product_qty;
 			return (
-				<tr>
-					<td className="hidden pb-4 md:table-cell">
-						<a href="#">
-							<img
-								src={`http://localhost:5000${val.Product.product_image_path}`}
-								className="w-20 rounded"
-								alt="Thumbnail"
-							/>
-						</a>
-					</td>
-					<td>
-						<a href="#">
-							<p className="mb-2 md:ml-4">{val.Product.product_name}</p>
-							<button
-								className="text-red-700 md:ml-4 hover:text-red-900 hover:bg-gray-100 rounded-lg px-1 focus:outline-none"
-								onClick={() => handleDelete(val.user_id, val.product_id)}
-							>
-								<small>(Remove item)</small>
-							</button>
-						</a>
-					</td>
-					<td className="justify-center md:justify-end md:flex mt-6">
-						<div className="w-20 h-10">
-							<div className="relative flex flex-col w-full h-8 items-center">
-								<div class="flex justify-center">
-									<button
-										onClick={() =>
-											handleDecrement(val.product_id, val.product_qty)
-										}
-										disabled={val.product_qty === 1}
-									>
-										<svg
-											class="w-6 h-6 fill-current text-gray-600 "
-											fill="currentColor"
-											viewBox="0 0 20 20"
-											xmlns="http://www.w3.org/2000/svg"
-										>
-											<path
-												fill-rule="evenodd"
-												d="M3 10a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1z"
-												clip-rule="evenodd"
-											></path>
-										</svg>
-									</button>
-									<input
-										value={val.product_qty}
-										className="w-full font-semibold text-center text-gray-700 bg-gray-200 outline-none focus:outline-none hover:text-black focus:text-black"
-									/>
-									<button
-										onClick={() =>
-											handleIncrement(
-												val.product_id,
-												val.product_qty,
-												val.product_price
-											)
-										}
-										disabled={val.product_qty === val.Product.product_stock}
-									>
-										<svg
-											class="w-6 h-6"
-											fill="currentColor"
-											viewBox="0 0 20 20"
-											xmlns="http://www.w3.org/2000/svg"
-										>
-											<path
-												fill-rule="evenodd"
-												d="M10 5a1 1 0 011 1v3h3a1 1 0 110 2h-3v3a1 1 0 11-2 0v-3H6a1 1 0 110-2h3V6a1 1 0 011-1z"
-												clip-rule="evenodd"
-											></path>
-										</svg>
-									</button>
-								</div>
-								<span className="text-sm text-gray-500">
-									({val.Product.product_stock} left)
-								</span>
-							</div>
-						</div>
-					</td>
-					<td className="hidden text-right md:table-cell">
-						<span className="text-sm lg:text-base font-medium">
-							Rp. {val.product_price.toLocaleString()}
-						</span>
-					</td>
-					<td className="text-right">
-						<span className="text-sm lg:text-base font-medium">
-							RP. {total.toLocaleString()}
-						</span>
-					</td>
-				</tr>
+				<CartCard
+					total={total}
+					image={val.Product.product_image_path}
+					name={val.Product.product_name}
+					user_id={val.user_id}
+					product_id={val.product_id}
+					qty={val.product_qty}
+					price={val.product_price}
+					stock={val.Product.product_stock}
+					vol={val.Product.product_vol}
+					increment={handleIncrement}
+					decrement={handleDecrement}
+					del={handleDelete}
+				/>
 			);
 		});
 	};
-
 	return (
 		<div className="flex justify-center my-6">
 			<div className="flex flex-col w-full p-8 text-gray-800 bg-white shadow-lg pin-r pin-y md:w-4/5 lg:w-4/5">
 				<label className="text-xl font-bold border-gray-400 border-b-2 mb-3">
 					YOUR CART
 				</label>
+
 				<div className="flex-1">
-					<table className="w-full text-sm lg:text-base" cellspacing="0">
+					{/* <table className="w-full text-sm lg:text-base" cellspacing="0">
 						<thead>
 							<tr className="h-12 uppercase">
 								<th className="hidden md:table-cell"></th>
@@ -167,13 +96,15 @@ export const Cart = () => {
 								<th className="text-right">Total price</th>
 							</tr>
 						</thead>
-						<tbody>{renderCart()}</tbody>
-					</table>
+						<tbody> */}
+					{renderCart()}
+					{/* </tbody> */}
+					{/* </table> */}
 					<div className="pb-6 mt-6">
 						<div className="my-4 mt-6 -mx-2 lg:flex">
 							<div className="lg:px-2 lg:w-1/2">
 								<div className="p-4 bg-gray-100 rounded-full">
-									<h1 className="ml-2 font-bold uppercase">Coupon Code</h1>
+									<h1 className="ml-2 font-bold uppercase">Address</h1>
 								</div>
 								<div className="p-4">
 									<p className="mb-4 italic">
@@ -181,7 +112,7 @@ export const Cart = () => {
 									</p>
 									<div className="justify-center md:flex">
 										<form action="" method="POST">
-											<div className="flex items-center w-full h-13 pl-3 bg-white bg-gray-100 border rounded-full">
+											<div className="flex items-center w-full h-13 pl-3  bg-gray-100 border rounded-full">
 												<input
 													type="coupon"
 													name="code"
@@ -240,48 +171,16 @@ export const Cart = () => {
 											Subtotal
 										</div>
 										<div className="lg:px-4 lg:py-2 m-2 lg:text-lg font-bold text-center text-gray-900">
-											148,827.53€
+											Rp.{subTotal.toLocaleString()}
 										</div>
 									</div>
-									<div className="flex justify-between pt-4 border-b">
-										<div className="flex lg:px-4 lg:py-2 m-2 text-lg lg:text-xl font-bold text-gray-800">
-											<form action="" method="POST">
-												<button type="submit" className="mr-2 mt-1 lg:mt-2">
-													<svg
-														aria-hidden="true"
-														data-prefix="far"
-														data-icon="trash-alt"
-														className="w-4 text-red-600 hover:text-red-800"
-														xmlns="http://www.w3.org/2000/svg"
-														viewBox="0 0 448 512"
-													>
-														<path
-															fill="currentColor"
-															d="M268 416h24a12 12 0 0012-12V188a12 12 0 00-12-12h-24a12 12 0 00-12 12v216a12 12 0 0012 12zM432 80h-82.41l-34-56.7A48 48 0 00274.41 0H173.59a48 48 0 00-41.16 23.3L98.41 80H16A16 16 0 000 96v16a16 16 0 0016 16h16v336a48 48 0 0048 48h288a48 48 0 0048-48V128h16a16 16 0 0016-16V96a16 16 0 00-16-16zM171.84 50.91A6 6 0 01177 48h94a6 6 0 015.15 2.91L293.61 80H154.39zM368 464H80V128h288zm-212-48h24a12 12 0 0012-12V188a12 12 0 00-12-12h-24a12 12 0 00-12 12v216a12 12 0 0012 12z"
-														/>
-													</svg>
-												</button>
-											</form>
-											Coupon "90off"
-										</div>
-										<div className="lg:px-4 lg:py-2 m-2 lg:text-lg font-bold text-center text-green-700">
-											-133,944.77€
-										</div>
-									</div>
+
 									<div className="flex justify-between pt-4 border-b">
 										<div className="lg:px-4 lg:py-2 m-2 text-lg lg:text-xl font-bold text-center text-gray-800">
-											New Subtotal
+											Tax 10%
 										</div>
 										<div className="lg:px-4 lg:py-2 m-2 lg:text-lg font-bold text-center text-gray-900">
-											14,882.75€
-										</div>
-									</div>
-									<div className="flex justify-between pt-4 border-b">
-										<div className="lg:px-4 lg:py-2 m-2 text-lg lg:text-xl font-bold text-center text-gray-800">
-											Tax
-										</div>
-										<div className="lg:px-4 lg:py-2 m-2 lg:text-lg font-bold text-center text-gray-900">
-											2,976.55€
+											Rp. {tax.toLocaleString()}
 										</div>
 									</div>
 									<div className="flex justify-between pt-4 border-b">
@@ -289,7 +188,7 @@ export const Cart = () => {
 											Total
 										</div>
 										<div className="lg:px-4 lg:py-2 m-2 lg:text-lg font-bold text-center text-gray-900">
-											17,859.3€
+											Rp. {total.toLocaleString()}
 										</div>
 									</div>
 									<a href="#">

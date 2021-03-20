@@ -12,10 +12,14 @@ export const userAddProductToCartAction = (obj) => {
 				type: "API_CART_START",
 			});
 			const response = await axios.post(`${api}/add`, obj);
-			console.log(response);
 			dispatch({
 				type: "USER_FETCH_CART",
 				payload: response.data,
+			});
+			const filtered = await axios.get(`${api}/total?user_id=${obj.user_id}`);
+			dispatch({
+				type: "USER_FETCH_SUBTOTAL",
+				payload: filtered.data,
 			});
 			toast("Product Added!", {
 				position: "bottom-right",
@@ -79,6 +83,12 @@ export const userSubProductFromCartAction = (obj) => {
 				type: "USER_FETCH_CART",
 				payload: response.data,
 			});
+
+			const filtered = await axios.get(`${api}/total?user_id=${obj.user_id}`);
+			dispatch({
+				type: "USER_FETCH_SUBTOTAL",
+				payload: filtered.data,
+			});
 		} catch (err) {
 			dispatch({
 				type: "API_CART_FAILED",
@@ -98,11 +108,38 @@ export const userDeleteProductInCart = (user_id, product_id) => {
 			const response = await axios.delete(
 				`${api}/remove?user_id=${user_id}&product_id=${product_id}`
 			);
-
 			dispatch({
 				type: "USER_FETCH_CART",
 				payload: response.data,
 			});
+			const filtered = await axios.get(`${api}/total?user_id=${user_id}`);
+			dispatch({
+				type: "USER_FETCH_SUBTOTAL",
+				payload: filtered.data,
+			});
+		} catch (err) {
+			dispatch({
+				type: "API_CART_FAILED",
+				payload: err.response.data.message,
+			});
+		}
+	};
+};
+
+export const userGetSubTotal = (user_id) => {
+	return async (dispatch) => {
+		try {
+			dispatch({
+				type: "API_CART_START",
+			});
+
+			const response = await axios.get(`${api}/total?user_id=${user_id}`);
+
+			dispatch({
+				type: "USER_FETCH_SUBTOTAL",
+				payload: response.data,
+			});
+			console.log(response.data);
 		} catch (err) {
 			dispatch({
 				type: "API_CART_FAILED",

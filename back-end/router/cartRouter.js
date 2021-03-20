@@ -5,11 +5,13 @@ const {
 		userGetCart,
 		userSubtractProductFromCart,
 		userDeleteProductInCart,
+		userFetchTotalAndAvailableProducts,
 	},
 } = require("../controller");
 
+router.get("/total", userFetchTotalAndAvailableProducts);
+router.get("/:id", userGetCart);
 router.post("/add", userAddProductToCart);
 router.post("/sub", userSubtractProductFromCart);
 router.delete("/remove", userDeleteProductInCart);
-router.get("/:id", userGetCart);
 module.exports = router;

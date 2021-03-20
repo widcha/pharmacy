@@ -108,7 +108,7 @@ module.exports = {
 	userGetCart: async (req, res) => {
 		try {
 			const { id } = req.params;
-			console.log(id);
+			// console.log(id);
 			const response = await Cart.findAll({
 				where: {
 					user_id: {
@@ -182,7 +182,7 @@ module.exports = {
 	userDeleteProductInCart: async (req, res) => {
 		try {
 			const { user_id, product_id } = req.query;
-			console.log(user_id, product_id);
+			// console.log(user_id, product_id);
 			await Cart.destroy({
 				where: {
 					[Op.and]: {
@@ -215,6 +215,45 @@ module.exports = {
 				],
 			});
 			return res.send(response);
+		} catch (err) {
+			return res.status(500).send({ message: err.message });
+		}
+	},
+	userFetchTotalAndAvailableProducts: async (req, res) => {
+		try {
+			// console.log("halohalo");
+			const { user_id } = req.query;
+			const response = await Cart.findAll({
+				where: {
+					user_id: {
+						[Op.eq]: user_id,
+					},
+				},
+				attributes: { exclude: ["createdAt", "updatedAt"] },
+				include: [
+					{
+						model: Product,
+						attributes: {
+							exclude: [
+								"createdAt",
+								"updatedAt",
+								"product_desc",
+								"product_id",
+								"product_price",
+								"product_category_id",
+							],
+						},
+					},
+				],
+			});
+			const filterData = response.filter((val) => {
+				return val.product_qty <= val.Product.product_stock;
+			});
+			let total = 0;
+			await filterData.forEach((val) => {
+				total += val.product_qty * val.product_price;
+			});
+			return res.send({ data: filterData, subTotal: total });
 		} catch (err) {
 			return res.status(500).send({ message: err.message });
 		}

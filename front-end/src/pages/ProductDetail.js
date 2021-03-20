@@ -3,7 +3,6 @@ import { ProdDetail } from "../components/ProdDetail";
 import { useDispatch, useSelector } from "react-redux";
 import { fetchProductByIdAction } from "../redux/actions";
 import { CircularProgress } from "@material-ui/core";
-import { ToastContainer, Zoom } from "react-toastify";
 
 export const ProductDetail = (props) => {
 	const dispatch = useDispatch();
@@ -21,19 +20,6 @@ export const ProductDetail = (props) => {
 	}
 	return (
 		<div className="flex flex-auto flex-col items-center">
-			<ToastContainer
-				position="bottom-right"
-				autoClose={2000}
-				hideProgressBar
-				newestOnTop={false}
-				closeOnClick
-				rtl={false}
-				pauseOnFocusLoss
-				draggable
-				pauseOnHover
-				transition={Zoom}
-				limit={3}
-			/>
 			<div>
 				<ProdDetail
 					img={product.product_image_path}
