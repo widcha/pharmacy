@@ -179,4 +179,44 @@ module.exports = {
 			return res.status(500).send({ message: err.message });
 		}
 	},
+	userDeleteProductInCart: async (req, res) => {
+		try {
+			const { user_id, product_id } = req.query;
+			console.log(user_id, product_id);
+			await Cart.destroy({
+				where: {
+					[Op.and]: {
+						user_id: user_id,
+						product_id: product_id,
+					},
+				},
+			});
+			const response = await Cart.findAll({
+				where: {
+					user_id: {
+						[Op.eq]: user_id,
+					},
+				},
+				attributes: { exclude: ["createdAt", "updatedAt"] },
+				include: [
+					{
+						model: Product,
+						attributes: {
+							exclude: [
+								"createdAt",
+								"updatedAt",
+								"product_desc",
+								"product_id",
+								"product_price",
+								"product_category_id",
+							],
+						},
+					},
+				],
+			});
+			return res.send(response);
+		} catch (err) {
+			return res.status(500).send({ message: err.message });
+		}
+	},
 };

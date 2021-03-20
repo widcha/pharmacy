@@ -1,9 +1,11 @@
 import { queryByTestId } from "@testing-library/dom";
 import React, { useEffect, useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
+import Swal from "sweetalert2";
 import {
 	fetchUserCartByIdAction,
 	userAddProductToCartAction,
+	userDeleteProductInCart,
 	userSubProductFromCartAction,
 } from "../redux/actions";
 export const Cart = () => {
@@ -29,6 +31,23 @@ export const Cart = () => {
 			userSubProductFromCartAction({ user_id, product_id: idx, currQty })
 		);
 	};
+
+	const handleDelete = (user_id, product_id) => {
+		Swal.fire({
+			title: "Are you sure?",
+			text: "You won't be able to revert this!",
+			icon: "warning",
+			showCancelButton: true,
+			confirmButtonColor: "#3085d6",
+			cancelButtonColor: "#d33",
+			confirmButtonText: "Yes, delete it!",
+		}).then((result) => {
+			if (result.isConfirmed) {
+				dispatch(userDeleteProductInCart(user_id, product_id));
+				Swal.fire("Deleted!", "Your item has been deleted.", "success");
+			}
+		});
+	};
 	const renderCart = () => {
 		return cart_list.map((val, index) => {
 			let total = val.product_price * val.product_qty;
@@ -46,11 +65,12 @@ export const Cart = () => {
 					<td>
 						<a href="#">
 							<p className="mb-2 md:ml-4">{val.Product.product_name}</p>
-							<form action="" method="POST">
-								<button type="submit" className="text-gray-700 md:ml-4">
-									<small>(Remove item)</small>
-								</button>
-							</form>
+							<button
+								className="text-red-700 md:ml-4 hover:text-red-900 hover:bg-gray-100 rounded-lg px-1 focus:outline-none"
+								onClick={() => handleDelete(val.user_id, val.product_id)}
+							>
+								<small>(Remove item)</small>
+							</button>
 						</a>
 					</td>
 					<td className="justify-center md:justify-end md:flex mt-6">

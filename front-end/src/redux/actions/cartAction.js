@@ -87,3 +87,27 @@ export const userSubProductFromCartAction = (obj) => {
 		}
 	};
 };
+export const userDeleteProductInCart = (user_id, product_id) => {
+	return async (dispatch) => {
+		try {
+			dispatch({
+				type: "API_CART_START",
+			});
+			console.log(user_id, product_id);
+
+			const response = await axios.delete(
+				`${api}/remove?user_id=${user_id}&product_id=${product_id}`
+			);
+
+			dispatch({
+				type: "USER_FETCH_CART",
+				payload: response.data,
+			});
+		} catch (err) {
+			dispatch({
+				type: "API_CART_FAILED",
+				payload: err.response.data.message,
+			});
+		}
+	};
+};
