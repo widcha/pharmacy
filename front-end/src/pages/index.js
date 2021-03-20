@@ -12,24 +12,26 @@ import RecipesAdmin from "./RecipesAdmin";
 import Products from "./Products";
 import UserAddress from "./UserAddress";
 import { ProductDetail } from "./ProductDetail";
+import { Cart } from "./Cart";
 import Landing from "./Landing";
 import CustomOrder from "./CustomOrder";
 
 export {
-  HomeAdmin,
-  CategoriesAdmin,
-  PaymentAdmin,
-  ProductAdmin,
-  ProductFlowAdmin,
-  RecipesAdmin,
-  SignUp,
-  Verification,
-  Login,
-  ForgotPassword,
-  ChangePassword,
-  Products,
-  UserAddress,
-  ProductDetail,
-  Landing,
-  CustomOrder,
+	HomeAdmin,
+	CategoriesAdmin,
+	PaymentAdmin,
+	ProductAdmin,
+	ProductFlowAdmin,
+	RecipesAdmin,
+	SignUp,
+	Verification,
+	Login,
+	ForgotPassword,
+	ChangePassword,
+	Products,
+	UserAddress,
+	ProductDetail,
+	Landing,
+	Cart,
+	CustomOrder,
 };
