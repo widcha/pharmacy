@@ -4,7 +4,7 @@ import { toast, Zoom } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { api_url } from "../../helpers";
 const api = `${api_url}/carts`;
-export const userAddProductToCartAction = (obj) => {
+export const userAddProductToCartAction = (obj, str) => {
 	return async (dispatch) => {
 		try {
 			console.log(obj);
@@ -21,16 +21,18 @@ export const userAddProductToCartAction = (obj) => {
 				type: "USER_FETCH_SUBTOTAL",
 				payload: filtered.data,
 			});
-			toast("Product Added!", {
-				position: "bottom-right",
-				autoClose: 2000,
-				hideProgressBar: true,
-				closeOnClick: true,
-				pauseOnHover: true,
-				draggable: true,
-				progress: undefined,
-				transition: Zoom,
-			});
+			if (!str) {
+				toast("Product Added!", {
+					position: "bottom-right",
+					autoClose: 2000,
+					hideProgressBar: true,
+					closeOnClick: true,
+					pauseOnHover: true,
+					draggable: true,
+					progress: undefined,
+					transition: Zoom,
+				});
+			}
 		} catch (err) {
 			// console.log(err);
 			dispatch({

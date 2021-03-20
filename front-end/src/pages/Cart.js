@@ -22,12 +22,15 @@ export const Cart = () => {
 	}, [dispatch, user_id]);
 	const handleIncrement = (idx, qty, price) => {
 		dispatch(
-			userAddProductToCartAction({
-				user_id,
-				product_id: idx,
-				product_qty: 1,
-				product_price: price,
-			})
+			userAddProductToCartAction(
+				{
+					user_id,
+					product_id: idx,
+					product_qty: 1,
+					product_price: price,
+				},
+				"cart"
+			)
 		);
 	};
 	const handleDecrement = (idx, currQty) => {
