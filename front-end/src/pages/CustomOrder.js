@@ -1,61 +1,95 @@
 import axios from "axios";
 import React, { useEffect, useState } from "react";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import Swal from "sweetalert2";
 import CardCustomOrder from "../components/CardCustomOrder";
 import { api_url } from "../helpers";
+import {
+  addCustomProductAction,
+  customQtyAction,
+} from "../redux/actions/customOrderAction";
 
 const CustomOrder = () => {
-  const { product_list } = useSelector((state) => state.product);
-  const [data, setData] = useState([]);
+  const { capsule } = useSelector((state) => state.customOrder);
+  const [filterData, setFilterData] = useState([]);
+  const [suggestion, setSuggestion] = useState(false);
   const [name, setName] = useState("");
-  const [container, setContainer] = useState([]);
+  const dispatch = useDispatch();
 
   useEffect(() => {
-    fetchData();
-  }, []);
-
-  const filterData = data.filter((val, index) => {
-    return (
-      val.product_name.toLocaleLowerCase().includes(name.toLocaleLowerCase()) &&
-      index < 7
-    );
-  });
-
-  const fetchData = async () => {
-    const response = await axios.get(`${api_url}/product`);
-    setData(response.data);
-  };
+    const timer = setTimeout(async () => {
+      const response = await axios.get(
+        `${api_url}/product/search?search=${name}`
+      );
+      const filterData = response.data.filter((val, index) => {
+        return (
+          val.product_name
+            .toLocaleLowerCase()
+            .includes(name.toLocaleLowerCase()) && index < 7
+        );
+      });
+      setFilterData(filterData);
+      setSuggestion(true);
+    }, 500);
+    return () => clearTimeout(timer);
+  }, [name]);
 
   const addBtn = (value) => {
-    const found = container.findIndex((val) => {
+    let newArr = [...capsule];
+    let totalQty = 0;
+    newArr.forEach((val) => {
+      return (totalQty += val.qty);
+    });
+    const found = capsule.findIndex((val) => {
       return value.product_id === val.product_id;
     });
-    console.log(found);
     if (found >= 0) {
       setName("");
       Swal.fire({
         icon: "error",
         title: `${value.product_name} already added`,
       });
+    } else if (totalQty < 5) {
+      dispatch(addCustomProductAction({ ...value, qty: 1 }));
     } else {
-      setContainer([...container, { ...value, qty: 1 }]);
+      Swal.fire({
+        icon: "error",
+        title: `Cannot add more than 5gr per capsule`,
+      });
     }
     setName("");
+    setSuggestion(false);
   };
 
   const addQty = (index) => {
-    let newState = [...container];
-    newState[index].qty = newState[index].qty + 1;
-    setContainer(newState);
+    let newArr = [...capsule];
+    let totalQty = 0;
+    newArr.forEach((val) => {
+      return (totalQty += val.qty);
+    });
+    if (totalQty < 5) {
+      newArr[index].qty = newArr[index].qty + 1;
+      dispatch(customQtyAction(newArr));
+    } else {
+      Swal.fire({
+        icon: "error",
+        title: `One capsule can't have more than 5 gram medicine`,
+      });
+    }
   };
 
   const decQty = (index) => {
-    let newState = [...container];
-    if (newState[index].qty > 1) {
-      newState[index].qty = newState[index].qty - 1;
-      setContainer(newState);
+    let newArr = [...capsule];
+    if (newArr[index].qty > 1) {
+      newArr[index].qty = newArr[index].qty - 1;
+      dispatch(customQtyAction(newArr));
     }
+  };
+
+  const deleteBtn = (i) => {
+    let newArr = [...capsule];
+    newArr = newArr.filter((_, index) => index !== i);
+    dispatch(customQtyAction(newArr));
   };
 
   const searchComponent = () => {
@@ -68,7 +102,7 @@ const CustomOrder = () => {
           placeholder="Search and add your medicine here"
           onChange={(e) => setName(e.target.value)}
         />
-        {name ? (
+        {name && suggestion ? (
           <div
             class="z-10 absolute left-10 mt-12 w-96 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 focus:outline-none"
             role="menu"
@@ -94,7 +128,7 @@ const CustomOrder = () => {
   };
 
   const cardCustom = () => {
-    return container.map((val, index) => {
+    return capsule.map((val, index) => {
       return (
         <CardCustomOrder
           name={val.product_name}
@@ -103,6 +137,7 @@ const CustomOrder = () => {
           image={val.product_image_path}
           addBtn={() => addQty(index)}
           decBtn={() => decQty(index)}
+          deleteBtn={() => deleteBtn(index)}
         />
       );
     });
