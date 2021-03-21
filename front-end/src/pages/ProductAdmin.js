@@ -242,13 +242,21 @@ const ProductAdmin = () => {
 
               <Button
                 onClick={searchBtn}
-                style={{backgroundColor: "#2460A7FF", color: "white"}}
+                style={{
+                  backgroundColor: "#2460A7FF",
+                  color: "white",
+                  outline: 0,
+                }}
               >
                 Search
               </Button>
               <Button
                 onClick={refreshBtn}
-                style={{backgroundColor: "#759cd8", marginTop: "10px"}}
+                style={{
+                  backgroundColor: "#759cd8",
+                  marginTop: "10px",
+                  outline: 0,
+                }}
               >
                 All Products
               </Button>
@@ -257,6 +265,7 @@ const ProductAdmin = () => {
                   backgroundColor: "#0098b3",
                   color: "white",
                   marginTop: "20px",
+                  outline: 0,
                 }}
                 onClick={toggle}
               >

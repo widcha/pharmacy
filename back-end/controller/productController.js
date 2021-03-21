@@ -24,7 +24,8 @@ module.exports = {
         maxPrice === undefined ||
         maxPrice === 0 ||
         maxPrice === null ||
-        maxPrice === ""
+        maxPrice === "" ||
+        maxPrice === "false"
       ) {
         //KALAU MAXPRICE TIDAK ADA
         if (minPrice || search) {

@@ -150,7 +150,7 @@ const RecipesAdmin = () => {
           </div>
           <Button
             onClick={searchBtn}
-            style={{backgroundColor: "#2460A7FF", color: "white"}}
+            style={{backgroundColor: "#2460A7FF", color: "white", outline: 0}}
           >
             Search
           </Button>
