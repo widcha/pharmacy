@@ -62,6 +62,19 @@ const ProductFlowAdmin = () => {
     return index >= from && index < to;
   });
 
+  const [sort, setSort] = useState("");
+  const [open, setOpen] = useState(false);
+
+  const handleSort = (e) => {
+    setSort(e.target.value);
+  };
+  const handleOpen = () => {
+    setOpen(true);
+  };
+  const handleClose = () => {
+    setOpen(false);
+  };
+
   const [openn, setOpenn] = useState(false);
 
   const [searchWord, setSearch] = useState("");
@@ -77,6 +90,9 @@ const ProductFlowAdmin = () => {
   };
   const searchBtn = () => {
     dispatch(fetchFilterProductAction({searchWord}));
+  };
+  const searchSecBtn = () => {
+    dispatch(getStockFlowAction({sort}));
   };
 
   useEffect(() => {
@@ -114,6 +130,9 @@ const ProductFlowAdmin = () => {
                   {row.Product_Category.product_category}
                 </TableCell>
                 <TableCell align="center">{row.product_stock}</TableCell>
+                <TableCell align="center">
+                  <Button>Flow Detail</Button>
+                </TableCell>
               </TableRow>
             );
           });
@@ -136,6 +155,19 @@ const ProductFlowAdmin = () => {
                 {row.Product_Category.product_category}
               </TableCell>
               <TableCell align="center">{row.product_stock}</TableCell>
+              <TableCell align="center">
+                <Link to={`/product-flow-detail?id=${row.product_id}`}>
+                  <Button
+                    style={{
+                      backgroundColor: "#2832C2",
+                      outline: 0,
+                      color: "whitesmoke",
+                    }}
+                  >
+                    Detail
+                  </Button>
+                </Link>
+              </TableCell>
             </TableRow>
           );
         });
@@ -183,6 +215,7 @@ const ProductFlowAdmin = () => {
                     <TableCell align="center">Images</TableCell>
                     <TableCell align="center">Product Category</TableCell>
                     <TableCell align="center">Stock</TableCell>
+                    <TableCell align="center">Detail</TableCell>
                   </TableRow>
                 </TableHead>
                 <TableBody>{renderProduct()}</TableBody>
@@ -280,14 +313,72 @@ const ProductFlowAdmin = () => {
     setPage(0);
     setSelectProduct(false);
   };
+
   const header = () => {
     return (
-      <>
-        <Button onClick={backToAll}>All</Button>
-        <Button onClick={() => setSelectProduct(true)}>
-          Select By Product
-        </Button>
-      </>
+      <div
+        style={{
+          marginTop: "25px",
+          display: "flex",
+          flexDirection: "row",
+          justifyContent: "space-between",
+        }}
+      >
+        <div>
+          <Button
+            onClick={backToAll}
+            style={{
+              backgroundColor: "#2460A7FF",
+              color: "whitesmoke",
+              outline: 0,
+            }}
+          >
+            All
+          </Button>
+          <Button
+            onClick={() => setSelectProduct(true)}
+            style={{
+              marginLeft: "15px",
+              backgroundColor: "#0492C2",
+              color: "white",
+              outline: 0,
+            }}
+          >
+            Select By Product
+          </Button>
+        </div>
+        {selectProduct ? null : (
+          <div>
+            <FormControl style={{width: "175px"}}>
+              <InputLabel id="demo-controlled-open-select-label">
+                Sort By Date
+              </InputLabel>
+              <Select
+                labelId="demo-controlled-open-select-label"
+                id="category"
+                open={open}
+                onClose={handleClose}
+                onOpen={handleOpen}
+                onChange={handleSort}
+              >
+                <MenuItem value="">All</MenuItem>
+                <MenuItem value="OLD">Date (old to new)</MenuItem>
+                <MenuItem value="NEW">Date (new to old)</MenuItem>
+              </Select>
+            </FormControl>
+            <Button
+              onClick={searchSecBtn}
+              style={{
+                backgroundColor: "#2460A7FF",
+                color: "white",
+                marginTop: "10px",
+              }}
+            >
+              Search
+            </Button>
+          </div>
+        )}
+      </div>
     );
   };
   return (

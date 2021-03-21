@@ -31,7 +31,7 @@ module.exports = {
           response = await Product.findAll({
             where: {
               [Op.and]: {
-                product_price: {[Op.gte]: minPrice},
+                product_price: {[Op.gte]: minPrice ? minPrice : 0},
                 product_name: {[Op.substring]: `${search}`},
               },
             },

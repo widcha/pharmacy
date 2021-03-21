@@ -148,7 +148,7 @@ module.exports = {
   },
   getStockFlow: async (req, res) => {
     try {
-      const {sort, search} = req.query;
+      const {sort} = req.query;
       let response;
       let orderSort;
       if (sort === "OLD") {
@@ -158,6 +158,39 @@ module.exports = {
       }
 
       response = await Material_Flow.findAll({
+        order: orderSort,
+        attributes: {
+          exclude: ["updatedAt"],
+        },
+        include: [
+          {
+            model: Product,
+            attributes: {
+              exclude: ["createdAt", "updatedAt"],
+            },
+          },
+        ],
+      });
+      return res.status(200).send(response);
+    } catch (err) {
+      return res.status(500).send({message: "Failed to get stock flow data"});
+    }
+  },
+  getStockFlowById: async (req, res) => {
+    try {
+      const {sort} = req.query;
+      const {id} = req.params;
+      let orderSort;
+      if (sort === "OLD") {
+        orderSort = [["createdAt", "ASC"]];
+      } else if (sort === "NEW" || sort === "") {
+        orderSort = [["createdAt", "DESC"]];
+      }
+
+      const response = await Material_Flow.findAll({
+        where: {
+          product_id: id,
+        },
         order: orderSort,
         attributes: {
           exclude: ["updatedAt"],

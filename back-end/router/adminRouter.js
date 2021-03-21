@@ -5,12 +5,14 @@ const {
     getPaymentProof,
     changeTransactionStatus,
     getStockFlow,
+    getStockFlowById,
   },
 } = require("../controller");
 const express = require("express");
 const router = express.Router();
 
 router.get("/get/stock-flow", getStockFlow);
+router.get("/get/flow/:id", getStockFlowById);
 
 router.get("/get/recipe", getRecipe);
 router.patch("/change/recipe/:id", editRecipeStatus);

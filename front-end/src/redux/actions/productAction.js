@@ -53,13 +53,14 @@ export const fetchFilterProductAction = ({
     try {
       dispatch({type: "FETCH_PRODUCT_START"});
       let response;
-      if (searchWord || minPrice || maxPrice || sortChosen) {
+      if ((searchWord && minPrice) || maxPrice || sortChosen) {
         const newLink = `${linkk}?search=${searchWord}&minPrice=${minPrice}&maxPrice=${
           maxPrice === 0 ? maxPrice === null : maxPrice
         }&sortChosen=${sortChosen}`;
         response = await axios.get(`${newLink}`);
+      } else if (searchWord) {
+        response = await axios.get(`${linkk}?search=${searchWord}`);
       }
-      console.log(response);
       dispatch({type: "FETCH_PRODUCT_SUCCESS", payload: response.data});
     } catch (err) {
       dispatch({type: "FETCH_PRODUCT_FAILED", payload: err});
