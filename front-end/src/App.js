@@ -22,8 +22,11 @@ import {
   UserAddress,
   ProductDetail,
   Landing,
+  CustomOrder,
+  Cart,
   ProductFlowDetail,
 } from "./pages";
+import {ToastContainer, Zoom} from "react-toastify";
 
 function App() {
   const dispatch = useDispatch();
@@ -58,6 +61,19 @@ function App() {
   } else {
     return (
       <div>
+        <ToastContainer
+          position="bottom-right"
+          autoClose={2000}
+          hideProgressBar
+          newestOnTop={false}
+          closeOnClick
+          rtl={false}
+          pauseOnFocusLoss
+          draggable
+          pauseOnHover
+          transition={Zoom}
+          limit={3}
+        />
         <Nav />
         <Route exact path="/" component={Landing} />
         <Route exact path="/signup" component={SignUp} />
@@ -67,7 +83,9 @@ function App() {
         <Route exact path="/change-password" component={ChangePassword} />
         <Route exact path="/product" component={Products} />
         <Route exact path="/product/detail" component={ProductDetail} />
-        <Route exact path="/profile-settings" component={UserAddress} />
+        <Route exact path="/user/address" component={UserAddress} />
+        <Route exact path="/custom-order" component={CustomOrder} />
+        <Route exact path="/user/cart" component={Cart} />
       </div>
     );
   }

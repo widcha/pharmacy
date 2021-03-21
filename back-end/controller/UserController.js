@@ -66,6 +66,28 @@ const userLogin = async (req, res) => {
         user_email: email,
         user_password: encryptedPassword,
       },
+
+      include: [
+        {
+          model: models.Cart,
+          attributes: {exclude: ["createdAt", "updatedAt"]},
+          include: [
+            {
+              model: models.Product,
+              attributes: {
+                exclude: [
+                  "createdAt",
+                  "updatedAt",
+                  "product_desc",
+                  "product_id",
+                  "product_price",
+                  "product_category_id",
+                ],
+              },
+            },
+          ],
+        },
+      ],
       attributes: {exclude: ["createdAt", "updatedAt", "user_password"]},
     });
 

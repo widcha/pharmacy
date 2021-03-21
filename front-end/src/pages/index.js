@@ -12,7 +12,9 @@ import RecipesAdmin from "./RecipesAdmin";
 import Products from "./Products";
 import UserAddress from "./UserAddress";
 import {ProductDetail} from "./ProductDetail";
+import {Cart} from "./Cart";
 import Landing from "./Landing";
+import CustomOrder from "./CustomOrder";
 import ProductFlowDetail from "./ProductFlowDetail";
 
 export {
@@ -32,4 +34,6 @@ export {
   ProductDetail,
   Landing,
   ProductFlowDetail,
+  Cart,
+  CustomOrder,
 };

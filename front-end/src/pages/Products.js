@@ -18,9 +18,6 @@ import {
 	Select,
 } from "@material-ui/core";
 import PriceSlider from "../components/PriceSlider";
-import { Redirect } from "react-router";
-import { Link } from "react-router-dom";
-import { ToastContainer, Zoom } from "react-toastify";
 import ExtendedNavbar from "../components/ExtendedNavbar";
 
 const Products = () => {
@@ -117,19 +114,6 @@ const Products = () => {
 		<div className="flex flex-col">
 			<ExtendedNavbar />
 			<div className="flex flex-row items-start justify-items-auto">
-				<ToastContainer
-					position="bottom-right"
-					autoClose={2000}
-					hideProgressBar
-					newestOnTop={false}
-					closeOnClick
-					rtl={false}
-					pauseOnFocusLoss
-					draggable
-					pauseOnHover
-					transition={Zoom}
-					limit={3}
-				/>
 				<div className="mt-10 ml-5 w-auto space-y-3 mx-auto flex flex-col">
 					<div className="w-max space-y-3 flex flex-col mb-5">
 						<label className="text-lg font-bold">Categories</label>

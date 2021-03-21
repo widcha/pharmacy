@@ -10,12 +10,14 @@ export const loginAction = (data) => {
     dispatch({type: "API_USER_START"});
     try {
       const response = await axios.post(`${url}/login`, data);
+      console.log(response.data.Carts);
       const {
         user_id,
         user_email,
         user_username,
         user_role_id,
         user_isverified,
+        Carts,
       } = response.data;
       dispatch({
         type: "LOGIN",
@@ -28,6 +30,7 @@ export const loginAction = (data) => {
         },
       });
       dispatch({type: "API_USER_SUCCESS"});
+      dispatch({type: "USER_FETCH_CART", payload: Carts});
     } catch (err) {
       console.log(err);
       dispatch({type: "API_USER_FAILED", payload: err.response.data.message});
@@ -141,7 +144,10 @@ export const logoutAction = () => {
   return async (dispatch) => {
     try {
       dispatch({type: "API_USER_START"});
-      await dispatch({type: "LOGOUT"});
+      dispatch({type: "LOGOUT"});
+      dispatch({
+        type: "CLEAR_CART",
+      });
       dispatch({type: "API_USER_SUCCESS"});
     } catch (err) {
       console.log(err);
@@ -153,6 +159,7 @@ export const logoutAction = () => {
   };
 };
 
+// FETCH ADDRESS
 export const fetchAddressAction = ({a, user_id}) => {
   return async (dispatch) => {
     try {
@@ -173,6 +180,7 @@ export const fetchAddressAction = ({a, user_id}) => {
   };
 };
 
+//ADD NEW ADDRESS
 export const addNewAddressAction = ({user_address, user_id}) => {
   return async (dispatch) => {
     try {
@@ -188,6 +196,7 @@ export const addNewAddressAction = ({user_address, user_id}) => {
   };
 };
 
+//CHANGE ADDRESS
 export const editAddressAction = ({user_address, user_address_id, user_id}) => {
   return async (dispatch) => {
     try {
@@ -202,6 +211,7 @@ export const editAddressAction = ({user_address, user_address_id, user_id}) => {
   };
 };
 
+//DELETE ADDRESS
 export const deleteAddressAction = ({id, user_id}) => {
   return async (dispatch) => {
     try {
@@ -213,6 +223,7 @@ export const deleteAddressAction = ({id, user_id}) => {
     }
   };
 };
+
 export const uploadRecipesAction = ({user_id, pict}) => {
   return async (dispatch) => {
     try {
