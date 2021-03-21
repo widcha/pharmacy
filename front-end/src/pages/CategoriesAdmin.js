@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, {useEffect, useState} from "react";
 import {
   Button,
   makeStyles,
@@ -22,7 +22,7 @@ import {
   fetchCategoryAction,
   fetchProductAction,
 } from "../redux/actions";
-import { useDispatch, useSelector } from "react-redux";
+import {useDispatch, useSelector} from "react-redux";
 import ReactPaginate from "react-paginate";
 import Swal from "sweetalert2";
 
@@ -38,7 +38,7 @@ const CategoriesAdmin = () => {
   const [page, setPage] = useState(0);
   const from = page * perPage;
   const to = (page + 1) * perPage;
-  const { product_list, loading } = useSelector((state) => state.product);
+  const {product_list, loading} = useSelector((state) => state.product);
   const [pageCount, setPageCount] = useState(category.length / perPage);
 
   const data = category.filter((val, index) => {
@@ -60,7 +60,6 @@ const CategoriesAdmin = () => {
     },
   });
   const classes = useStyles();
-  const [searchWord, setSearch] = useState("");
 
   const toggle = (id) => {
     let catCheck = product_list.find((val) => val.product_category_id === id);
@@ -95,16 +94,16 @@ const CategoriesAdmin = () => {
   };
   const saveButton = (id) => {
     if (product_category) {
-      dispatch(editCategoryAction({ id, product_category }));
+      dispatch(editCategoryAction({id, product_category}));
       setClick(false);
     }
   };
-
   const cancelButton = () => {
     setClick(false);
     setAddClick(false);
   };
 
+  const [searchWord, setSearch] = useState("");
   const searchBtn = () => {
     const a = `?search=${searchWord}`;
     dispatch(fetchCategoryAction(a));
@@ -137,16 +136,18 @@ const CategoriesAdmin = () => {
 
   const renderRow = () => {
     let newCat;
-    if(data){
+    if (data) {
       if (filterCategory) {
-        newCat = data.filter((val) => val.product_category_id === filterCategory);
+        newCat = data.filter(
+          (val) => val.product_category_id === filterCategory
+        );
       } else {
         newCat = data;
       }
     }
     return newCat.map((row, index) => (
       <TableRow key={row.product_category_id}>
-        <TableCell>{index + 1}</TableCell>
+        <TableCell>{page === 0 ? index + 1 : index + 1 + page * 10}</TableCell>
         {clicked && row.product_category_id === idCat && addClick === false ? (
           <>
             <TableCell>
@@ -162,7 +163,7 @@ const CategoriesAdmin = () => {
             <TableCell align="center">
               <Button
                 onClick={() => saveButton(row.product_category_id)}
-                style={{ backgroundColor: "#29AFBB", color: "black" }}
+                style={{backgroundColor: "#4886af", color: "white"}}
               >
                 Save
               </Button>
@@ -184,7 +185,7 @@ const CategoriesAdmin = () => {
             <TableCell align="center">
               <Button
                 onClick={() => editButton(row.product_category_id)}
-                style={{ backgroundColor: "#29AFBB", color: "black" }}
+                style={{backgroundColor: "#4a91bb", color: "white"}}
                 disabled={addClick}
               >
                 Edit
@@ -222,7 +223,7 @@ const CategoriesAdmin = () => {
         <TableCell align="center">
           <Button
             onClick={() => saveAddBtn(product_category)}
-            style={{ backgroundColor: "#29AFBB", color: "black" }}
+            style={{backgroundColor: "#4886af", color: "white"}}
           >
             Save
           </Button>
@@ -252,11 +253,14 @@ const CategoriesAdmin = () => {
   const renderAll = () => {
     return (
       <div>
-        <div style={{ display: "flex", flexDirection: "row" }}>
-          <div style={{ display: "flex", marginTop: '13px' }}>
-            <TableContainer component={Paper} style={{ backgroundColor: '#D5F5EE' }}>
+        <div style={{display: "flex", flexDirection: "row"}}>
+          <div style={{display: "flex", marginTop: "23px"}}>
+            <TableContainer
+              component={Paper}
+              style={{backgroundColor: "#D5F5EE"}}
+            >
               <Table className={classes.table} aria-label="simple table">
-                <TableHead style={{ backgroundColor: '#65ccb8' }}>
+                <TableHead style={{backgroundColor: "#65ccb8"}}>
                   <TableRow>
                     <TableCell>#</TableCell>
                     <TableCell>Category</TableCell>
@@ -281,8 +285,7 @@ const CategoriesAdmin = () => {
               left: "78%",
             }}
           >
-            
-            <FormControl style={{ width: "275px" }}>
+            <FormControl style={{width: "275px"}}>
               <InputLabel id="demo-controlled-open-select-label">
                 Filter By Category
               </InputLabel>
@@ -308,15 +311,22 @@ const CategoriesAdmin = () => {
                 label="Search"
                 id="search"
                 onChange={(e) => setSearch(e.target.value)}
-                style={{ width: "275px", paddingBottom: "10px" }}
+                style={{width: "275px", paddingBottom: "10px"}}
               />
             </div>
-            <Button onClick={searchBtn} style={{ backgroundColor: "#305c4c", color: 'white' }}>
+            <Button
+              onClick={searchBtn}
+              style={{backgroundColor: "#2460A7FF", color: "white"}}
+            >
               Search
             </Button>
 
             <Button
-              style={{ backgroundColor: "teal", color: "white", marginTop: '20px' }}
+              style={{
+                backgroundColor: "#0098b3",
+                color: "white",
+                marginTop: "20px",
+              }}
               onClick={() => setAddClick(true)}
             >
               Add New Category

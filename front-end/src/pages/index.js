@@ -11,23 +11,25 @@ import ProductFlowAdmin from "./ProductFlowAdmin";
 import RecipesAdmin from "./RecipesAdmin";
 import Products from "./Products";
 import UserAddress from "./UserAddress";
-import { ProductDetail } from "./ProductDetail";
+import {ProductDetail} from "./ProductDetail";
 import Landing from "./Landing";
+import ProductFlowDetail from "./ProductFlowDetail";
 
 export {
-	HomeAdmin,
-	CategoriesAdmin,
-	PaymentAdmin,
-	ProductAdmin,
-	ProductFlowAdmin,
-	RecipesAdmin,
-	SignUp,
-	Verification,
-	Login,
-	ForgotPassword,
-	ChangePassword,
-	Products,
-	UserAddress,
-	ProductDetail,
-	Landing,
+  HomeAdmin,
+  CategoriesAdmin,
+  PaymentAdmin,
+  ProductAdmin,
+  ProductFlowAdmin,
+  RecipesAdmin,
+  SignUp,
+  Verification,
+  Login,
+  ForgotPassword,
+  ChangePassword,
+  Products,
+  UserAddress,
+  ProductDetail,
+  Landing,
+  ProductFlowDetail,
 };

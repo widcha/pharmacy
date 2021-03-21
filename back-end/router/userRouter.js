@@ -29,10 +29,10 @@ router.post("/change-password", checkVerificationToken, userChangePassword);
 router.post("/verified-check", userCheck);
 router.post("/security-question", userSecurityQuestion);
 
-router.get("/address/:id", getUserAddress);
-router.post("/address/:id", addNewUserAddress);
-router.patch("/address/:id", editUserAddress);
-router.delete("/address/:id", deleteUserAddress);
+router.get("/address/get/:id", getUserAddress);
+router.post("/address/add/:id", addNewUserAddress);
+router.patch("/address/edit/:id", editUserAddress);
+router.delete("/address/delete/:id", deleteUserAddress);
 
 router.post("/upload", userAddRecipes);
 

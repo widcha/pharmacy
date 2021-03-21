@@ -18,5 +18,8 @@
     "nodemailer": "^4.7.0",
     "pify": "^5.0.0",
     "sequelize": "^6.5.1"
+  },
+  "devDependencies": {
+    "sequelize-cli": "^6.2.0"
   }
 }

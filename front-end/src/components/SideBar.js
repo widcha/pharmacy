@@ -1,28 +1,24 @@
-import React, { useState } from "react";
-import { Link } from "react-router-dom";
+import React, {useState} from "react";
+import {Link} from "react-router-dom";
 import {
-  Button,
   Collapse,
   List,
   ListItem,
   ListItemText,
   makeStyles,
 } from "@material-ui/core";
-import { ExpandLess, ExpandMore } from "@material-ui/icons";
-import { logoutAction } from "../redux/actions";
-import { useDispatch } from "react-redux";
+import {ExpandLess, ExpandMore} from "@material-ui/icons";
 
 const SideBar = () => {
   const classes = useStyles();
   const [open, setOpen] = useState(false);
 
-  const dispatch = useDispatch();
   const handleClick = () => {
     setOpen(!open);
   };
   return (
     <div className="sidebar">
-      <List disablePadding dense style={{ marginTop: '5px'}}>
+      <List disablePadding dense style={{marginTop: "10px"}}>
         <Link to="/">
           <ListItem>
             <ListItemText primary="Dashboard" />
@@ -55,7 +51,7 @@ const SideBar = () => {
         </Link>
         <Link to="/recipe">
           <ListItem>
-            <ListItemText primary="Recipe Images" />
+            <ListItemText primary="Prescription Images" />
           </ListItem>
         </Link>
         <Link to="/payment-proof">
@@ -73,9 +69,6 @@ const SideBar = () => {
             <ListItemText primary="Complain" />
           </ListItem>
         </Link>
-        <Button onClick={() => dispatch(logoutAction())}>
-          Sign Out
-        </Button>
       </List>
     </div>
   );

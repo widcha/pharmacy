@@ -1,12 +1,7 @@
 import React from "react";
-import { useDispatch } from "react-redux";
 
 const HomeAdmin = () => {
-  const dispatch = useDispatch();
-  return (
-  <div>
-    Home
-  </div>);
+  return <div style={{marginTop: "15px"}}>Home</div>;
 };
 
 export default HomeAdmin;
