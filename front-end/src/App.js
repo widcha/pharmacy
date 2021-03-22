@@ -1,10 +1,11 @@
 import "./App.css";
-import React, { useEffect } from "react";
-import { Route } from "react-router-dom";
-import { useDispatch, useSelector } from "react-redux";
-import { nullifyErrorAction } from "./redux/actions";
+import React, {useEffect} from "react";
+import {Route} from "react-router-dom";
+import {useDispatch, useSelector} from "react-redux";
+import {nullifyErrorAction} from "./redux/actions";
 import SideBar from "./components/SideBar";
-import { Nav } from "./components/Navbar";
+import {Nav} from "./components/Navbar";
+import {NavAdmin} from "./components/NavbarAdmin";
 import {
   HomeAdmin,
   ProductAdmin,
@@ -19,14 +20,17 @@ import {
   ChangePassword,
   Products,
   UserAddress,
+  ProductDetail,
   Landing,
+  CustomOrder,
+  Cart,
+  ProductFlowDetail,
 } from "./pages";
-// import { useDispatch } from "react-redux";
-// import { nullifyErrorAction } from "./redux/actions";
+import {ToastContainer, Zoom} from "react-toastify";
 
 function App() {
   const dispatch = useDispatch();
-  const { user_role_id } = useSelector((state) => state.user);
+  const {user_role_id} = useSelector((state) => state.user);
 
   useEffect(() => {
     dispatch(nullifyErrorAction());
@@ -35,22 +39,41 @@ function App() {
   if (user_role_id === 1) {
     return (
       <div className="container">
-        <div className="sidebar">
+        <div className="nav">
+          <NavAdmin />
+        </div>
+        <div className="sidebar" style={{marginTop: "56px"}}>
           <SideBar />
         </div>
-        <div style={{ overflowY: "auto", marginLeft: "210px" }}>
+        <div
+          style={{overflowY: "auto", marginLeft: "210px", marginTop: "45px"}}
+        >
           <Route path="/" exact component={HomeAdmin} />
           <Route path="/product" component={ProductAdmin} />
           <Route path="/category" component={CategoriesAdmin} />
           <Route path="/recipe" component={RecipesAdmin} />
           <Route path="/payment-proof" component={PaymentAdmin} />
           <Route path="/product-flow" component={ProductFlowAdmin} />
+          <Route path="/product-flow-detail" component={ProductFlowDetail} />
         </div>
       </div>
     );
   } else {
     return (
       <div>
+        <ToastContainer
+          position="bottom-right"
+          autoClose={2000}
+          hideProgressBar
+          newestOnTop={false}
+          closeOnClick
+          rtl={false}
+          pauseOnFocusLoss
+          draggable
+          pauseOnHover
+          transition={Zoom}
+          limit={3}
+        />
         <Nav />
         <Route exact path="/" component={Landing} />
         <Route exact path="/signup" component={SignUp} />
@@ -59,7 +82,10 @@ function App() {
         <Route exact path="/forgot-password" component={ForgotPassword} />
         <Route exact path="/change-password" component={ChangePassword} />
         <Route exact path="/product" component={Products} />
+        <Route exact path="/product/detail" component={ProductDetail} />
         <Route exact path="/user/address" component={UserAddress} />
+        <Route exact path="/custom-order" component={CustomOrder} />
+        <Route exact path="/user/cart" component={Cart} />
       </div>
     );
   }

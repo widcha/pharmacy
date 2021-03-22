@@ -1,17 +1,43 @@
-import { ClickAwayListener } from "@material-ui/core";
-import { useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
-import { Link } from "react-router-dom";
+import {ClickAwayListener} from "@material-ui/core";
+import axios from "axios";
+import {useEffect, useState} from "react";
+import {useDispatch, useSelector} from "react-redux";
+import {Link, useHistory} from "react-router-dom";
 import Logo from "../assets/icons/medicine.svg";
-import { logoutAction, searchProductAction } from "../redux/actions";
+import {api_url} from "../helpers";
+import {logoutAction, searchProductAction} from "../redux/actions";
+import {CartIcon} from "./CartIcon";
 
 export const Nav = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [profile, setProfile] = useState(false);
   const [notif, setNotif] = useState(false);
   const [name, setName] = useState("");
+  const [filterData, setFilterData] = useState([]);
+  const [suggestion, setSuggestion] = useState(false);
   const dispatch = useDispatch();
   const user = useSelector((state) => state.user);
+  const {cart_list} = useSelector((state) => state.cart);
+
+  const history = useHistory();
+
+  useEffect(() => {
+    const timer = setTimeout(async () => {
+      const response = await axios.get(
+        `${api_url}/product/search?search=${name}`
+      );
+      const filterData = response.data.filter((val, index) => {
+        return (
+          val.product_name
+            .toLocaleLowerCase()
+            .includes(name.toLocaleLowerCase()) && index < 7
+        );
+      });
+      setFilterData(filterData);
+      setSuggestion(true);
+    }, 500);
+    return () => clearTimeout(timer);
+  }, [name]);
 
   const logoutBtn = () => {
     setProfile(false);
@@ -84,12 +110,14 @@ export const Nav = () => {
               aria-labelledby="options-menu"
             >
               <div class="py-1" role="none">
-                <p
-                  className="transition duration-200 font-semibold block px-4 py-2 text-sm text-gray-600 hover:bg-gray-100 hover:text-blue-500 cursor-pointer"
-                  role="menuitem"
-                >
-                  Account settings
-                </p>
+                <Link to="/user/address">
+                  <p
+                    className="transition duration-200 font-semibold block px-4 py-2 text-sm text-gray-600 hover:bg-gray-100 hover:text-blue-500 cursor-pointer"
+                    role="menuitem"
+                  >
+                    Account settings
+                  </p>
+                </Link>
                 <p
                   className="transition duration-200 font-semibold block px-4 py-2 text-sm text-gray-600 hover:bg-gray-100 hover:text-blue-500 cursor-pointer"
                   role="menuitem"
@@ -115,6 +143,7 @@ export const Nav = () => {
   const handleClickAway = () => {
     setProfile(false);
     setNotif(false);
+    setSuggestion(false);
   };
 
   const notificationBtn = () => {
@@ -173,10 +202,20 @@ export const Nav = () => {
   const rightComponent = () => {
     return (
       <div className="flex flex-row items-center">
+        <Link to="/user/cart">
+          <CartIcon length={cart_list.length} />
+        </Link>
         {notificationBtn()}
         {profileBtn()}
       </div>
     );
+  };
+
+  const searchBtn = (e) => {
+    history.push(`/product?search=${name}`);
+    e.preventDefault();
+    dispatch(searchProductAction(name));
+    setSuggestion(false);
   };
 
   const searchComponent = () => {
@@ -199,13 +238,31 @@ export const Nav = () => {
             search
           </i>
         </span>
+        {name && suggestion ? (
+          <ClickAwayListener onClickAway={handleClickAway}>
+            <div
+              class="z-10 absolute center mt-12 w-96 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 focus:outline-none"
+              role="menu"
+              aria-orientation="vertical"
+              aria-labelledby="options-menu"
+            >
+              <div class="py-1" role="none">
+                {filterData.map((val) => {
+                  return (
+                    <p
+                      className="transition duration-200 font-semibold block px-4 py-2 text-sm text-gray-600 hover:bg-gray-100 hover:text-blue-500 cursor-pointer"
+                      onClick={searchBtn}
+                    >
+                      {val.product_name}
+                    </p>
+                  );
+                })}
+              </div>
+            </div>
+          </ClickAwayListener>
+        ) : null}
       </form>
     );
-  };
-
-  const searchBtn = (e) => {
-    e.preventDefault();
-    dispatch(searchProductAction(name));
   };
 
   return (

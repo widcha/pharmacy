@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, {useEffect, useState} from "react";
 import {
   Button,
   MenuItem,
@@ -7,7 +7,7 @@ import {
   InputLabel,
   TextField,
 } from "@material-ui/core";
-import { useDispatch, useSelector } from "react-redux";
+import {useDispatch, useSelector} from "react-redux";
 import ReactPaginate from "react-paginate";
 import CardProduct from "../components/CardProduct";
 import {
@@ -24,7 +24,7 @@ const ProductAdmin = () => {
   const [page, setPage] = useState(0);
   const from = page * perPage;
   const to = (page + 1) * perPage;
-  const { product_list, loading } = useSelector((state) => state.product);
+  const {product_list, loading} = useSelector((state) => state.product);
   const [pageCount, setPageCount] = useState(product_list.length / perPage);
 
   let category = useSelector((state) => state.product.category);
@@ -38,6 +38,7 @@ const ProductAdmin = () => {
     setShowModal(!showModal);
   };
 
+  const [filter, setFilter] = useState(false);
   const [openn, setOpenn] = useState(false);
   const [filterCategory, setFilterCategory] = useState("");
   const handleOpenn = () => {
@@ -59,7 +60,7 @@ const ProductAdmin = () => {
   const handleCloseSort = () => {
     setOpenSort(false);
   };
-  const handleSort = (e) => {
+  const handleSort = async (e) => {
     setSortChosen(e.target.value);
   };
 
@@ -67,8 +68,12 @@ const ProductAdmin = () => {
   const [maxPrice, setMaxPrice] = useState(0);
   const [minPrice, setMinPrice] = useState(0);
 
+  useEffect(() => {
+    dispatch(fetchProductAction());
+    dispatch(fetchCategoryAction());
+  }, [dispatch]);
+
   const searchBtn = () => {
-    console.log(sortChosen);
     dispatch(
       fetchFilterProductAction({
         minPrice,
@@ -77,6 +82,7 @@ const ProductAdmin = () => {
         sortChosen,
       })
     );
+    setFilter(true);
   };
 
   const renderProduct = () => {
@@ -113,7 +119,7 @@ const ProductAdmin = () => {
                 vol={val.product_vol}
                 stock_total={val.product_stock_total}
                 desc={val.product_desc}
-                cat={val.product_category_id}
+                catt={val.Product_Category.product_category}
                 image={val.product_image_path}
               />
             </div>
@@ -123,14 +129,17 @@ const ProductAdmin = () => {
     }
   };
 
+  const refreshBtn = () => {
+    setSearch("");
+    setSortChosen("");
+    setMaxPrice(0);
+    setMinPrice(0);
+    setFilter(false);
+    dispatch(fetchProductAction());
+  };
   useEffect(() => {
     setPageCount(product_list.length / perPage);
   }, [perPage, product_list]);
-
-  useEffect(() => {
-    dispatch(fetchProductAction());
-    dispatch(fetchCategoryAction());
-  }, [dispatch]);
 
   const handlePageClick = (e) => {
     const selectedPage = e.selected;
@@ -147,9 +156,9 @@ const ProductAdmin = () => {
           modalName="Add New Product"
         />
         <div>
-          <div style={{ display: "flex", flexDirection: "row" }}>
+          <div style={{display: "flex", flexDirection: "row"}}>
             <div className="mt-2 mx-3">
-              <div style={{ marginLeft: "25px" }}>{renderProduct()}</div>
+              <div style={{marginLeft: "25px"}}>{renderProduct()}</div>
             </div>
             <div
               style={{
@@ -163,7 +172,7 @@ const ProductAdmin = () => {
               }}
             >
               {/* SORT */}
-              <FormControl style={{ width: "275px" }}>
+              <FormControl style={{width: "275px"}}>
                 <InputLabel id="demo-controlled-open-select-label">
                   Sort By{" "}
                 </InputLabel>
@@ -181,7 +190,7 @@ const ProductAdmin = () => {
                 </Select>
               </FormControl>
               {/* CATEGORY FILTER */}
-              <FormControl style={{ width: "275px" }}>
+              <FormControl style={{width: "275px"}}>
                 <InputLabel id="demo-controlled-open-select-label">
                   Filter By Category
                 </InputLabel>
@@ -207,7 +216,7 @@ const ProductAdmin = () => {
                   label="Search"
                   id="search"
                   onChange={(e) => setSearch(e.target.value)}
-                  style={{ width: "275px" }}
+                  style={{width: "275px"}}
                 />
               </div>
               <div
@@ -224,7 +233,7 @@ const ProductAdmin = () => {
                   onChange={(e) => setMinPrice(e.target.value)}
                 />
                 &nbsp;&nbsp;
-                <div style={{ paddingTop: "20px" }}>-</div>
+                <div style={{paddingTop: "20px"}}>-</div>
                 &nbsp;&nbsp;
                 <TextField
                   placeholder="Max. Price"
@@ -234,12 +243,33 @@ const ProductAdmin = () => {
                 />
               </div>
 
-              <Button onClick={searchBtn} style={{ backgroundColor: "#305c4c", color: 'white' }}>
+              <Button
+                onClick={searchBtn}
+                style={{
+                  backgroundColor: "#2460A7FF",
+                  color: "white",
+                  outline: 0,
+                }}
+              >
                 Search
               </Button>
-
               <Button
-                style={{ backgroundColor: "teal", color: "white", marginTop: '20px' }}
+                onClick={refreshBtn}
+                style={{
+                  backgroundColor: "#759cd8",
+                  marginTop: "10px",
+                  outline: 0,
+                }}
+              >
+                All Products
+              </Button>
+              <Button
+                style={{
+                  backgroundColor: "#0098b3",
+                  color: "white",
+                  marginTop: "20px",
+                  outline: 0,
+                }}
                 onClick={toggle}
               >
                 Add New Product
@@ -250,9 +280,36 @@ const ProductAdmin = () => {
       </>
     );
   };
+  const headerTxt = () => {
+    let txt = "";
+    if (filter) {
+      if (minPrice) {
+        txt += `that has minimum price = ${minPrice} `;
+      }
+      if (maxPrice) {
+        if (txt !== "") {
+          txt = `that has a price between ${minPrice} - ${maxPrice} `;
+        } else {
+          txt += `that has maximum price = ${maxPrice} `;
+        }
+      }
+      if (searchWord) {
+        if (txt !== "") {
+          txt += `and contain '${searchWord}'`;
+        } else {
+          txt += `that contain '${searchWord}' `;
+        }
+      }
+      if (sortChosen) {
+        txt += `with sort = ${sortChosen} `;
+      }
+      return <div>Showing products {txt}</div>;
+    }
+  };
   return (
     <>
-      <div className="flex flex-col mx-2">
+      <div className="flex flex-col mx-2" style={{marginTop: "15px"}}>
+        {headerTxt()}
         <div className="flex flex-wrap">{loading ? null : renderAll()}</div>
         <div className="flex-row align-baseline">
           <ReactPaginate

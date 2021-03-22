@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { useSelector } from "react-redux";
+import { useHistory } from "react-router-dom";
 import Swal from "sweetalert2";
 import ModalUploadUser from "./ModalUploadUser";
 
@@ -7,6 +8,7 @@ import ModalUploadUser from "./ModalUploadUser";
 const ExtendedNavbar = () => {
   const [modal, setModal] = useState(false);
   const { user_id } = useSelector((state) => state.user);
+  const history = useHistory();
 
   const uploadBtn = () => {
     if (user_id !== 0) {
@@ -19,8 +21,14 @@ const ExtendedNavbar = () => {
     }
   };
 
+  const routeChange = () => {
+    let path = `/custom-order`;
+    history.push(path);
+  };
+
   const personalizedBtn = () => {
     if (user_id !== 0) {
+      routeChange();
     } else {
       Swal.fire({
         icon: "error",
@@ -52,7 +60,7 @@ const ExtendedNavbar = () => {
                 d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"
               />
             </svg>
-            Personalized Medicine
+            Create Your Own Custom Prescription
           </button>
         </div>
         <div className="flex border-l w-1/2 border-blue-300 justify-center">
