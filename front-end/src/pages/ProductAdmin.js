@@ -38,6 +38,7 @@ const ProductAdmin = () => {
     setShowModal(!showModal);
   };
 
+  const [filter, setFilter] = useState(false);
   const [openn, setOpenn] = useState(false);
   const [filterCategory, setFilterCategory] = useState("");
   const handleOpenn = () => {
@@ -81,6 +82,7 @@ const ProductAdmin = () => {
         sortChosen,
       })
     );
+    setFilter(true);
   };
 
   const renderProduct = () => {
@@ -132,6 +134,7 @@ const ProductAdmin = () => {
     setSortChosen("");
     setMaxPrice(0);
     setMinPrice(0);
+    setFilter(false);
     dispatch(fetchProductAction());
   };
   useEffect(() => {
@@ -277,9 +280,36 @@ const ProductAdmin = () => {
       </>
     );
   };
+  const headerTxt = () => {
+    let txt = "";
+    if (filter) {
+      if (minPrice) {
+        txt += `that has minimum price = ${minPrice} `;
+      }
+      if (maxPrice) {
+        if (txt !== "") {
+          txt = `that has a price between ${minPrice} - ${maxPrice} `;
+        } else {
+          txt += `that has maximum price = ${maxPrice} `;
+        }
+      }
+      if (searchWord) {
+        if (txt !== "") {
+          txt += `and contain '${searchWord}'`;
+        } else {
+          txt += `that contain '${searchWord}' `;
+        }
+      }
+      if (sortChosen) {
+        txt += `with sort = ${sortChosen} `;
+      }
+      return <div>Showing products {txt}</div>;
+    }
+  };
   return (
     <>
-      <div className="flex flex-col mx-2" style={{marginTop: "5px"}}>
+      <div className="flex flex-col mx-2" style={{marginTop: "15px"}}>
+        {headerTxt()}
         <div className="flex flex-wrap">{loading ? null : renderAll()}</div>
         <div className="flex-row align-baseline">
           <ReactPaginate

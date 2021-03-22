@@ -6,6 +6,7 @@ const {
   User,
   Material_Flow,
 } = require("../models");
+const {Op} = require("sequelize");
 
 module.exports = {
   getRecipe: async (req, res) => {
@@ -31,6 +32,9 @@ module.exports = {
           include: [
             {
               model: User,
+              where: {
+                user_username: {[Op.substring]: `${search}`},
+              },
               attributes: {
                 exclude: ["createdAt", "updatedAt"],
               },
@@ -46,6 +50,9 @@ module.exports = {
           include: [
             {
               model: User,
+              where: {
+                user_username: {[Op.substring]: `${search ? search : ""}`},
+              },
               attributes: {
                 exclude: ["createdAt", "updatedAt"],
               },
