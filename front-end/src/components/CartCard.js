@@ -1,4 +1,5 @@
 import React from "react";
+import { Link } from "react-router-dom";
 
 export const CartCard = ({
 	total,
@@ -25,11 +26,13 @@ export const CartCard = ({
 			<div className={qty <= stock ? "w-11/12" : "opacity-40 w-11/12"}>
 				<div className="w-full bg-white border-2 border-gray-300 p-5 rounded-md tracking-wide shadow-lg">
 					<div id="header" className="flex">
-						<img
-							alt="mountain"
-							className="w-36 p-2 rounded-md border-2 border-gray-300"
-							src={`http://localhost:5000${image}`}
-						/>
+						<Link to={`/product/detail?id=${product_id}`}>
+							<img
+								alt="mountain"
+								className="w-36 p-2 rounded-md border-2 border-gray-300"
+								src={`http://localhost:5000${image}`}
+							/>
+						</Link>
 						<div id="body" className="flex flex-col ml-5 justify-between">
 							<h4 id="name" className="text-xl font-semibold">
 								{name}
@@ -66,6 +69,7 @@ export const CartCard = ({
 								<input
 									value={qty}
 									className="w-full font-semibold text-center text-gray-700 bg-gray-200 outline-none focus:outline-none hover:text-black focus:text-black"
+									disabled
 								/>
 								<button
 									onClick={() => increment(product_id, qty, price)}
@@ -94,12 +98,13 @@ export const CartCard = ({
 					</div>
 				</div>
 			</div>
-			<button onClick={() => del(user_id, product_id)}>
+			<button className="outline-none focus:outline-none cursor-default">
 				<svg
-					class="w-16 h-16 hover:bg-gray-300 rounded transition duration-200"
+					class="w-16 h-16 hover:bg-gray-300 rounded transition duration-200 cursor-pointer"
 					fill="currentColor"
 					viewBox="0 0 20 20"
 					xmlns="http://www.w3.org/2000/svg"
+					onClick={() => del(user_id, product_id)}
 				>
 					<path
 						fill-rule="evenodd"

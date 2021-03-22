@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { BreadCrumbs } from "./BreadCrumbs";
 import { useDispatch, useSelector } from "react-redux";
 import { userAddProductToCartAction } from "../redux/actions";
+import Swal from "sweetalert2";
 
 export const ProdDetail = ({
 	img,
@@ -20,14 +21,21 @@ export const ProdDetail = ({
 	const [qty, setQty] = useState(1);
 
 	const handleAddToCart = () => {
-		dispatch(
-			userAddProductToCartAction({
-				user_id,
-				product_id: idx,
-				product_qty: qty,
-				product_price: price,
-			})
-		);
+		if (user_id > 0) {
+			dispatch(
+				userAddProductToCartAction({
+					user_id,
+					product_id: idx,
+					product_qty: qty,
+					product_price: price,
+				})
+			);
+		} else {
+			Swal.fire({
+				icon: "error",
+				title: "You need to login first",
+			});
+		}
 	};
 
 	return (
