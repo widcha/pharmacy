@@ -1,6 +1,7 @@
 import axios from "axios";
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
+import { Redirect } from "react-router";
 import Swal from "sweetalert2";
 import CardCustomOrder from "../components/CardCustomOrder";
 import { api_url } from "../helpers";
@@ -15,6 +16,7 @@ const CustomOrder = () => {
   const [suggestion, setSuggestion] = useState(false);
   const [name, setName] = useState("");
   const dispatch = useDispatch();
+  const user = useSelector((state) => state.user);
 
   useEffect(() => {
     const timer = setTimeout(async () => {
@@ -142,6 +144,10 @@ const CustomOrder = () => {
       );
     });
   };
+
+  if (user.user_id === 0) {
+    <Redirect to="/" />;
+  }
   return (
     <div className="grid grid-cols-3 gap-4 my-5 h-screen mx-5">
       <div className="col-span-2">
