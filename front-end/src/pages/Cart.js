@@ -69,7 +69,7 @@ export const Cart = () => {
 					qty={val.product_qty}
 					price={Math.ceil(price)}
 					stock={val.Product.product_stock_total}
-					vol={val.Product.product_vol}
+					vol={val.Product.product_stock_total}
 					increment={handleIncrement}
 					decrement={handleDecrement}
 					del={handleDelete}

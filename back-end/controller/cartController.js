@@ -77,7 +77,8 @@ module.exports = {
 						},
 					},
 				});
-				if (product_res.stock_total <= product_qty) {
+				console.log(product_res.dataValues.product_stock_total);
+				if (product_qty <= product_res.dataValues.product_stock_total) {
 					await Cart.create({
 						user_id,
 						product_id,

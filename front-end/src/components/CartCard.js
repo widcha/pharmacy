@@ -38,10 +38,12 @@ export const CartCard = ({
 								className="
                             text-sm"
 							>
-								{vol}ml/bottle
+								({vol}ml left)
 							</span>
 
-							<p className="text-lg font-bold">Rp{price.toLocaleString()}</p>
+							<p className="text-lg font-bold">
+								Rp{price.toLocaleString()}/gram
+							</p>
 
 							<div class="w-28 flex justify-center ">
 								<button
