@@ -28,43 +28,26 @@ module.exports = {
         maxPrice === "false"
       ) {
         //KALAU MAXPRICE TIDAK ADA
-        if (minPrice || search) {
-          response = await Product.findAll({
-            where: {
-              [Op.and]: {
-                product_price: {[Op.gte]: minPrice ? minPrice : 0},
-                product_name: {[Op.substring]: `${search}`},
+        response = await Product.findAll({
+          where: {
+            [Op.and]: {
+              product_price: {[Op.gte]: minPrice ? minPrice : 0},
+              product_name: {[Op.substring]: `${search ? search : ""}`},
+            },
+          },
+          order: orderSort,
+          attributes: {
+            exclude: ["createdAt", "updatedAt"],
+          },
+          include: [
+            {
+              model: Product_Category,
+              attributes: {
+                exclude: ["createdAt", "updatedAt"],
               },
             },
-            order: orderSort,
-            attributes: {
-              exclude: ["createdAt", "updatedAt"],
-            },
-            include: [
-              {
-                model: Product_Category,
-                attributes: {
-                  exclude: ["createdAt", "updatedAt"],
-                },
-              },
-            ],
-          });
-        } else {
-          //FIND ALL TANPA FILTER
-          response = await Product.findAll({
-            attributes: {
-              exclude: ["createdAt", "updatedAt"],
-            },
-            include: [
-              {
-                model: Product_Category,
-                attributes: {
-                  exclude: ["createdAt", "updatedAt"],
-                },
-              },
-            ],
-          });
-        }
+          ],
+        });
       } else {
         //KALAU ADA MAX PRICE
         if (minPrice || search) {
@@ -73,31 +56,12 @@ module.exports = {
               [Op.and]: {
                 product_price: {
                   [Op.and]: {
-                    [Op.gte]: minPrice,
+                    [Op.gte]: minPrice ? minPrice : 0,
                     [Op.lte]: maxPrice,
                   },
                 },
-                product_name: {[Op.substring]: `${search}`},
+                product_name: {[Op.substring]: `${search ? search : ""}`},
               },
-            },
-            order: orderSort,
-            attributes: {
-              exclude: ["createdAt", "updatedAt"],
-            },
-            include: [
-              {
-                model: Product_Category,
-                attributes: {
-                  exclude: ["createdAt", "updatedAt"],
-                },
-              },
-            ],
-          });
-        } else {
-          // ADA MAXPRICE ONLY
-          response = await Product.findAll({
-            where: {
-              product_price: {[Op.lte]: maxPrice},
             },
             order: orderSort,
             attributes: {
