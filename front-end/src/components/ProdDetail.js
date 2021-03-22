@@ -12,8 +12,9 @@ export const ProdDetail = ({
 	vol,
 	category,
 	idx,
+	pricePerGram,
 }) => {
-	// console.log(img);
+	console.log(price);
 	const dispatch = useDispatch();
 	const { user_id } = useSelector((state) => state.user);
 	const [qty, setQty] = useState(1);
@@ -157,8 +158,8 @@ export const ProdDetail = ({
 								</button>
 								<span className="mx-3">{qty}</span>
 								<button
-									className="disabled:opacity-50 flex items-center justify-center border-2 border-gray-300 rounded-full w-6 h-6 focus:outline-none hover:bg-blue-200 transition duration-200"
-									disabled={qty === stock}
+									className="flex items-center justify-center border-2 border-gray-300 rounded-full w-6 h-6 focus:outline-none hover:bg-blue-200 transition duration-200"
+									disabled={qty > stock}
 									onClick={() => setQty((curr) => curr + 1)}
 								>
 									+
@@ -167,12 +168,14 @@ export const ProdDetail = ({
 							<div className="flex ml-6 items-center">
 								<span className="mr-3">Items left:</span>
 
-								<span>{stock}</span>
+								<span>{stock} gram(s)</span>
 							</div>
 						</div>
 						<div className="flex">
 							<span className="title-font font-medium text-2xl text-gray-900">
-								Rp. {price ? price.toLocaleString() : null}
+								Rp.{" "}
+								{pricePerGram ? Math.ceil(pricePerGram).toLocaleString() : null}
+								/gram
 							</span>
 							<button
 								className="flex ml-auto text-white bg-indigo-500 border-0 py-2 px-6 focus:outline-none hover:bg-indigo-600 rounded"

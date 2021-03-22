@@ -19,11 +19,11 @@ module.exports = {
 					},
 				],
 			});
-			// console.log(cart_check);
+			console.log(cart_check);
 			if (cart_check.length > 0) {
 				if (
 					cart_check[0].product_qty + product_qty <=
-					cart_check[0].Product.product_stock
+					cart_check[0].Product.product_stock_total
 				) {
 					await Cart.update(
 						{ product_qty: cart_check[0].product_qty + product_qty },
@@ -70,36 +70,47 @@ module.exports = {
 					return res.status(404).send({ message: "Excessive Quantity" });
 				}
 			} else {
-				await Cart.create({
-					user_id,
-					product_id,
-					product_qty,
-					product_price,
-				});
-				const response = await Cart.findAll({
+				const product_res = await Product.findOne({
 					where: {
-						user_id: {
-							[Op.eq]: user_id,
+						product_id: {
+							[Op.eq]: product_id,
 						},
 					},
-					attributes: { exclude: ["createdAt", "updatedAt"] },
-					include: [
-						{
-							model: Product,
-							attributes: {
-								exclude: [
-									"createdAt",
-									"updatedAt",
-									"product_desc",
-									"product_id",
-									"product_price",
-									"product_category_id",
-								],
+				});
+				if (product_res.stock_total <= product_qty) {
+					await Cart.create({
+						user_id,
+						product_id,
+						product_qty,
+						product_price,
+					});
+					const response = await Cart.findAll({
+						where: {
+							user_id: {
+								[Op.eq]: user_id,
 							},
 						},
-					],
-				});
-				return res.send(response);
+						attributes: { exclude: ["createdAt", "updatedAt"] },
+						include: [
+							{
+								model: Product,
+								attributes: {
+									exclude: [
+										"createdAt",
+										"updatedAt",
+										"product_desc",
+										"product_id",
+										"product_price",
+										"product_category_id",
+									],
+								},
+							},
+						],
+					});
+					return res.send(response);
+				} else {
+					return res.status(404).send({ message: "Excessive Quantity" });
+				}
 			}
 		} catch (err) {
 			return res.status(500).send({ message: err.message });
@@ -247,13 +258,14 @@ module.exports = {
 				],
 			});
 			const filterData = response.filter((val) => {
-				return val.product_qty <= val.Product.product_stock;
+				return val.product_qty <= val.Product.product_stock_total;
 			});
 			let total = 0;
 			await filterData.forEach((val) => {
-				total += val.product_qty * val.product_price;
+				total +=
+					val.product_qty * (val.product_price / val.Product.product_vol);
 			});
-			return res.send({ data: filterData, subTotal: total });
+			return res.send({ data: filterData, subTotal: Math.ceil(total) });
 		} catch (err) {
 			return res.status(500).send({ message: err.message });
 		}

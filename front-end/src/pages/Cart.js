@@ -57,17 +57,18 @@ export const Cart = () => {
 	};
 	const renderCart = () => {
 		return cart_list.map((val, index) => {
-			let total = val.product_price * val.product_qty;
+			let price = val.product_price / val.Product.product_vol;
+			let total = price * val.product_qty;
 			return (
 				<CartCard
-					total={total}
+					total={Math.ceil(total)}
 					image={val.Product.product_image_path}
 					name={val.Product.product_name}
 					user_id={val.user_id}
 					product_id={val.product_id}
 					qty={val.product_qty}
-					price={val.product_price}
-					stock={val.Product.product_stock}
+					price={Math.ceil(price)}
+					stock={val.Product.product_stock_total}
 					vol={val.Product.product_vol}
 					increment={handleIncrement}
 					decrement={handleDecrement}
