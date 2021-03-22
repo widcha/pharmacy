@@ -13,6 +13,14 @@ module.exports = (sequelize, DataTypes) => {
 				foreignKey: "order_status_id",
 				onDelete: "cascade",
 			});
+			this.hasMany(models.Admin_Notif, {
+				foreignKey: "order_status_id",
+				onDelete: "cascade",
+			});
+			this.hasMany(models.User_Notif, {
+				foreignKey: "order_status_id",
+				onDelete: "cascade",
+			});
 		}
 	}
 	Order_Status.init(
