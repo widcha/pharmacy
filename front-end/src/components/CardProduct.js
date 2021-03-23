@@ -28,7 +28,7 @@ const CardProduct = ({
 }) => {
   const dispatch = useDispatch();
 
-  const {category} = useSelector((state) => state.product);
+  const {product_list} = useSelector((state) => state.product);
   const [showModal, setShowModal] = useState(false);
   const [showMod, setShowMod] = useState(false);
 
@@ -36,10 +36,12 @@ const CardProduct = ({
 
   const [theCat, setTheCat] = useState("");
   useEffect(() => {
-    const cat = category.filter((val) => val.product_category_id === catt)[0]
-      .product_category;
+    const cat = product_list.filter(
+      (val) => val.product_category_id === catt
+    )[0].Product_Category.product_category;
     setTheCat(cat);
-  }, [category]);
+  }, [product_list]);
+
   const useStyles = makeStyles({
     root: {
       minWidth: 700,
@@ -166,7 +168,7 @@ const CardProduct = ({
         showModal={showModal}
         modalName="Edit Product"
         idProd={idProd}
-        data={{name, price, stock, vol, desc}}
+        data={{name, price, stock, vol, desc, catt}}
       />
       <Card className={classes.root}>
         <CardActionArea>

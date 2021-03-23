@@ -99,7 +99,7 @@ const ProductAdmin = () => {
                   vol={val.product_vol}
                   stock_total={val.product_stock_total}
                   desc={val.product_desc}
-                  cat={val.product_category_id}
+                  catt={val.product_category_id}
                   image={val.product_image_path}
                 />
               </div>
