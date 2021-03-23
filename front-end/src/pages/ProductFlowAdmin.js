@@ -35,8 +35,7 @@ const ProductFlowAdmin = () => {
     dispatch(fetchCategoryAction());
   }, [dispatch]);
 
-  const product_list = useSelector((state) => state.product.product_list);
-  const category = useSelector((state) => state.product.category);
+  const {product_list, category} = useSelector((state) => state.product);
 
   const useStyles = makeStyles({
     table: {

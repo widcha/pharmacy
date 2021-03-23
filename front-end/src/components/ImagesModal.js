@@ -41,7 +41,7 @@ const ImagesModal = ({
       }).then((result) => {
         if (result.isConfirmed) {
           Swal.fire("Order Confirmed!", "", "success");
-          // dispatch(changeOrderStatusAction({id: invoice, order_status_id: "2"}))
+          // dispatch(changeOrderStatusAction({id: invoice, order_status_id: 2, reason: `Transaction ${invoice} confirmed by Admin`}))
           toggle();
         }
       });
@@ -79,7 +79,7 @@ const ImagesModal = ({
                 title: "Order Cancelled",
                 text: `${results.value}`,
               });
-              // dispatch(changeOrderStatusAction({id: invoice, order_status_id: "1", reason: `${results.value}`}));
+              // dispatch(changeOrderStatusAction({id: invoice, order_status_id: 1, reason: `${results.value}`}));
             }
           });
         }
