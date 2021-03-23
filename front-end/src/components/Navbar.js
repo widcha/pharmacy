@@ -5,7 +5,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { Link, useHistory } from "react-router-dom";
 import Logo from "../assets/icons/medicine.svg";
 import { api_url } from "../helpers";
-import { logoutAction, searchProductAction } from "../redux/actions";
+import { logoutAction } from "../redux/actions";
 import { CartIcon } from "./CartIcon";
 
 export const Nav = () => {

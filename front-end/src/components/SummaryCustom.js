@@ -1,13 +1,16 @@
 import React, { useEffect, useState } from "react";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import Swal from "sweetalert2";
 import pill from "../assets/icons/pill2.png";
+import { addProductToDatabaseAction } from "../redux/actions/customOrderAction";
 
 const SummaryCustom = () => {
   const { capsule } = useSelector((state) => state.customOrder);
+  const { user_id } = useSelector((state) => state.user);
   const [totalPrice, setTotalPrice] = useState(0);
   const [dose, setDose] = useState(1);
   const [grandTotal, setGrandTotal] = useState(0);
+  const dispatch = useDispatch();
 
   useEffect(() => {
     const res = capsule.map((val) => {
@@ -24,6 +27,17 @@ const SummaryCustom = () => {
       setDose(1);
     }
   }, [totalPrice, dose]);
+
+  const addToCartBtn = () => {
+    dispatch(
+      addProductToDatabaseAction({
+        user_id,
+        capsule,
+        totalQty: dose,
+        totalPrice: grandTotal,
+      })
+    );
+  };
 
   const details = () => {
     return capsule.map((val) => {
@@ -129,7 +143,10 @@ const SummaryCustom = () => {
               Rp. {grandTotal.toLocaleString()}
             </div>
           </div>
-          <button className="flex items-center font-semibold text-white bg-blue-400 border-0 py-2 px-4 w-full focus:outline-none hover:bg-blue-500 rounded">
+          <button
+            onClick={addToCartBtn}
+            className="flex items-center font-semibold text-white bg-blue-400 border-0 py-2 px-4 w-full focus:outline-none hover:bg-blue-500 rounded"
+          >
             Add to Cart
             <svg
               fill="none"
