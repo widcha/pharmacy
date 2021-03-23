@@ -443,6 +443,9 @@ module.exports = {
         }
       } else {
         const response = await Product.findAll({
+          where: {
+            isAvailable: 1,
+          },
           order: [["createdAt", "DESC"]],
         });
         return res.status(200).send(response);
