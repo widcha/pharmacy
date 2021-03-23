@@ -1,116 +1,132 @@
 const { Op } = require("sequelize");
 
-const { Cart, Product } = require("../models");
+const { Cart, Product, Custom_Product } = require("../models");
 module.exports = {
 	userAddProductToCart: async (req, res) => {
 		try {
-			const { user_id, product_id, product_qty, product_price } = req.body;
-			const cart_check = await Cart.findAll({
-				where: {
-					[Op.and]: {
-						user_id: user_id,
-						product_id: product_id,
-					},
-				},
-				include: [
-					{
-						model: Product,
-						attributes: { exclude: ["createdAt", "updatedAt"] },
-					},
-				],
-			});
-			console.log(cart_check);
-			if (cart_check.length > 0) {
-				if (
-					cart_check[0].product_qty + product_qty <=
-					cart_check[0].Product.product_stock_total
-				) {
-					await Cart.update(
-						{ product_qty: cart_check[0].product_qty + product_qty },
-						{
-							where: {
-								[Op.and]: {
-									user_id: user_id,
-									product_id: product_id,
-									cart_id: cart_check[0].cart_id,
-								},
-							},
-						}
-					);
-					// const response = await Cart.findAll({
-					// 	where: {
-					// 		cart_id: { [Op.eq]: cart_check[0].cart_id },
-					// 	},
-					// });
-					const response = await Cart.findAll({
-						where: {
-							user_id: {
-								[Op.eq]: user_id,
-							},
-						},
-						attributes: { exclude: ["createdAt", "updatedAt"] },
-						include: [
-							{
-								model: Product,
-								attributes: {
-									exclude: [
-										"createdAt",
-										"updatedAt",
-										"product_desc",
-										"product_id",
-										"product_price",
-										"product_category_id",
-									],
-								},
-							},
-						],
-					});
-					return res.send(response);
-				} else {
-					return res.status(404).send({ message: "Excessive Quantity" });
-				}
-			} else {
-				const product_res = await Product.findOne({
-					where: {
-						product_id: {
-							[Op.eq]: product_id,
-						},
-					},
+			const {
+				user_id,
+				product_id,
+				product_qty,
+				product_price,
+				custom_product_id,
+			} = req.body;
+			if (custom_product_id) {
+				const response = await Cart.create({
+					user_id,
+					product_id,
+					product_qty,
+					product_price,
+					custom_product_id,
 				});
-				console.log(product_res.dataValues.product_stock_total);
-				if (product_qty <= product_res.dataValues.product_stock_total) {
-					await Cart.create({
-						user_id,
-						product_id,
-						product_qty,
-						product_price,
-					});
-					const response = await Cart.findAll({
-						where: {
-							user_id: {
-								[Op.eq]: user_id,
-							},
+
+				return res.send(response);
+			} else {
+				const cart_check = await Cart.findAll({
+					where: {
+						[Op.and]: {
+							user_id: user_id,
+							product_id: product_id,
 						},
-						attributes: { exclude: ["createdAt", "updatedAt"] },
-						include: [
+					},
+					include: [
+						{
+							model: Product,
+							attributes: { exclude: ["createdAt", "updatedAt"] },
+						},
+					],
+				});
+				if (cart_check.length > 0) {
+					if (
+						cart_check[0].product_qty + product_qty <=
+						cart_check[0].Product.product_stock_total
+					) {
+						await Cart.update(
+							{ product_qty: cart_check[0].product_qty + product_qty },
 							{
-								model: Product,
-								attributes: {
-									exclude: [
-										"createdAt",
-										"updatedAt",
-										"product_desc",
-										"product_id",
-										"product_price",
-										"product_category_id",
-									],
+								where: {
+									[Op.and]: {
+										user_id: user_id,
+										product_id: product_id,
+										cart_id: cart_check[0].cart_id,
+									},
+								},
+							}
+						);
+						// const response = await Cart.findAll({
+						// 	where: {
+						// 		cart_id: { [Op.eq]: cart_check[0].cart_id },
+						// 	},
+						// });
+						const response = await Cart.findAll({
+							where: {
+								user_id: {
+									[Op.eq]: user_id,
 								},
 							},
-						],
-					});
-					return res.send(response);
+							attributes: { exclude: ["createdAt", "updatedAt"] },
+							include: [
+								{
+									model: Product,
+									attributes: {
+										exclude: [
+											"createdAt",
+											"updatedAt",
+											"product_desc",
+											"product_id",
+											"product_price",
+											"product_category_id",
+										],
+									},
+								},
+							],
+						});
+						return res.send(response);
+					} else {
+						return res.status(404).send({ message: "Excessive Quantity" });
+					}
 				} else {
-					return res.status(404).send({ message: "Excessive Quantity" });
+					const product_res = await Product.findOne({
+						where: {
+							product_id: {
+								[Op.eq]: product_id,
+							},
+						},
+					});
+					if (product_qty <= product_res.dataValues.product_stock_total) {
+						await Cart.create({
+							user_id,
+							product_id,
+							product_qty,
+							product_price,
+						});
+						const response = await Cart.findAll({
+							where: {
+								user_id: {
+									[Op.eq]: user_id,
+								},
+							},
+							attributes: { exclude: ["createdAt", "updatedAt"] },
+							include: [
+								{
+									model: Product,
+									attributes: {
+										exclude: [
+											"createdAt",
+											"updatedAt",
+											"product_desc",
+											"product_id",
+											"product_price",
+											"product_category_id",
+										],
+									},
+								},
+							],
+						});
+						return res.send(response);
+					} else {
+						return res.status(404).send({ message: "Excessive Quantity" });
+					}
 				}
 			}
 		} catch (err) {
@@ -120,7 +136,6 @@ module.exports = {
 	userGetCart: async (req, res) => {
 		try {
 			const { id } = req.params;
-			// console.log(id);
 			const response = await Cart.findAll({
 				where: {
 					user_id: {
@@ -194,7 +209,6 @@ module.exports = {
 	userDeleteProductInCart: async (req, res) => {
 		try {
 			const { user_id, product_id } = req.query;
-			// console.log(user_id, product_id);
 			await Cart.destroy({
 				where: {
 					[Op.and]: {
@@ -233,7 +247,6 @@ module.exports = {
 	},
 	userFetchTotalAndAvailableProducts: async (req, res) => {
 		try {
-			// console.log("halohalo");
 			const { user_id } = req.query;
 			const response = await Cart.findAll({
 				where: {
@@ -256,17 +269,20 @@ module.exports = {
 							],
 						},
 					},
+					{ model: Custom_Product },
 				],
 			});
-			const filterData = response.filter((val) => {
-				return val.product_qty <= val.Product.product_stock_total;
-			});
-			let total = 0;
-			await filterData.forEach((val) => {
-				total +=
-					val.product_qty * (val.product_price / val.Product.product_vol);
-			});
-			return res.send({ data: filterData, subTotal: Math.ceil(total) });
+			// const filterData = response.filter((val) => {
+			// 	return val.product_qty <= val.Product.product_stock_total;
+			// });
+			// let total = 0;
+			// await filterData.forEach((val) => {
+			// 	total +=
+			// 		val.product_qty * (val.product_price / val.Product.product_vol);
+			// });
+			// return res.send({ data: filterData, subTotal: Math.ceil(total) });
+
+			return res.send(response);
 		} catch (err) {
 			return res.status(500).send({ message: err.message });
 		}
