@@ -55,7 +55,9 @@ export const fetchFilterProductAction = ({
       let response;
       if ((searchWord && minPrice) || maxPrice || sortChosen) {
         const newLink = `${linkk}?search=${searchWord}&minPrice=${minPrice}&maxPrice=${
-          maxPrice === 0 ? maxPrice === null : maxPrice
+          maxPrice === 0 || maxPrice === undefined
+            ? maxPrice === null
+            : maxPrice
         }&sortChosen=${sortChosen}`;
         response = await axios.get(`${newLink}`);
       } else if (searchWord) {

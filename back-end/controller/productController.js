@@ -24,46 +24,30 @@ module.exports = {
         maxPrice === undefined ||
         maxPrice === 0 ||
         maxPrice === null ||
-        maxPrice === ""
+        maxPrice === "" ||
+        maxPrice === "false"
       ) {
         //KALAU MAXPRICE TIDAK ADA
-        if (minPrice || search) {
-          response = await Product.findAll({
-            where: {
-              [Op.and]: {
-                product_price: {[Op.gte]: minPrice ? minPrice : 0},
-                product_name: {[Op.substring]: `${search}`},
+        response = await Product.findAll({
+          where: {
+            [Op.and]: {
+              product_price: {[Op.gte]: minPrice ? minPrice : 0},
+              product_name: {[Op.substring]: `${search ? search : ""}`},
+            },
+          },
+          order: orderSort,
+          attributes: {
+            exclude: ["createdAt", "updatedAt"],
+          },
+          include: [
+            {
+              model: Product_Category,
+              attributes: {
+                exclude: ["createdAt", "updatedAt"],
               },
             },
-            order: orderSort,
-            attributes: {
-              exclude: ["createdAt", "updatedAt"],
-            },
-            include: [
-              {
-                model: Product_Category,
-                attributes: {
-                  exclude: ["createdAt", "updatedAt"],
-                },
-              },
-            ],
-          });
-        } else {
-          //FIND ALL TANPA FILTER
-          response = await Product.findAll({
-            attributes: {
-              exclude: ["createdAt", "updatedAt"],
-            },
-            include: [
-              {
-                model: Product_Category,
-                attributes: {
-                  exclude: ["createdAt", "updatedAt"],
-                },
-              },
-            ],
-          });
-        }
+          ],
+        });
       } else {
         //KALAU ADA MAX PRICE
         if (minPrice || search) {
@@ -72,31 +56,12 @@ module.exports = {
               [Op.and]: {
                 product_price: {
                   [Op.and]: {
-                    [Op.gte]: minPrice,
+                    [Op.gte]: minPrice ? minPrice : 0,
                     [Op.lte]: maxPrice,
                   },
                 },
-                product_name: {[Op.substring]: `${search}`},
+                product_name: {[Op.substring]: `${search ? search : ""}`},
               },
-            },
-            order: orderSort,
-            attributes: {
-              exclude: ["createdAt", "updatedAt"],
-            },
-            include: [
-              {
-                model: Product_Category,
-                attributes: {
-                  exclude: ["createdAt", "updatedAt"],
-                },
-              },
-            ],
-          });
-        } else {
-          // ADA MAXPRICE ONLY
-          response = await Product.findAll({
-            where: {
-              product_price: {[Op.lte]: maxPrice},
             },
             order: orderSort,
             attributes: {
@@ -227,12 +192,15 @@ module.exports = {
         }
       );
 
-      await Material_Flow.create({
-        product_id: id,
-        material_flow_stock: product_stock,
-        material_flow_info: "Stock added by admin",
-        stock: newStock,
-      });
+      //MATERIAL FLOW WHEN ADMIN ADD NEW STOCK
+      if (product_stock !== 0) {
+        await Material_Flow.create({
+          product_id: id,
+          material_flow_stock: product_stock,
+          material_flow_info: "Stock added by admin",
+          stock: newStock,
+        });
+      }
       return res.status(200).send({
         message: "Stock updated successfully",
       });
@@ -286,6 +254,7 @@ module.exports = {
           }
         );
 
+        //MATERIAL FLOW WHEN ADMIN CAN CHANGE DATA
         const stockk = prods.dataValues.product_stock;
         let info = "";
         let stockChanged = stockk - oldStock;
@@ -294,12 +263,15 @@ module.exports = {
         } else if (stockk < oldStock) {
           info = "Stock added by admin";
         }
-        await Material_Flow.create({
-          product_id: id,
-          material_flow_stock: `${-stockChanged}`,
-          material_flow_info: `${info}`,
-          stock: oldStock,
-        });
+
+        if (stockChanged !== 0) {
+          await Material_Flow.create({
+            product_id: id,
+            material_flow_stock: `${-stockChanged}`,
+            material_flow_info: `${info}`,
+            stock: oldStock,
+          });
+        }
         if (response) {
           if (image && oldImagepath !== null) {
             fs.unlinkSync(`public${oldImagepath}`);

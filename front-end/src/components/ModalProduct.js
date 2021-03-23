@@ -87,6 +87,14 @@ const ModalProduct = ({toggle, showModal, modalName, idProd, data}) => {
     setOldStock(oldStock - 1);
   };
 
+  useEffect(() => {
+    if (data) {
+      setNewName(data.name);
+      setNewPrice(data.price);
+      setNewVol(data.vol);
+      setNewDesc(data.desc);
+    }
+  }, [data]);
   const saveChange = (idProd) => {
     if (newName && newPrice && newVol && newDesc && selectedCategory) {
       if (idProd && oldStock) {
@@ -129,6 +137,10 @@ const ModalProduct = ({toggle, showModal, modalName, idProd, data}) => {
     toggle();
   };
 
+  const handleNameChange = (e) => {
+    setNewName(e.target.value);
+  };
+
   return (
     <>
       {showModall ? (
@@ -140,35 +152,6 @@ const ModalProduct = ({toggle, showModal, modalName, idProd, data}) => {
             <div className="relative w-auto my-6 mx-auto max-w-3xl">
               {/*content*/}
               <div style={{display: "flex", flexDirection: "row"}}>
-                {idProd ? (
-                  <div className="border-0 rounded-lg shadow-lg relative flex flex-col w-full bg-white outline-none focus:outline-none">
-                    {/* header */}
-                    <div className="flex items-start justify-between p-5 border-b border-solid border-gray-300 rounded-t">
-                      <h3 className="text-3xl font-semibold">Old Value</h3>
-                      <button
-                        className="p-1 ml-auto bg-transparent border-0 text-black opacity-5 float-right text-3xl leading-none font-semibold outline-none focus:outline-none"
-                        onClick={toggle}
-                      >
-                        <span className="bg-transparent text-black opacity-5 h-6 w-6 text-2xl block outline-none focus:outline-none">
-                          ×
-                        </span>
-                      </button>
-                    </div>
-                    {/*body*/}
-                    <div
-                      className="relative p-6 flex-auto"
-                      style={{display: "flex", flexDirection: "column"}}
-                    >
-                      <div>Name: {data.name}</div>
-                      <div>Price: {data.price}</div>
-                      <div>Stock: {data.stock}</div>
-                      <div>Volume: {data.vol}</div>
-                      <div>Desc: {data.desc}</div>
-                      <div>Category: {data.catt}</div>
-                    </div>
-                  </div>
-                ) : null}
-
                 <div className="border-0 rounded-lg shadow-lg relative flex flex-col w-full bg-white outline-none focus:outline-none">
                   {/*header*/}
                   <div className="flex items-start justify-between p-5 border-b border-solid border-gray-300 rounded-t">
@@ -192,14 +175,16 @@ const ModalProduct = ({toggle, showModal, modalName, idProd, data}) => {
                     }}
                   >
                     <TextField
-                      placeholder="Name"
+                      // placeholder="Name"
+                      value={newName}
                       label={"Name"}
                       id="name"
                       size="large"
-                      onChange={(e) => setNewName(e.target.value)}
+                      onChange={handleNameChange}
                     />
                     <TextField
-                      placeholder="Price"
+                      // placeholder="Price"
+                      value={newPrice}
                       label={"Price"}
                       id="price"
                       size="large"
@@ -230,14 +215,16 @@ const ModalProduct = ({toggle, showModal, modalName, idProd, data}) => {
                     </div>
 
                     <TextField
-                      placeholder="Volume"
+                      // placeholder="Volume"
+                      value={newVol}
                       label={"Volume"}
                       id="volume"
                       size="large"
                       onChange={(e) => setNewVol(e.target.value)}
                     />
                     <TextField
-                      placeholder="Description"
+                      // placeholder="Description"
+                      value={newDesc}
                       label={"Description"}
                       id="description"
                       size="large"

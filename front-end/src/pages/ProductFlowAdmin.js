@@ -131,7 +131,17 @@ const ProductFlowAdmin = () => {
                 </TableCell>
                 <TableCell align="center">{row.product_stock}</TableCell>
                 <TableCell align="center">
-                  <Button>Flow Detail</Button>
+                  <Link to={`/product-flow-detail?id=${row.product_id}`}>
+                    <Button
+                      style={{
+                        backgroundColor: "#2832C2",
+                        outline: 0,
+                        color: "whitesmoke",
+                      }}
+                    >
+                      Info
+                    </Button>
+                  </Link>
                 </TableCell>
               </TableRow>
             );
@@ -164,7 +174,7 @@ const ProductFlowAdmin = () => {
                       color: "whitesmoke",
                     }}
                   >
-                    Detail
+                    Info
                   </Button>
                 </Link>
               </TableCell>
@@ -227,7 +237,7 @@ const ProductFlowAdmin = () => {
               display: "flex",
               flexDirection: "column",
               width: "275px",
-              paddingTop: "17px",
+              paddingTop: "7px",
               maxHeight: "50px",
               position: "fixed",
               left: "78%",
@@ -266,13 +276,22 @@ const ProductFlowAdmin = () => {
 
             <Button
               onClick={searchBtn}
-              style={{backgroundColor: "#2460A7FF", color: "white"}}
+              style={{
+                backgroundColor: "#2460A7FF",
+                color: "white",
+                marginTop: "10px",
+                outline: 0,
+              }}
             >
               Search
             </Button>
             <Button
               onClick={() => dispatch(fetchProductAction())}
-              style={{backgroundColor: "#759cd8", marginTop: "10px"}}
+              style={{
+                backgroundColor: "#759cd8",
+                marginTop: "10px",
+                outline: 0,
+              }}
             >
               All Products
             </Button>
@@ -372,6 +391,7 @@ const ProductFlowAdmin = () => {
                 backgroundColor: "#2460A7FF",
                 color: "white",
                 marginTop: "10px",
+                outline: 0,
               }}
             >
               Search
