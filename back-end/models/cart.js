@@ -15,10 +15,9 @@ module.exports = (sequelize, DataTypes) => {
       this.belongsTo(models.Product, {
         foreignKey: "product_id",
       });
-      // this.belongsTo(models.Custom_Order, {
-      // 	foreignKey: "custom_product_uid",
-      // 	onDelete: "cascade",
-      // });
+      this.belongsTo(models.Custom_Product, {
+        foreignKey: "custom_product_id",
+      });
     }
   }
   Cart.init(
@@ -49,8 +48,12 @@ module.exports = (sequelize, DataTypes) => {
       product_price: {
         type: DataTypes.INTEGER,
       },
-      custom_product_uid: {
-        type: DataTypes.STRING,
+      custom_product_id: {
+        type: DataTypes.INTEGER,
+        references: {
+          model: "custom_products",
+          key: "custom_product_id",
+        },
       },
     },
     {

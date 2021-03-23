@@ -1,17 +1,16 @@
 const { Op } = require("sequelize");
-const { Custom_Order } = require("../models");
+const { Custom_Product } = require("../models");
 module.exports = {
 	addSumn: async (req, res) => {
 		try {
-			const { custom_product_uid, product_id, product_qty } = req.body;
+			const { custom_product_price, product_qty } = req.body;
 			// const l  = [ 1,2]
 			// let response;
 			// for (let i = 0; i <= 2; i++) {
 			// const custom_product_uid = Date.now();
-			const response = await Custom_Order.create({
-				custom_product_uid,
-				product_id,
+			const response = await Custom_Product.create({
 				product_qty,
+				custom_product_price,
 			});
 			// }
 

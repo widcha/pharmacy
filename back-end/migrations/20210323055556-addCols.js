@@ -8,16 +8,19 @@ module.exports = {
      * Example:
      * await queryInterface.createTable('users', { id: Sequelize.INTEGER });
      */
-
-    await queryInterface.addColumn("custom_orders", "custom_product_uid", {
-      type: Sequelize.STRING,
-      allowNull: false,
+    await queryInterface.addColumn("transactions", "custom_product_id", {
+      type: Sequelize.INTEGER,
+      references: {
+        model: "custom_products",
+        key: "custom_product_id",
+      },
     });
-    await queryInterface.addColumn("carts", "custom_product_uid", {
-      type: Sequelize.STRING,
-    });
-    await queryInterface.addColumn("transactions", "custom_product_uid", {
-      type: Sequelize.STRING,
+    await queryInterface.addColumn("carts", "custom_product_id", {
+      type: Sequelize.INTEGER,
+      references: {
+        model: "custom_products",
+        key: "custom_product_id",
+      },
     });
   },
 

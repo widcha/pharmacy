@@ -16,7 +16,7 @@ const ExtendedNavbar = () => {
     } else {
       Swal.fire({
         icon: "error",
-        title: "You need to login first",
+        title: "You need to login",
       });
     }
   };
@@ -32,7 +32,7 @@ const ExtendedNavbar = () => {
     } else {
       Swal.fire({
         icon: "error",
-        title: "You need to login first",
+        title: "You need to login",
       });
     }
   };

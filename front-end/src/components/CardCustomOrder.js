@@ -8,6 +8,7 @@ const CardCustomOrder = ({
   addBtn,
   decBtn,
   deleteBtn,
+  pricePerMl,
 }) => {
   const counterBtn = () => {
     return (
@@ -16,7 +17,7 @@ const CardCustomOrder = ({
           <input
             disabled
             type="text"
-            value={`${qty} gr`}
+            value={`${qty} ml`}
             class="bg-gray-100 text-sm font-bold text-gray-700 text-center focus:outline-none border border-gray-300 focus:border-gray-600 rounded-l-md w-full"
           />
         </div>
@@ -50,10 +51,12 @@ const CardCustomOrder = ({
         <div>
           <div class="font-semibold text-gray-700">{name}</div>
           <div class="text-sm font-semibold text-gray-500">
-            Stock: {stock.toLocaleString()} gram
+            Stock: {stock.toLocaleString()} ml
+          </div>
+          <div class="text-sm font-semibold text-gray-500">
+            Price: Rp. {pricePerMl.toLocaleString()} / ml
           </div>
         </div>
-        <div></div>
       </div>
       <div class="p-2">{counterBtn()}</div>
       <div>

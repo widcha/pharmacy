@@ -15,6 +15,7 @@ const Login = () => {
   const [userInput, setUserInput] = useState(userData);
   const dispatch = useDispatch();
   const user = useSelector((state) => state.user);
+  const [empty, setEmpty] = useState("");
 
   useEffect(() => {
     dispatch(nullifyErrorAction());
@@ -37,6 +38,8 @@ const Login = () => {
     e.preventDefault();
     if (userInput.email.length !== 0) {
       dispatch(loginAction(userInput));
+    } else {
+      setEmpty("Please Insert Email and Password");
     }
   };
 
@@ -51,6 +54,7 @@ const Login = () => {
             Email address
           </label>
           <input
+            required
             type="email"
             id="email"
             value={userInput.email}
@@ -74,6 +78,7 @@ const Login = () => {
             </Link>
           </div>
           <input
+            required
             type={passwordShown ? "text" : "password"}
             id="password"
             value={userInput.password}
@@ -109,7 +114,9 @@ const Login = () => {
               Log in
             </button>
           )}
-          <p className="text-red-500 pt-2 italic font-semibold">{user.error}</p>
+          <p className="text-red-500 pt-2 italic font-semibold">
+            {user.error || empty}
+          </p>
         </div>
       </form>
     );

@@ -32,10 +32,9 @@ module.exports = (sequelize, DataTypes) => {
         foreignKey: "transaction_invoice_number",
         onDelete: "cascade",
       });
-      // this.belongsTo(models.Custom_Order, {
-      // 	foreignKey: "custom_product_uid",
-      // 	onDelete: "cascade",
-      // });
+      this.belongsTo(models.Custom_Product, {
+        foreignKey: "custom_product_id",
+      });
     }
   }
   Transaction.init(
@@ -93,8 +92,12 @@ module.exports = (sequelize, DataTypes) => {
         type: DataTypes.INTEGER,
         allowNull: false,
       },
-      custom_product_uid: {
-        type: DataTypes.STRING,
+      custom_product_id: {
+        type: DataTypes.INTEGER,
+        references: {
+          model: "custom_products",
+          key: "custom_product_id",
+        },
       },
     },
     {

@@ -18,6 +18,10 @@ const SignUp = () => {
   const dispatch = useDispatch();
   const user = useSelector((state) => state.user);
 
+  const reUppercase = /[A-Z]/;
+  const re6Chars = /^.{6,}$/;
+  const reSpecialChar = /\W|_/;
+
   useEffect(() => {
     dispatch(nullifyErrorAction());
   }, [dispatch]);
@@ -50,6 +54,7 @@ const SignUp = () => {
             Email address
           </label>
           <input
+            required
             type="email"
             id="email"
             value={userInput.email}
@@ -66,6 +71,7 @@ const SignUp = () => {
             Username
           </label>
           <input
+            required
             type="text"
             id="username"
             value={userInput.username}
@@ -84,24 +90,62 @@ const SignUp = () => {
             </label>
           </div>
           <input
+            required
             type={passwordShown ? "text" : "password"}
             id="password"
             value={userInput.password}
             onChange={handleInput}
-            className="text-gray-700 font-semibold px-4 py-2 transition duration-300 border border-gray-300 rounded focus:border-transparent focus:outline-none focus:ring-4 focus:ring-blue-200"
+            className="text-gray-700 font-semibold px-4 pt-2 transition duration-300 border border-gray-300 rounded focus:border-transparent focus:outline-none focus:ring-4 focus:ring-blue-200"
           />
+          <div className="flex mt-1">
+            <div className="flex items-center space-x-2">
+              <input
+                type="checkbox"
+                id="remember"
+                onClick={togglePasswordVisibility}
+                className="border-gray-500 w-4 h-4 transition duration-300 rounded focus:ring-2 focus:ring-offset-0 focus:outline-none focus:ring-blue-200"
+              />
+              <label
+                for="remember"
+                className="text-sm font-semibold text-gray-500"
+              >
+                Show password
+              </label>
+            </div>
+            <div style={{ fontSize: "12px" }}>
+              <ul className="flex flex-row justify-content-between p-1 pl-3 space-x-4">
+                <li
+                  style={{
+                    color: reUppercase.test(userInput.password)
+                      ? "#7dbf5c"
+                      : "red",
+                  }}
+                >
+                  An uppercase letter
+                </li>
+                <li
+                  style={{
+                    color: re6Chars.test(userInput.password)
+                      ? "#7dbf5c"
+                      : "red",
+                  }}
+                >
+                  Min 6 chars
+                </li>
+                <li
+                  style={{
+                    color: reSpecialChar.test(userInput.password)
+                      ? "#7dbf5c"
+                      : "red",
+                  }}
+                >
+                  A special char
+                </li>
+              </ul>
+            </div>
+          </div>
         </div>
-        <div className="flex items-center space-x-2">
-          <input
-            type="checkbox"
-            id="remember"
-            onClick={togglePasswordVisibility}
-            className="border-gray-500 w-4 h-4 transition duration-300 rounded focus:ring-2 focus:ring-offset-0 focus:outline-none focus:ring-blue-200"
-          />
-          <label for="remember" className="text-sm font-semibold text-gray-500">
-            Show password
-          </label>
-        </div>
+
         <div className="flex flex-col space-y-1">
           <label
             // Security Question Input
@@ -111,6 +155,7 @@ const SignUp = () => {
             Security Question: What is your favorite animal?
           </label>
           <input
+            required
             type="text"
             id="security_question"
             value={userInput.security_question}

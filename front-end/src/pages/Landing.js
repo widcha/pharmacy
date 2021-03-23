@@ -3,7 +3,7 @@ import ExtendedNavbar from "../components/ExtendedNavbar";
 
 const Landing = () => {
   return (
-    <div>
+    <div className="flex flex-col">
       <ExtendedNavbar />
       <div className="font-bold text-blue-500 justify-items-center justify-center text-2xl text-center">
         Landing
