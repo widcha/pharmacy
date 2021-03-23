@@ -33,6 +33,9 @@ module.exports = (sequelize, DataTypes) => {
 				foreignKey: "user_id",
 				onDelete: "cascade",
 			});
+			this.hasMany(models.Custom_Product, {
+				foreignKey: "user_id",
+			});
 		}
 	}
 	User.init(
