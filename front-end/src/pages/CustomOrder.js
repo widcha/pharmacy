@@ -4,6 +4,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { Redirect } from "react-router";
 import Swal from "sweetalert2";
 import CardCustomOrder from "../components/CardCustomOrder";
+import SummaryCustom from "../components/SummaryCustom";
 import { api_url } from "../helpers";
 import {
   addCustomProductAction,
@@ -27,7 +28,9 @@ const CustomOrder = () => {
         return (
           val.product_name
             .toLocaleLowerCase()
-            .includes(name.toLocaleLowerCase()) && index < 7
+            .includes(name.toLocaleLowerCase()) &&
+          index <= 4 &&
+          val.product_stock_total > 0
         );
       });
       setFilterData(filterData);
@@ -52,7 +55,13 @@ const CustomOrder = () => {
         title: `${value.product_name} already added`,
       });
     } else if (totalQty < 5) {
-      dispatch(addCustomProductAction({ ...value, qty: 1 }));
+      dispatch(
+        addCustomProductAction({
+          ...value,
+          qty: 1,
+          pricePerMl: value.product_price / value.product_vol,
+        })
+      );
     } else {
       Swal.fire({
         icon: "error",
@@ -66,16 +75,23 @@ const CustomOrder = () => {
   const addQty = (index) => {
     let newArr = [...capsule];
     let totalQty = 0;
-    newArr.forEach((val) => {
-      return (totalQty += val.qty);
-    });
-    if (totalQty < 5) {
-      newArr[index].qty = newArr[index].qty + 1;
-      dispatch(customQtyAction(newArr));
+    if (newArr[index].product_stock_total > newArr[index].qty) {
+      newArr.forEach((val) => {
+        return (totalQty += val.qty);
+      });
+      if (totalQty < 5) {
+        newArr[index].qty = newArr[index].qty + 1;
+        dispatch(customQtyAction(newArr));
+      } else {
+        Swal.fire({
+          icon: "error",
+          title: `One capsule can't have more than 5 gram medicine`,
+        });
+      }
     } else {
       Swal.fire({
         icon: "error",
-        title: `One capsule can't have more than 5 gram medicine`,
+        title: `Insufficient stock`,
       });
     }
   };
@@ -140,6 +156,7 @@ const CustomOrder = () => {
           addBtn={() => addQty(index)}
           decBtn={() => decQty(index)}
           deleteBtn={() => deleteBtn(index)}
+          pricePerMl={val.product_price / val.product_vol}
         />
       );
     });
@@ -175,7 +192,7 @@ const CustomOrder = () => {
           </div>
         </div>
       </div>
-      <div className="border-2">Two</div>
+      <div className="mt-2">{SummaryCustom()}</div>
     </div>
   );
 };

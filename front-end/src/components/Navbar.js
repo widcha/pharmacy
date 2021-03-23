@@ -9,7 +9,6 @@ import { logoutAction, searchProductAction } from "../redux/actions";
 import { CartIcon } from "./CartIcon";
 
 export const Nav = () => {
-  const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [profile, setProfile] = useState(false);
   const [notif, setNotif] = useState(false);
   const [name, setName] = useState("");
@@ -30,7 +29,7 @@ export const Nav = () => {
         return (
           val.product_name
             .toLocaleLowerCase()
-            .includes(name.toLocaleLowerCase()) && index < 7
+            .includes(name.toLocaleLowerCase()) && index <= 4
         );
       });
       setFilterData(filterData);
@@ -214,10 +213,8 @@ export const Nav = () => {
   };
 
   const searchBtn = (e) => {
-    console.log(e);
     history.push(`/product?search=${name}`);
     e.preventDefault();
-    dispatch(searchProductAction(name));
     setSuggestion(false);
   };
 
@@ -231,6 +228,7 @@ export const Nav = () => {
           className="w-96 rounded-lg focus:outline-none focus:ring-blue-100 focus:ring-4 pl-3 font-semibold text-gray-700 transition duration-300"
           type="text"
           placeholder="Search rulox"
+          value={name}
           onChange={(e) => setName(e.target.value)}
         />
         <span className="w-auto flex justify-end items-center text-gray-500 p-1 hover:bg-blue-100 rounded-xl transition duration-300">
@@ -285,13 +283,13 @@ export const Nav = () => {
           </a>
           <ul class="flex items-center space-x-8 lg:flex">
             <li>
-              <Link
-                to="/product"
-                aria-label="Our product"
-                title="Our product"
-                class="font-medium tracking-wide text-gray-700 transition-colors duration-300 hover:text-blue-500"
-              >
-                Product
+              <Link to="/product" aria-label="Our product" title="Our product">
+                <button
+                  class="font-medium tracking-wide text-gray-700 transition-colors duration-300 hover:text-blue-500 focus:outline-none"
+                  onClick={() => setName("")}
+                >
+                  Product
+                </button>
               </Link>
             </li>
           </ul>
