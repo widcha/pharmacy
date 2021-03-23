@@ -1,16 +1,17 @@
-import React, { useEffect, useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
+import React, {useEffect, useState} from "react";
+import {useDispatch, useSelector} from "react-redux";
 import Swal from "sweetalert2";
 import pill from "../assets/icons/pill2.png";
 import {
   addProductToDatabaseAction,
   nullifyCustomAction,
 } from "../redux/actions/customOrderAction";
-import { toast, Zoom } from "react-toastify";
+import {toast, Zoom} from "react-toastify";
+import {changeRecipeStatus} from "../redux/actions/adminAction";
 
-const SummaryCustom = () => {
-  const { capsule } = useSelector((state) => state.customOrder);
-  const { user_id } = useSelector((state) => state.user);
+const SummaryCustom = ({userID, recipeID}) => {
+  const {capsule} = useSelector((state) => state.customOrder);
+  const {user_id} = useSelector((state) => state.user);
   const [totalPrice, setTotalPrice] = useState(0);
   const [dose, setDose] = useState(1);
   const [grandTotal, setGrandTotal] = useState(0);
@@ -33,31 +34,62 @@ const SummaryCustom = () => {
   }, [totalPrice, dose]);
 
   const addToCartBtn = () => {
-    if (capsule.length >= 2) {
-      dispatch(
-        addProductToDatabaseAction({
-          user_id,
-          capsule,
-          totalQty: dose,
-          totalPrice: grandTotal,
-        })
-      );
-      dispatch(nullifyCustomAction());
-      toast.info("Product Added!", {
-        position: "top-right",
-        autoClose: 4000,
-        hideProgressBar: true,
-        closeOnClick: true,
-        pauseOnHover: true,
-        draggable: true,
-        progress: undefined,
-        transition: Zoom,
-      });
+    if (userID && recipeID) {
+      if (capsule.length >= 2) {
+        dispatch(
+          addProductToDatabaseAction({
+            user_id: userID,
+            capsule,
+            totalQty: dose,
+            totalPrice: grandTotal,
+          })
+        );
+        dispatch(changeRecipeStatus({id: recipeID, recipes_status: "Done"}));
+        dispatch(nullifyCustomAction());
+        toast.info("Product Added!", {
+          position: "top-right",
+          autoClose: 4000,
+          hideProgressBar: true,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+          transition: Zoom,
+        });
+      } else {
+        Swal.fire({
+          icon: "error",
+          title: "Minimum 2 product in one custom",
+        });
+      }
     } else {
-      Swal.fire({
-        icon: "error",
-        title: "Minimum 2 product in one custom",
-      });
+      if (capsule.length >= 2) {
+        alert("HOI");
+        dispatch(
+          addProductToDatabaseAction({
+            user_id,
+            capsule,
+            totalQty: dose,
+            totalPrice: grandTotal,
+          })
+        );
+        dispatch(nullifyCustomAction());
+        toast.info("Product Added!", {
+          position: "top-right",
+          autoClose: 4000,
+          hideProgressBar: true,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+          transition: Zoom,
+        });
+      } else {
+        Swal.fire({
+          icon: "error",
+          title: "Minimum 2 product in one custom",
+        });
+      }
     }
   };
 

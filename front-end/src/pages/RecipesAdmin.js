@@ -89,6 +89,7 @@ const RecipesAdmin = () => {
                     status={`${val.recipes_status}`}
                     username={`${val.User.user_username}`}
                     recipes_id={`${val.recipes_id}`}
+                    user_id={`${val.user_id}`}
                   />
                 );
               })

@@ -88,12 +88,14 @@ export const NavAdmin = () => {
                 >
                   Account settings
                 </p>
-                <p
-                  className="transition duration-200 font-semibold block w-full text-left px-4 py-2 text-sm text-gray-600 hover:bg-gray-100 hover:text-blue-500 cursor-pointer"
-                  onClick={logoutBtn}
-                >
-                  Sign Out
-                </p>
+                <Link to="/">
+                  <p
+                    className="transition duration-200 font-semibold block w-full text-left px-4 py-2 text-sm text-gray-600 hover:bg-gray-100 hover:text-blue-500 cursor-pointer"
+                    onClick={logoutBtn}
+                  >
+                    Sign Out
+                  </p>
+                </Link>
               </div>
             </div>
           </ClickAwayListener>

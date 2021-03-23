@@ -10,6 +10,7 @@ const ImagesCard = ({
   imageUrl,
   username,
   recipes_id,
+  user_id,
 }) => {
   const [showModal, setShowModal] = useState(false);
 
@@ -27,6 +28,8 @@ const ImagesCard = ({
         name={username}
         imageUrl={imageUrl}
         recipes_id={recipes_id}
+        user_id={user_id}
+        status={status}
       />
       <div
         style={{

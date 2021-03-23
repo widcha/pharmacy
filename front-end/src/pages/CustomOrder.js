@@ -1,18 +1,19 @@
 import axios from "axios";
-import React, { useEffect, useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
-import { Redirect } from "react-router";
+import React, {useEffect, useState} from "react";
+import {useDispatch, useSelector} from "react-redux";
+import {Redirect} from "react-router";
 import Swal from "sweetalert2";
 import CardCustomOrder from "../components/CardCustomOrder";
 import SummaryCustom from "../components/SummaryCustom";
-import { api_url } from "../helpers";
+import {api_url} from "../helpers";
 import {
   addCustomProductAction,
   customQtyAction,
 } from "../redux/actions/customOrderAction";
+import queryString from "querystring";
 
 const CustomOrder = () => {
-  const { capsule } = useSelector((state) => state.customOrder);
+  const {capsule} = useSelector((state) => state.customOrder);
   const [filterData, setFilterData] = useState([]);
   const [suggestion, setSuggestion] = useState(false);
   const [name, setName] = useState("");
@@ -38,6 +39,15 @@ const CustomOrder = () => {
     }, 500);
     return () => clearTimeout(timer);
   }, [name]);
+
+  const [recId, setResId] = useState("");
+  const [userId, setUserId] = useState("");
+  useEffect(() => {
+    const que = queryString.parse(window.location.search)["?recipes"];
+    const secQue = queryString.parse(window.location.search)["userid"];
+    setResId(que);
+    setUserId(secQue);
+  }, []);
 
   const addBtn = (value) => {
     let newArr = [...capsule];
@@ -157,6 +167,8 @@ const CustomOrder = () => {
           decBtn={() => decQty(index)}
           deleteBtn={() => deleteBtn(index)}
           pricePerMl={val.product_price / val.product_vol}
+          userID={userId}
+          recipeID={recId}
         />
       );
     });
@@ -166,7 +178,7 @@ const CustomOrder = () => {
     <Redirect to="/" />;
   }
   return (
-    <div className="grid grid-cols-3 gap-4 my-5 h-screen mx-5">
+    <div className="grid grid-cols-3 gap-4 my-5 mx-5">
       <div className="col-span-2">
         <div className="flex flex-col">
           <h3 className="flex text-gray-700 font-semibold text-2xl mx-5">
@@ -192,7 +204,9 @@ const CustomOrder = () => {
           </div>
         </div>
       </div>
-      <div className="mt-2">{SummaryCustom()}</div>
+      <div className="mt-2">
+        <SummaryCustom userID={userId} recipeID={recId} />
+      </div>
     </div>
   );
 };

@@ -55,6 +55,7 @@ function App() {
           <Route path="/payment-proof" component={PaymentAdmin} />
           <Route path="/product-flow" component={ProductFlowAdmin} />
           <Route path="/product-flow-detail" component={ProductFlowDetail} />
+          <Route exact path="/custom-order" component={CustomOrder} />
         </div>
       </div>
     );
