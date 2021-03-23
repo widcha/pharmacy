@@ -32,7 +32,7 @@ const ProductFlowDetail = () => {
   useEffect(() => {
     const que = queryString.parse(window.location.search)["?id"];
     setProductID(que);
-  });
+  }, []);
 
   useEffect(() => {
     dispatch(fetchStockFlowByIdAction(productID));

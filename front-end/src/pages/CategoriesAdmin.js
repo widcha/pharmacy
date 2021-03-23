@@ -3,10 +3,6 @@ import {
   Button,
   makeStyles,
   Paper,
-  FormControl,
-  InputLabel,
-  MenuItem,
-  Select,
   Table,
   TableBody,
   TableCell,
@@ -121,91 +117,75 @@ const CategoriesAdmin = () => {
       });
     }
   };
-  const [filterCategory, setFilterCategory] = useState("");
-  const [openn, setOpenn] = useState(false);
-
-  const handleFilterCategory = (e) => {
-    setFilterCategory(e.target.value);
-  };
-  const handleOpenn = () => {
-    setOpenn(true);
-  };
-  const handleClosee = () => {
-    setOpenn(false);
-  };
 
   const renderRow = () => {
-    let newCat;
     if (data) {
-      if (filterCategory) {
-        newCat = data.filter(
-          (val) => val.product_category_id === filterCategory
-        );
-      } else {
-        newCat = data;
-      }
+      return data.map((row, index) => (
+        <TableRow key={row.product_category_id}>
+          <TableCell>
+            {page === 0 ? index + 1 : index + 1 + page * 10}
+          </TableCell>
+          {clicked &&
+          row.product_category_id === idCat &&
+          addClick === false ? (
+            <>
+              <TableCell>
+                <TextField
+                  placeholder="Category Name"
+                  label="Category Name"
+                  id="category-name"
+                  defaultValue={row.product_category}
+                  size="small"
+                  onChange={(e) => setCategory(e.target.value)}
+                />
+              </TableCell>
+              <TableCell align="center">
+                <Button
+                  onClick={() => saveButton(row.product_category_id)}
+                  style={{backgroundColor: "#4886af", color: "white"}}
+                >
+                  Save
+                </Button>
+                <Button
+                  onClick={() => cancelButton()}
+                  style={{
+                    backgroundColor: "#E8282C",
+                    color: "white",
+                    marginLeft: "20px",
+                  }}
+                >
+                  Cancel
+                </Button>
+              </TableCell>
+            </>
+          ) : (
+            <>
+              <TableCell>{row.product_category}</TableCell>
+              <TableCell align="center">
+                <Button
+                  onClick={() => editButton(row.product_category_id)}
+                  style={{backgroundColor: "#4a91bb", color: "white"}}
+                  disabled={addClick}
+                >
+                  Edit
+                </Button>
+                <Button
+                  onClick={() => toggle(row.product_category_id)}
+                  style={{
+                    backgroundColor: "#E8282C",
+                    color: "white",
+                    marginLeft: "20px",
+                  }}
+                  disabled={addClick}
+                >
+                  Delete
+                </Button>
+              </TableCell>
+            </>
+          )}
+        </TableRow>
+      ));
     }
-    return newCat.map((row, index) => (
-      <TableRow key={row.product_category_id}>
-        <TableCell>{page === 0 ? index + 1 : index + 1 + page * 10}</TableCell>
-        {clicked && row.product_category_id === idCat && addClick === false ? (
-          <>
-            <TableCell>
-              <TextField
-                placeholder="Category Name"
-                label="Category Name"
-                id="category-name"
-                defaultValue={row.product_category}
-                size="small"
-                onChange={(e) => setCategory(e.target.value)}
-              />
-            </TableCell>
-            <TableCell align="center">
-              <Button
-                onClick={() => saveButton(row.product_category_id)}
-                style={{backgroundColor: "#4886af", color: "white"}}
-              >
-                Save
-              </Button>
-              <Button
-                onClick={() => cancelButton()}
-                style={{
-                  backgroundColor: "#E8282C",
-                  color: "white",
-                  marginLeft: "20px",
-                }}
-              >
-                Cancel
-              </Button>
-            </TableCell>
-          </>
-        ) : (
-          <>
-            <TableCell>{row.product_category}</TableCell>
-            <TableCell align="center">
-              <Button
-                onClick={() => editButton(row.product_category_id)}
-                style={{backgroundColor: "#4a91bb", color: "white"}}
-                disabled={addClick}
-              >
-                Edit
-              </Button>
-              <Button
-                onClick={() => toggle(row.product_category_id)}
-                style={{
-                  backgroundColor: "#E8282C",
-                  color: "white",
-                  marginLeft: "20px",
-                }}
-                disabled={addClick}
-              >
-                Delete
-              </Button>
-            </TableCell>
-          </>
-        )}
-      </TableRow>
-    ));
   };
   const renderNewRow = () => {
     return addClick ? (
@@ -285,26 +265,6 @@ const CategoriesAdmin = () => {
               left: "78%",
             }}
           >
-            <FormControl style={{width: "275px"}}>
-              <InputLabel id="demo-controlled-open-select-label">
-                Filter By Category
-              </InputLabel>
-              <Select
-                labelId="demo-controlled-open-select-label"
-                id="category"
-                open={openn}
-                onClose={handleClosee}
-                onOpen={handleOpenn}
-                onChange={handleFilterCategory}
-              >
-                <MenuItem value="">All</MenuItem>
-                {data.map((val) => (
-                  <MenuItem value={val.product_category_id}>
-                    {val.product_category}
-                  </MenuItem>
-                ))}
-              </Select>
-            </FormControl>
             <div>
               <TextField
                 placeholder="Search..."

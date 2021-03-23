@@ -58,6 +58,10 @@ module.exports = (sequelize, DataTypes) => {
 			product_image_path: {
 				type: DataTypes.STRING(500),
 			},
+			isAvailable: {
+				type: DataTypes.INTEGER,
+				allowNull: false,
+			},
 		},
 		{
 			sequelize,

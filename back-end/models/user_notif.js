@@ -1,7 +1,7 @@
 "use strict";
 const { Model } = require("sequelize");
 module.exports = (sequelize, DataTypes) => {
-	class Cart extends Model {
+	class User_Notif extends Model {
 		/**
 		 * Helper method for defining associations.
 		 * This method is not a part of DataTypes lifecycle.
@@ -12,54 +12,52 @@ module.exports = (sequelize, DataTypes) => {
 			this.belongsTo(models.User, {
 				foreignKey: "user_id",
 			});
-			this.belongsTo(models.Product, {
-				foreignKey: "product_id",
+			this.belongsTo(models.Transaction, {
+				foreignKey: "transaction_invoice_number",
 			});
-			this.belongsTo(models.Custom_Product, {
-				foreignKey: "custom_product_id",
+			this.belongsTo(models.Order_Status, {
+				foreignKey: "order_status_id",
 			});
 		}
 	}
-	Cart.init(
+	User_Notif.init(
 		{
-			cart_id: {
+			user_notif_id: {
 				allowNull: false,
 				autoIncrement: true,
 				primaryKey: true,
 				type: DataTypes.INTEGER,
 			},
+			user_notif_messages: { allowNull: false, type: DataTypes.STRING },
+			user_notif_status: { allowNull: false, type: DataTypes.INTEGER },
 			user_id: {
+				allowNull: false,
 				type: DataTypes.INTEGER,
 				references: {
 					model: "users",
 					key: "user_id",
 				},
 			},
-			product_id: {
-				type: DataTypes.INTEGER,
+			transaction_invoice_number: {
+				type: DataTypes.STRING,
 				references: {
-					model: "products",
-					key: "product_id",
+					model: "transactions",
+					key: "transaction_invoice_number",
 				},
 			},
-			product_qty: {
-				type: DataTypes.INTEGER,
-			},
-			product_price: {
-				type: DataTypes.INTEGER,
-			},
-			custom_product_id: {
+			order_status_id: {
+				allowNull: false,
 				type: DataTypes.INTEGER,
 				references: {
-					model: "custom_products",
-					key: "custom_product_id",
+					model: "order_statuses",
+					key: "order_status_id",
 				},
 			},
 		},
 		{
 			sequelize,
-			modelName: "Cart",
+			modelName: "User_Notif",
 		}
 	);
-	return Cart;
+	return User_Notif;
 };

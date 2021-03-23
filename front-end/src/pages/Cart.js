@@ -55,20 +55,22 @@ export const Cart = () => {
 			}
 		});
 	};
+
 	const renderCart = () => {
 		return cart_list.map((val, index) => {
-			let total = val.product_price * val.product_qty;
+			let price = val.product_price / val.Product.product_vol;
+			let total = price * val.product_qty;
 			return (
 				<CartCard
-					total={total}
+					total={Math.ceil(total)}
 					image={val.Product.product_image_path}
 					name={val.Product.product_name}
 					user_id={val.user_id}
 					product_id={val.product_id}
 					qty={val.product_qty}
-					price={val.product_price}
-					stock={val.Product.product_stock}
-					vol={val.Product.product_vol}
+					price={Math.ceil(price)}
+					stock={val.Product.product_stock_total}
+					vol={val.Product.product_stock_total}
 					increment={handleIncrement}
 					decrement={handleDecrement}
 					del={handleDelete}
@@ -76,6 +78,30 @@ export const Cart = () => {
 			);
 		});
 	};
+
+	const handleCheckout = () => {};
+	if (cart_list.length === 0) {
+		return (
+			<div className="flex h-screen">
+				<div className="m-auto flex flex-col items-center">
+					<svg
+						class="w-44 h-44"
+						fill="#00b3ac"
+						viewBox="0 0 20 20"
+						xmlns="http://www.w3.org/2000/svg"
+					>
+						<path d="M3 1a1 1 0 000 2h1.22l.305 1.222a.997.997 0 00.01.042l1.358 5.43-.893.892C3.74 11.846 4.632 14 6.414 14H15a1 1 0 000-2H6.414l1-1H14a1 1 0 00.894-.553l3-6A1 1 0 0017 3H6.28l-.31-1.243A1 1 0 005 1H3zM16 16.5a1.5 1.5 0 11-3 0 1.5 1.5 0 013 0zM6.5 18a1.5 1.5 0 100-3 1.5 1.5 0 000 3z"></path>
+					</svg>
+					<p className="text-3xl font-bold font-sans text-gray-800">
+						Your Cart is Empty
+					</p>
+					<p className="text-3xl font-bold font-sans text-gray-800">
+						Add something to make me happy :)
+					</p>
+				</div>
+			</div>
+		);
+	}
 	return (
 		<div className="flex justify-center my-6">
 			<div className="flex flex-col w-full p-8 text-gray-800 bg-white shadow-lg pin-r pin-y md:w-4/5 lg:w-4/5">
@@ -84,25 +110,7 @@ export const Cart = () => {
 				</label>
 
 				<div className="flex-1">
-					{/* <table className="w-full text-sm lg:text-base" cellspacing="0">
-						<thead>
-							<tr className="h-12 uppercase">
-								<th className="hidden md:table-cell"></th>
-								<th className="text-left">Product</th>
-								<th className="lg:text-right text-left pl-5 lg:pl-0">
-									<span className="lg:hidden" title="Quantity">
-										Qty
-									</span>
-									<span className="hidden lg:inline">Quantity</span>
-								</th>
-								<th className="hidden text-right md:table-cell">Item price</th>
-								<th className="text-right">Total price</th>
-							</tr>
-						</thead>
-						<tbody> */}
 					{renderCart()}
-					{/* </tbody> */}
-					{/* </table> */}
 					<div className="pb-6 mt-6">
 						<div className="my-4 mt-6 -mx-2 lg:flex">
 							<div className="lg:px-2 lg:w-1/2">

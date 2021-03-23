@@ -1,4 +1,4 @@
-import React, {useState} from "react";
+import React, {useEffect, useState} from "react";
 import {
   Button,
   Card,
@@ -10,7 +10,7 @@ import {
   Typography,
 } from "@material-ui/core";
 import {api_url} from "../helpers";
-import {useDispatch} from "react-redux";
+import {useDispatch, useSelector} from "react-redux";
 import Swal from "sweetalert2";
 import {addStock, deleteProductAction} from "../redux/actions";
 import ModalProduct from "./ModalProduct";
@@ -28,11 +28,18 @@ const CardProduct = ({
 }) => {
   const dispatch = useDispatch();
 
+  const {category} = useSelector((state) => state.product);
   const [showModal, setShowModal] = useState(false);
   const [showMod, setShowMod] = useState(false);
 
   const [changeStock, setChangeStock] = useState(1);
 
+  const [theCat, setTheCat] = useState("");
+  useEffect(() => {
+    const cat = category.filter((val) => val.product_category_id === catt)[0]
+      .product_category;
+    setTheCat(cat);
+  }, [category]);
   const useStyles = makeStyles({
     root: {
       minWidth: 700,
@@ -159,7 +166,7 @@ const CardProduct = ({
         showModal={showModal}
         modalName="Edit Product"
         idProd={idProd}
-        data={{name, price, stock, vol, desc, catt}}
+        data={{name, price, stock, vol, desc}}
       />
       <Card className={classes.root}>
         <CardActionArea>
@@ -200,7 +207,7 @@ const CardProduct = ({
                 component="p"
                 style={{marginTop: "3px"}}
               >
-                Category: {catt}
+                Category: {theCat}
               </Typography>
               <Typography
                 variant="body2"

@@ -56,10 +56,12 @@ const Products = (props) => {
       <>
         {data
           ? data.map((val, index) => {
+              let price = val.product_price / val.product_vol;
               return (
                 <CardProductUser
                   name={val.product_name}
                   price={val.product_price}
+                  pricePerGram={Math.ceil(price)}
                   id={val.product_id}
                   img={val.product_image_path}
                 />
