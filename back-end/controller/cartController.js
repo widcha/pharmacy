@@ -194,9 +194,20 @@ module.exports = {
 					{ model: Product },
 					{
 						model: Custom_Product,
+						attributes: [
+							// "custom_product_id",
+							"custom_product_qty",
+							"custom_product_price",
+							// [
+							// 	sequelize.fn("SUM", sequelize.col("custom_product_price")),
+							// 	"totalPrice",
+							// ],
+							// [sequelize.fn('COUNT', sequelize.fn('DISTINCT', sequelize.col('items.id'))), 'itemsCount'],
+						],
 					},
 				],
 				group: ["custom_product_id"],
+
 				// having: ["custom_product_id"],
 			});
 
