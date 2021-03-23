@@ -179,8 +179,13 @@ module.exports = {
 
 			const response = await Cart.findAll({
 				where: {
-					user_id: {
-						[Op.eq]: id,
+					[Op.and]: {
+						user_id: {
+							[Op.eq]: id,
+						},
+						custom_product_id: {
+							[Op.ne]: null,
+						},
 					},
 				},
 				// attributes: [
@@ -190,27 +195,41 @@ module.exports = {
 				// 	],
 				// ],
 				// group: ["custom_product_id"],
+				attributes: { exclude: ["createdAt", "updatedAt"] },
 				include: [
-					{ model: Product },
+					{
+						model: Product,
+						attributes: { exclude: ["createdAt", "updatedAt"] },
+					},
 					{
 						model: Custom_Product,
-						attributes: [
-							// "custom_product_id",
-							"custom_product_qty",
-							"custom_product_price",
-							// [
-							// 	sequelize.fn("SUM", sequelize.col("custom_product_price")),
-							// 	"totalPrice",
-							// ],
-							// [sequelize.fn('COUNT', sequelize.fn('DISTINCT', sequelize.col('items.id'))), 'itemsCount'],
-						],
+						// attributes: [
+						// 	// "custom_product_id",
+						// 	"custom_product_qty",
+						// 	"custom_product_price",
+						// 	[
+						// 		sequelize.fn(
+						// 			"GROUP_CONCAT",
+						// 			sequelize.col("custom_product_id")
+						// 		),
+						// 		"totalPrice",
+						// 	],
+						// 	// [sequelize.fn('COUNT', sequelize.fn('DISTINCT', sequelize.col('items.id'))), 'itemsCount'],
+						// ],
+						attributes: { exclude: ["createdAt", "updatedAt"] },
 					},
 				],
-				group: ["custom_product_id"],
+				// group: ["custom_product_id"],
 
 				// having: ["custom_product_id"],
 			});
+			// console.log(response[0].dataValues);
+			var grouped = _.mapValues(
+				_.groupBy(response, "custom_product_id"),
+				(clist) => clist.map((res) => _.omit(res, "custom_product_id"))
+			);
 
+			// console.log(grouped["1"][1].dataValues);
 			// console.log(response.length);
 			// // console.log(length);
 			// return res.status(200).send({ data: response, length: length.length });
@@ -234,8 +253,9 @@ module.exports = {
 
 			// 	// include: [{ model: Product }],
 			// });
+			console.log(Object.entries(grouped)[0][1][0].dataValues);
 
-			return res.send(response);
+			return res.send(grouped["1"][1].dataValues);
 		} catch (err) {
 			return res.status(500).send({ message: err.message });
 		}
