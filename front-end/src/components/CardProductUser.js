@@ -16,7 +16,7 @@ const CardProductUser = ({ name, price, id, img, qty, pricePerGram }) => {
 					user_id,
 					product_id: id,
 					product_qty: 1,
-					product_price: price,
+					product_price: pricePerGram,
 				})
 			);
 		} else {

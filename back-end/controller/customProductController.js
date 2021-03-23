@@ -7,6 +7,7 @@ module.exports = {
 			const response = await Custom_Product.create({
 				custom_product_qty: totalQty,
 				custom_product_price: totalPrice,
+				user_id,
 			});
 			await capsule.forEach((val) => {
 				Cart.create({

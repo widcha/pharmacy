@@ -7,7 +7,7 @@ const {
 const pify = require("pify");
 const { uploader } = require("../handlers");
 const fs = require("fs");
-const { User_Address } = require("../models");
+const { User_Address, Cart, Custom_Product, Product } = require("../models");
 const { Op } = require("sequelize");
 const { emailOne, emailTwo } = require("../helpers/emailTemplate");
 
@@ -65,7 +65,7 @@ const userVerification = async (req, res) => {
 const userLogin = async (req, res) => {
 	try {
 		const { email, password } = req.body;
-		console.log(req.body);
+		// console.log(req.body);
 		const encryptedPassword = hashPassword(password);
 		const user = await models.User.findAll({
 			where: {
@@ -73,33 +73,75 @@ const userLogin = async (req, res) => {
 				user_password: encryptedPassword,
 			},
 
-			include: [
-				{
-					model: models.Cart,
-					attributes: { exclude: ["createdAt", "updatedAt"] },
-					include: [
-						{
-							model: models.Product,
-							attributes: {
-								exclude: [
-									"createdAt",
-									"updatedAt",
-									"product_desc",
-									"product_id",
-									"product_price",
-									"product_category_id",
-								],
-							},
-						},
-					],
-				},
-			],
+			// include: [
+			// 	{
+			// 		model: models.Cart,
+			// 		attributes: { exclude: ["createdAt", "updatedAt"] },
+			// 		include: [
+			// 			{
+			// 				model: models.Product,
+			// 				attributes: {
+			// 					exclude: [
+			// 						"createdAt",
+			// 						"updatedAt",
+			// 						"product_desc",
+			// 						"product_id",
+			// 						"product_price",
+			// 						"product_category_id",
+			// 					],
+			// 				},
+			// 			},
+			// 		],
+			// 	},
+			// ],
 			attributes: { exclude: ["createdAt", "updatedAt", "user_password"] },
 		});
 
+		const fetch_cart1 = await Cart.findAll({
+			where: {
+				[Op.and]: {
+					user_id: {
+						[Op.eq]: user[0].user_id,
+					},
+					custom_product_id: {
+						[Op.eq]: null,
+					},
+				},
+			},
+
+			attributes: { exclude: ["createdAt", "updatedAt"] },
+			include: [
+				{
+					model: Product,
+					attributes: { exclude: ["createdAt", "updatedAt"] },
+				},
+			],
+		});
+
+		const fetch_cart2 = await Custom_Product.findAll({
+			where: {
+				user_id: user[0].user_id,
+			},
+			attributes: { exclude: ["createdAt", "updatedAt"] },
+			include: [
+				{
+					model: Cart,
+					include: [
+						{
+							model: Product,
+							attributes: { exclude: ["createdAt", "updatedAt"] },
+						},
+					],
+					attributes: { exclude: ["createdAt", "updatedAt"] },
+				},
+			],
+		});
+		// console.log(user[0].user_id);
+		// console.log([...fetch_cart1]);
 		const responseData = { ...user[0].dataValues };
 		const token = createJWTToken(responseData);
 		responseData.token = token;
+		responseData.cart = [...fetch_cart1, ...fetch_cart2];
 
 		return res.send(responseData);
 	} catch (err) {

@@ -184,44 +184,18 @@ module.exports = {
 							[Op.eq]: id,
 						},
 						custom_product_id: {
-							[Op.ne]: null,
+							[Op.eq]: null,
 						},
 					},
 				},
-				// attributes: [
-				// 	[
-				// 		sequelize.fn("array_agg", sequelize.literal("custom_product_id")),
-				// 		"customs",
-				// 	],
-				// ],
-				// group: ["custom_product_id"],
+
 				attributes: { exclude: ["createdAt", "updatedAt"] },
 				include: [
 					{
 						model: Product,
 						attributes: { exclude: ["createdAt", "updatedAt"] },
 					},
-					{
-						model: Custom_Product,
-						// attributes: [
-						// 	// "custom_product_id",
-						// 	"custom_product_qty",
-						// 	"custom_product_price",
-						// 	[
-						// 		sequelize.fn(
-						// 			"GROUP_CONCAT",
-						// 			sequelize.col("custom_product_id")
-						// 		),
-						// 		"totalPrice",
-						// 	],
-						// 	// [sequelize.fn('COUNT', sequelize.fn('DISTINCT', sequelize.col('items.id'))), 'itemsCount'],
-						// ],
-						attributes: { exclude: ["createdAt", "updatedAt"] },
-					},
 				],
-				// group: ["custom_product_id"],
-
-				// having: ["custom_product_id"],
 			});
 			// console.log(response[0].dataValues);
 			var grouped = _.mapValues(
@@ -253,9 +227,30 @@ module.exports = {
 
 			// 	// include: [{ model: Product }],
 			// });
-			console.log(Object.entries(grouped)[0][1][0].dataValues);
+			// console.log(Object.entries(grouped));
+			// const arr = Object.entries(grouped);
+			// console.log(arr.map((val) => val));
 
-			return res.send(grouped["1"][1].dataValues);
+			const customProducts = await Custom_Product.findAll({
+				where: {
+					user_id: id,
+				},
+				attributes: { exclude: ["createdAt", "updatedAt"] },
+				include: [
+					{
+						model: Cart,
+						include: [
+							{
+								model: Product,
+								attributes: { exclude: ["createdAt", "updatedAt"] },
+							},
+						],
+						attributes: { exclude: ["createdAt", "updatedAt"] },
+					},
+				],
+			});
+			return res.send([...response, ...customProducts]);
+			// return res.send(grouped["1"][1].dataValues);
 		} catch (err) {
 			return res.status(500).send({ message: err.message });
 		}
