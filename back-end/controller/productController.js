@@ -33,6 +33,7 @@ module.exports = {
             [Op.and]: {
               product_price: {[Op.gte]: minPrice ? minPrice : 0},
               product_name: {[Op.substring]: `${search ? search : ""}`},
+              isAvailable: 1,
             },
           },
           order: orderSort,
@@ -61,6 +62,7 @@ module.exports = {
                   },
                 },
                 product_name: {[Op.substring]: `${search ? search : ""}`},
+                isAvailable: 1,
               },
             },
             order: orderSort,
@@ -88,7 +90,10 @@ module.exports = {
       const {id} = req.params;
       const response = await Product.findOne({
         where: {
-          product_id: id,
+          [Op.and]: {
+            product_id: id,
+            isAvailable: 1,
+          },
         },
         attributes: {
           exclude: ["createdAt", "updatedAt"],
@@ -112,7 +117,10 @@ module.exports = {
       const {id} = req.params;
       const response = await Product.findAll({
         where: {
-          product_category_id: id,
+          [Op.and]: {
+            product_category_id: id,
+            isAvailable: 1,
+          },
         },
       });
       return res.status(200).send(response);
@@ -147,6 +155,7 @@ module.exports = {
           product_desc: newDesc,
           product_category_id: selectedCategory,
           product_image_path: imagepath,
+          isAvailable: 1,
         });
 
         if (response) {
@@ -288,20 +297,32 @@ module.exports = {
   deleteProduct: async (req, res) => {
     try {
       const {id} = req.params;
+      const {isAvail, stock} = req.body;
+
       const prods = await Product.findOne({
         where: {
           product_id: id,
         },
       });
-      const oldImagepath = prods.dataValues.product_image_path;
-      if (oldImagepath) {
-        fs.unlinkSync(`public${oldImagepath}`);
-        await Product.destroy({
+      await Product.update(
+        {
+          product_stock: stock,
+          product_stock_total: stock,
+          isAvailable: isAvail,
+        },
+        {
           where: {
             product_id: id,
           },
-        });
-      }
+        }
+      );
+
+      await Material_Flow.create({
+        product_id: id,
+        material_flow_stock: `${-prods.dataValues.product_stock}`,
+        material_flow_info: "Product deleted by admin",
+        stock: stock,
+      });
       return res.status(200).send({message: "Product deleted"});
     } catch (err) {
       return res.send(err.message);
@@ -314,7 +335,10 @@ module.exports = {
         const sort_res = await Product.findAll({
           order: [["createdAt", `${order}`]],
           where: {
-            product_category_id: id,
+            [Op.and]: {
+              product_category_id: id,
+              isAvailable: 1,
+            },
           },
         });
         return res.send(sort_res);
@@ -334,8 +358,11 @@ module.exports = {
       if (category > 0) {
         const response = await Product.findAll({
           where: {
-            product_category_id: {
-              [Op.eq]: category,
+            [Op.and]: {
+              product_category_id: {
+                [Op.eq]: category,
+              },
+              isAvailable: 1,
             },
           },
         });
@@ -353,8 +380,11 @@ module.exports = {
       const {search, limit} = req.query;
       let response = await Product.findAll({
         where: {
-          product_name: {
-            [Op.substring]: search,
+          [Op.and]: {
+            product_name: {
+              [Op.substring]: search,
+            },
+            isAvailable: 1,
           },
         },
       });
@@ -369,6 +399,9 @@ module.exports = {
       console.log("halo");
       if (highest_price === "true") {
         const response = await Product.findAll({
+          where: {
+            isAvailable: 1,
+          },
           attributes: [
             [sequelize.fn("max", sequelize.col("product_price")), "maxPrice"],
           ],
@@ -389,6 +422,7 @@ module.exports = {
                 product_category_id: {
                   [Op.eq]: category,
                 },
+                isAvailable: 1,
               },
             },
           });
@@ -402,6 +436,7 @@ module.exports = {
                   [Op.lte]: price_to,
                 },
               },
+              isAvailable: 1,
             },
           });
           return res.status(200).send(response);
@@ -414,6 +449,33 @@ module.exports = {
       }
     } catch (err) {
       return res.send(err.message);
+    }
+  },
+  getDeletedProduct: async (req, res) => {
+    try {
+      const {search} = req.query;
+      const response = await Product.findAll({
+        where: {
+          [Op.and]: {
+            product_name: {[Op.substring]: `${search ? search : ""}`},
+            [Op.or]: [{isAvailable: 0}, {isAvailable: 1}],
+          },
+        },
+        attributes: {
+          exclude: ["createdAt", "updatedAt"],
+        },
+        include: [
+          {
+            model: Product_Category,
+            attributes: {
+              exclude: ["createdAt", "updatedAt"],
+            },
+          },
+        ],
+      });
+      return res.status(200).send(response);
+    } catch (err) {
+      return res.status(500).send(err.message);
     }
   },
 };

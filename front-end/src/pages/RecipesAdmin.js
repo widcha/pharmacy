@@ -118,8 +118,8 @@ const RecipesAdmin = () => {
               onChange={handleSort}
             >
               <MenuItem value="">All</MenuItem>
-              <MenuItem value="OLD">Date (old to new)</MenuItem>
-              <MenuItem value="NEW">Date (new to old)</MenuItem>
+              <MenuItem value="OLD">Latest</MenuItem>
+              <MenuItem value="NEW">Newest</MenuItem>
             </Select>
           </FormControl>
           <FormControl style={{width: "275px"}}>
@@ -144,6 +144,7 @@ const RecipesAdmin = () => {
               placeholder="Username"
               label="Search"
               id="search"
+              value={searchWord ? searchWord : ""}
               onChange={(e) => setSearch(e.target.value)}
               style={{width: "275px", paddingBottom: "10px"}}
             />

@@ -38,7 +38,6 @@ const ProductAdmin = () => {
     setShowModal(!showModal);
   };
 
-  const [filter, setFilter] = useState(false);
   const [openn, setOpenn] = useState(false);
   const [filterCategory, setFilterCategory] = useState("");
   const handleOpenn = () => {
@@ -60,7 +59,7 @@ const ProductAdmin = () => {
   const handleCloseSort = () => {
     setOpenSort(false);
   };
-  const handleSort = async (e) => {
+  const handleSort = (e) => {
     setSortChosen(e.target.value);
   };
 
@@ -82,7 +81,6 @@ const ProductAdmin = () => {
         sortChosen,
       })
     );
-    setFilter(true);
   };
 
   const renderProduct = () => {
@@ -134,7 +132,6 @@ const ProductAdmin = () => {
     setSortChosen("");
     setMaxPrice(0);
     setMinPrice(0);
-    setFilter(false);
     dispatch(fetchProductAction());
   };
   useEffect(() => {
@@ -179,14 +176,15 @@ const ProductAdmin = () => {
                 <Select
                   labelId="demo-controlled-open-select-label"
                   id="sort"
+                  value={sortChosen ? sortChosen : ""}
                   open={openSort}
                   onClose={handleCloseSort}
                   onOpen={handleOpenSort}
                   onChange={handleSort}
                 >
-                  <MenuItem value="None">None</MenuItem>
-                  <MenuItem value="DateOld">Date (Old to New)</MenuItem>
-                  <MenuItem value="DateNew">Date (New to Old)</MenuItem>
+                  <MenuItem value="None"></MenuItem>
+                  <MenuItem value="DateOld">Latest</MenuItem>
+                  <MenuItem value="DateNew">Newest</MenuItem>
                 </Select>
               </FormControl>
               {/* CATEGORY FILTER */}
@@ -197,6 +195,7 @@ const ProductAdmin = () => {
                 <Select
                   labelId="demo-controlled-open-select-label"
                   id="category"
+                  value={filterCategory ? filterCategory : ""}
                   open={openn}
                   onClose={handleClosee}
                   onOpen={handleOpenn}
@@ -215,6 +214,7 @@ const ProductAdmin = () => {
                   placeholder="Search..."
                   label="Search"
                   id="search"
+                  value={searchWord ? searchWord : ""}
                   onChange={(e) => setSearch(e.target.value)}
                   style={{width: "275px"}}
                 />
@@ -230,6 +230,7 @@ const ProductAdmin = () => {
                   placeholder="Min. Price"
                   label="Min. Price"
                   id="minprice"
+                  value={minPrice ? minPrice : ""}
                   onChange={(e) => setMinPrice(e.target.value)}
                 />
                 &nbsp;&nbsp;
@@ -239,6 +240,7 @@ const ProductAdmin = () => {
                   placeholder="Max. Price"
                   label="Max. Price"
                   id="maxprice"
+                  value={maxPrice ? maxPrice : ""}
                   onChange={(e) => setMaxPrice(e.target.value)}
                 />
               </div>
@@ -280,36 +282,9 @@ const ProductAdmin = () => {
       </>
     );
   };
-  const headerTxt = () => {
-    let txt = "";
-    if (filter) {
-      if (minPrice) {
-        txt += `that has minimum price = ${minPrice} `;
-      }
-      if (maxPrice) {
-        if (txt !== "") {
-          txt = `that has a price between ${minPrice} - ${maxPrice} `;
-        } else {
-          txt += `that has maximum price = ${maxPrice} `;
-        }
-      }
-      if (searchWord) {
-        if (txt !== "") {
-          txt += `and contain '${searchWord}'`;
-        } else {
-          txt += `that contain '${searchWord}' `;
-        }
-      }
-      if (sortChosen) {
-        txt += `with sort = ${sortChosen} `;
-      }
-      return <div>Showing products {txt}</div>;
-    }
-  };
   return (
     <>
       <div className="flex flex-col mx-2" style={{marginTop: "15px"}}>
-        {headerTxt()}
         <div className="flex flex-wrap">{loading ? null : renderAll()}</div>
         <div className="flex-row align-baseline">
           <ReactPaginate
