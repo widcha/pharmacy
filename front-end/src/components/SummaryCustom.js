@@ -2,7 +2,11 @@ import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import Swal from "sweetalert2";
 import pill from "../assets/icons/pill2.png";
-import { addProductToDatabaseAction } from "../redux/actions/customOrderAction";
+import {
+  addProductToDatabaseAction,
+  nullifyCustomAction,
+} from "../redux/actions/customOrderAction";
+import { toast, Zoom } from "react-toastify";
 
 const SummaryCustom = () => {
   const { capsule } = useSelector((state) => state.customOrder);
@@ -29,14 +33,32 @@ const SummaryCustom = () => {
   }, [totalPrice, dose]);
 
   const addToCartBtn = () => {
-    dispatch(
-      addProductToDatabaseAction({
-        user_id,
-        capsule,
-        totalQty: dose,
-        totalPrice: grandTotal,
-      })
-    );
+    if (capsule.length >= 2) {
+      dispatch(
+        addProductToDatabaseAction({
+          user_id,
+          capsule,
+          totalQty: dose,
+          totalPrice: grandTotal,
+        })
+      );
+      dispatch(nullifyCustomAction());
+      toast.info("Product Added!", {
+        position: "top-right",
+        autoClose: 4000,
+        hideProgressBar: true,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        transition: Zoom,
+      });
+    } else {
+      Swal.fire({
+        icon: "error",
+        title: "Minimum 2 product in one custom",
+      });
+    }
   };
 
   const details = () => {

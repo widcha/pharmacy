@@ -18,7 +18,7 @@ const SignUp = () => {
   const dispatch = useDispatch();
   const user = useSelector((state) => state.user);
 
-  const reUppercase = /[A-Z]/;
+  const reUppercase = /[0-9]/;
   const re6Chars = /^.{6,}$/;
   const reSpecialChar = /\W|_/;
 
@@ -97,7 +97,7 @@ const SignUp = () => {
             onChange={handleInput}
             className="text-gray-700 font-semibold px-4 pt-2 transition duration-300 border border-gray-300 rounded focus:border-transparent focus:outline-none focus:ring-4 focus:ring-blue-200"
           />
-          <div className="flex mt-1">
+          <div className="flex justify-between mt-1">
             <div className="flex items-center space-x-2">
               <input
                 type="checkbox"
@@ -121,7 +121,7 @@ const SignUp = () => {
                       : "red",
                   }}
                 >
-                  An uppercase letter
+                  A number
                 </li>
                 <li
                   style={{
