@@ -1,2 +1,5 @@
-const uid = Date.now();
-console.log(uid / 100);
+const moment = require("moment");
+
+const invoice = `INV/22/${Date.now()}`;
+console.log(invoice);
+console.log(moment().format("l"));
