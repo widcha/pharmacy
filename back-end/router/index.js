@@ -4,4 +4,6 @@ module.exports = {
   categoryRouter: require("./categoryRouter"),
   cartRouter: require("./cartRouter"),
   adminRouter: require("./adminRouter"),
+  transactionRouter: require("./transactionRouter"),
+  customProductRouter: require("./customProductRouter"),
 };

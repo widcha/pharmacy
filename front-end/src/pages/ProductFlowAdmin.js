@@ -19,7 +19,7 @@ import {useDispatch, useSelector} from "react-redux";
 import {
   fetchCategoryAction,
   fetchFilterProductAction,
-  fetchProductAction,
+  fetchFlowProductAction,
   getStockFlowAction,
 } from "../redux/actions";
 import ReactPaginate from "react-paginate";
@@ -31,12 +31,11 @@ const ProductFlowAdmin = () => {
 
   useEffect(() => {
     dispatch(getStockFlowAction());
-    dispatch(fetchProductAction());
+    dispatch(fetchFlowProductAction());
     dispatch(fetchCategoryAction());
   }, [dispatch]);
 
-  const product_list = useSelector((state) => state.product.product_list);
-  const category = useSelector((state) => state.product.category);
+  const {product_list, category} = useSelector((state) => state.product);
 
   const useStyles = makeStyles({
     table: {
@@ -286,7 +285,7 @@ const ProductFlowAdmin = () => {
               Search
             </Button>
             <Button
-              onClick={() => dispatch(fetchProductAction())}
+              onClick={() => dispatch(fetchFlowProductAction())}
               style={{
                 backgroundColor: "#759cd8",
                 marginTop: "10px",

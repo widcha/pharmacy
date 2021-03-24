@@ -1,22 +1,30 @@
 import React from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Link } from "react-router-dom";
+import Swal from "sweetalert2";
 import capsules from "../assets/icons/capsules.svg";
 import { cart } from "../assets/icons/cart";
 import { userAddProductToCartAction } from "../redux/actions/cartAction";
 
-const CardProductUser = ({ name, price, id, img, qty }) => {
+const CardProductUser = ({ name, price, id, img, qty, pricePerGram }) => {
 	const dispatch = useDispatch();
 	const { user_id } = useSelector((state) => state.user);
 	const handleAddToCart = () => {
-		dispatch(
-			userAddProductToCartAction({
-				user_id,
-				product_id: id,
-				product_qty: 1,
-				product_price: price,
-			})
-		);
+		if (user_id > 0) {
+			dispatch(
+				userAddProductToCartAction({
+					user_id,
+					product_id: id,
+					product_qty: 1,
+					product_price: pricePerGram,
+				})
+			);
+		} else {
+			Swal.fire({
+				icon: "error",
+				title: "You need to login first",
+			});
+		}
 	};
 	return (
 		<div class="flex-shrink-0 bg-blue-200m-6 relative overflow-hidden bg-gray-50 rounded-lg max-w-xs w-48 shadow-lg m-5">
@@ -66,7 +74,7 @@ const CardProductUser = ({ name, price, id, img, qty }) => {
 					{name}
 				</span>
 				<span class="block bg-gray-300 rounded-full text-blue-500 text-xs font-bold px-3 py-2 leading-none flex items-center ">
-					{`Rp ${price}`}
+					{`Rp ${pricePerGram}/gram`}
 				</span>
 				<div class="flex justify-between">
 					<button

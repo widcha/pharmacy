@@ -26,7 +26,8 @@ export const ProductDetail = (props) => {
 					name={product.product_name}
 					desc={product.product_desc}
 					price={product.product_price}
-					stock={product.product_stock}
+					pricePerGram={product.product_price / product.product_vol}
+					stock={product.product_stock_total}
 					vol={product.product_vol}
 					category={product.Product_Category.product_category}
 					idx={product.product_id}

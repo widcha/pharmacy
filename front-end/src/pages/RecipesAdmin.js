@@ -78,6 +78,7 @@ const RecipesAdmin = () => {
           style={{
             display: "flex",
             flexDirection: "row",
+            flexWrap: "wrap",
           }}
         >
           {data
@@ -89,6 +90,7 @@ const RecipesAdmin = () => {
                     status={`${val.recipes_status}`}
                     username={`${val.User.user_username}`}
                     recipes_id={`${val.recipes_id}`}
+                    user_id={`${val.user_id}`}
                   />
                 );
               })
@@ -118,8 +120,8 @@ const RecipesAdmin = () => {
               onChange={handleSort}
             >
               <MenuItem value="">All</MenuItem>
-              <MenuItem value="OLD">Date (old to new)</MenuItem>
-              <MenuItem value="NEW">Date (new to old)</MenuItem>
+              <MenuItem value="OLD">Latest</MenuItem>
+              <MenuItem value="NEW">Newest</MenuItem>
             </Select>
           </FormControl>
           <FormControl style={{width: "275px"}}>
@@ -144,6 +146,7 @@ const RecipesAdmin = () => {
               placeholder="Username"
               label="Search"
               id="search"
+              value={searchWord ? searchWord : ""}
               onChange={(e) => setSearch(e.target.value)}
               style={{width: "275px", paddingBottom: "10px"}}
             />

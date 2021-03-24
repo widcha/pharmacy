@@ -9,12 +9,14 @@ const {
   categoryRouter,
   cartRouter,
   adminRouter,
+  transactionRouter,
+  customProductRouter,
 } = require("./router");
 
 app.use(cors());
 app.use(express.static("public"));
 app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({extended: true}));
+app.use(bodyParser.urlencoded({ extended: true }));
 
 app.get("/", (req, res) => {
   return res.status(200).send("Commerce API");
@@ -25,5 +27,7 @@ app.use("/product", productRouter);
 app.use("/category", categoryRouter);
 app.use("/carts", cartRouter);
 app.use("/admin", adminRouter);
+app.use("/transaction", transactionRouter);
+app.use("/custom-product", customProductRouter);
 
 app.listen(PORT, () => console.log(`SERVER LISTENING AT PORT ${PORT}`));

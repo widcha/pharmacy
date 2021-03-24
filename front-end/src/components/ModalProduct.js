@@ -53,7 +53,7 @@ const ModalProduct = ({toggle, showModal, modalName, idProd, data}) => {
   const [newDesc, setNewDesc] = useState("");
   const [pict, setPict] = useState();
   const [pictName, setPictName] = useState("");
-  const [selectedCategory, setCategory] = useState("");
+  const [selectedCategory, setSelectedCategory] = useState("");
 
   const [open, setOpen] = useState(false);
 
@@ -61,7 +61,7 @@ const ModalProduct = ({toggle, showModal, modalName, idProd, data}) => {
     setOpen(true);
   };
   const handleChange = (e) => {
-    setCategory(e.target.value);
+    setSelectedCategory(e.target.value);
   };
   const handleClose = () => {
     setOpen(false);
@@ -93,8 +93,10 @@ const ModalProduct = ({toggle, showModal, modalName, idProd, data}) => {
       setNewPrice(data.price);
       setNewVol(data.vol);
       setNewDesc(data.desc);
+      setSelectedCategory(data.catt);
     }
   }, [data]);
+
   const saveChange = (idProd) => {
     if (newName && newPrice && newVol && newDesc && selectedCategory) {
       if (idProd && oldStock) {
@@ -133,12 +135,8 @@ const ModalProduct = ({toggle, showModal, modalName, idProd, data}) => {
     dispatch(fetchProductAction());
     setPict();
     setPictName("");
-    setCategory("");
+    setSelectedCategory("");
     toggle();
-  };
-
-  const handleNameChange = (e) => {
-    setNewName(e.target.value);
   };
 
   return (
@@ -175,15 +173,13 @@ const ModalProduct = ({toggle, showModal, modalName, idProd, data}) => {
                     }}
                   >
                     <TextField
-                      // placeholder="Name"
                       value={newName}
                       label={"Name"}
                       id="name"
                       size="large"
-                      onChange={handleNameChange}
+                      onChange={(e) => setNewName(e.target.value)}
                     />
                     <TextField
-                      // placeholder="Price"
                       value={newPrice}
                       label={"Price"}
                       id="price"
@@ -215,7 +211,6 @@ const ModalProduct = ({toggle, showModal, modalName, idProd, data}) => {
                     </div>
 
                     <TextField
-                      // placeholder="Volume"
                       value={newVol}
                       label={"Volume"}
                       id="volume"
@@ -223,7 +218,6 @@ const ModalProduct = ({toggle, showModal, modalName, idProd, data}) => {
                       onChange={(e) => setNewVol(e.target.value)}
                     />
                     <TextField
-                      // placeholder="Description"
                       value={newDesc}
                       label={"Description"}
                       id="description"
@@ -243,7 +237,12 @@ const ModalProduct = ({toggle, showModal, modalName, idProd, data}) => {
                         onChange={handleChange}
                       >
                         {categoryList.map((val) => (
-                          <MenuItem value={val.product_category_id}>
+                          <MenuItem
+                            value={val.product_category_id}
+                            onClick={() =>
+                              console.log(`${val.product_category}`)
+                            }
+                          >
                             {val.product_category}
                           </MenuItem>
                         ))}

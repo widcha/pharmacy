@@ -1,5 +1,6 @@
 const INITIAL_STATE = {
   capsule: [],
+  admin_capsule: [],
   loading: false,
   error: "",
 };
@@ -28,11 +29,18 @@ export const customOrderReducer = (state = INITIAL_STATE, action) => {
         ...state,
         capsule: [...state.capsule, action.payload],
       };
+    case "ADD_ADMIN_CUSTOM_PRODUCT":
+      return {
+        ...state,
+        admin_capsule: [...state.admin_capsule, action.payload],
+      };
     case "CHANGE_QTY":
       return {
         ...state,
         capsule: action.payload,
       };
+    case "NULLIFY_CUSTOM_PRODUCT":
+      return INITIAL_STATE;
     default:
       return state;
   }

@@ -1,5 +1,6 @@
 import axios from "axios";
 import {api_url} from "../../helpers";
+import {nullifyCustomAction} from "./customOrderAction";
 
 const url = api_url + "/user";
 
@@ -10,14 +11,14 @@ export const loginAction = (data) => {
     dispatch({type: "API_USER_START"});
     try {
       const response = await axios.post(`${url}/login`, data);
-      console.log(response.data.Carts);
+      console.log(response.data);
       const {
         user_id,
         user_email,
         user_username,
         user_role_id,
         user_isverified,
-        Carts,
+        cart,
       } = response.data;
       dispatch({
         type: "LOGIN",
@@ -30,7 +31,7 @@ export const loginAction = (data) => {
         },
       });
       dispatch({type: "API_USER_SUCCESS"});
-      dispatch({type: "USER_FETCH_CART", payload: Carts});
+      dispatch({type: "USER_FETCH_CART", payload: cart});
     } catch (err) {
       console.log(err);
       dispatch({type: "API_USER_FAILED", payload: err.response.data.message});
@@ -149,6 +150,7 @@ export const logoutAction = () => {
         type: "CLEAR_CART",
       });
       dispatch({type: "API_USER_SUCCESS"});
+      dispatch(nullifyCustomAction());
     } catch (err) {
       console.log(err);
       dispatch({

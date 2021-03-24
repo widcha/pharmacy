@@ -24,6 +24,17 @@ module.exports = (sequelize, DataTypes) => {
         foreignKey: "transaction_invoice_number",
         onDelete: "cascade",
       });
+      this.hasMany(models.Admin_Notif, {
+        foreignKey: "transaction_invoice_number",
+        onDelete: "cascade",
+      });
+      this.hasMany(models.User_Notif, {
+        foreignKey: "transaction_invoice_number",
+        onDelete: "cascade",
+      });
+      // this.belongsTo(models.Custom_Product, {
+      // 	foreignKey: "custom_product_id",
+      // });
     }
   }
   Transaction.init(

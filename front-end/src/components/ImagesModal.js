@@ -4,10 +4,8 @@ import "react-medium-image-zoom/dist/styles.css";
 import {useDispatch} from "react-redux";
 import Swal from "sweetalert2";
 import {api_url} from "../helpers";
-import {
-  changeRecipeStatus,
-  changeOrderStatusAction,
-} from "../redux/actions/adminAction";
+import {changeOrderStatusAction} from "../redux/actions/adminAction";
+import {Link} from "react-router-dom";
 
 const ImagesModal = ({
   showmodal,
@@ -16,7 +14,9 @@ const ImagesModal = ({
   name,
   modalName,
   imageUrl,
+  status,
   recipes_id,
+  user_id,
 }) => {
   const [showModal, setShowModal] = useState(false);
 
@@ -26,26 +26,21 @@ const ImagesModal = ({
   }, [showmodal]);
 
   const confirmBtn = () => {
-    if (modalName === "Prescription") {
-      dispatch(changeRecipeStatus({id: recipes_id, recipes_status: "Done"}));
-      toggle();
-    } else {
-      Swal.fire({
-        title: "Confirm this order?",
-        text: "You won't be able to revert this",
-        icon: "question",
-        showCancelButton: true,
-        confirmButtonColor: "#3085d6",
-        cancelButtonColor: "#d33",
-        confirmButtonText: "Yes, confirm this order",
-      }).then((result) => {
-        if (result.isConfirmed) {
-          Swal.fire("Order Confirmed!", "", "success");
-          // dispatch(changeOrderStatusAction({id: invoice, order_status_id: "2"}))
-          toggle();
-        }
-      });
-    }
+    Swal.fire({
+      title: "Confirm this order?",
+      text: "You won't be able to revert this",
+      icon: "question",
+      showCancelButton: true,
+      confirmButtonColor: "#3085d6",
+      cancelButtonColor: "#d33",
+      confirmButtonText: "Yes, confirm this order",
+    }).then((result) => {
+      if (result.isConfirmed) {
+        Swal.fire("Order Confirmed!", "", "success");
+        // dispatch(changeOrderStatusAction({id: invoice, order_status_id: 2, reason: `Transaction ${invoice} confirmed by Admin`}))
+        toggle();
+      }
+    });
   };
 
   const cancelBtn = () => {
@@ -79,7 +74,7 @@ const ImagesModal = ({
                 title: "Order Cancelled",
                 text: `${results.value}`,
               });
-              // dispatch(changeOrderStatusAction({id: invoice, order_status_id: "1", reason: `${results.value}`}));
+              // dispatch(changeOrderStatusAction({id: invoice, order_status_id: 1, reason: `${results.value}`}));
             }
           });
         }
@@ -150,16 +145,32 @@ const ImagesModal = ({
                   >
                     {modalName === "Prescription" ? "Cancel" : "Cancel Order"}
                   </button>
-                  <button
-                    className="bg-green-500 text-white active:bg-green-600 font-bold uppercase text-sm px-6 py-3 rounded shadow hover:shadow-lg outline-none focus:outline-none mr-1 mb-1"
-                    type="button"
-                    style={{transition: "all .15s ease"}}
-                    onClick={confirmBtn}
-                  >
-                    {modalName === "Prescription"
-                      ? "Create Custom Order"
-                      : "Confirm Order"}
-                  </button>
+                  {modalName === "Prescription" ? (
+                    <Link
+                      to={`/custom-order?recipes=${recipes_id}&userid=${user_id}&img=${imageUrl}`}
+                      disabled={status === "Done"}
+                    >
+                      <button
+                        className="bg-green-500 text-white active:bg-green-600 font-bold uppercase text-sm px-6 py-3 rounded shadow hover:shadow-lg outline-none focus:outline-none mr-1 mb-1"
+                        type="button"
+                        style={{transition: "all .15s ease"}}
+                        onClick={() => toggle()}
+                        disabled={status === "Done"}
+                      >
+                        Create Custom Order
+                      </button>
+                    </Link>
+                  ) : (
+                    <button
+                      className="bg-green-500 text-white active:bg-green-600 font-bold uppercase text-sm px-6 py-3 rounded shadow hover:shadow-lg outline-none focus:outline-none mr-1 mb-1"
+                      type="button"
+                      style={{transition: "all .15s ease"}}
+                      onClick={confirmBtn}
+                      // disabled={}
+                    >
+                      "Confirm Order"
+                    </button>
+                  )}
                 </div>
               </div>
             </div>
