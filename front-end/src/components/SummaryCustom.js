@@ -9,7 +9,7 @@ import {
 import {toast, Zoom} from "react-toastify";
 import {changeRecipeStatus} from "../redux/actions/adminAction";
 
-const SummaryCustom = ({userID, recipeID}) => {
+const SummaryCustom = () => {
   const {capsule} = useSelector((state) => state.customOrder);
   const {user_id} = useSelector((state) => state.user);
   const [totalPrice, setTotalPrice] = useState(0);
@@ -34,63 +34,14 @@ const SummaryCustom = ({userID, recipeID}) => {
   }, [totalPrice, dose]);
 
   const addToCartBtn = () => {
-    if (userID && recipeID) {
-      if (capsule.length >= 2) {
-        dispatch(
-          addProductToDatabaseAction({
-            user_id: userID,
-            capsule,
-            totalQty: dose,
-            totalPrice: grandTotal,
-          })
-        );
-        dispatch(changeRecipeStatus({id: recipeID, recipes_status: "Done"}));
-        dispatch(nullifyCustomAction());
-        toast.info("Product Added!", {
-          position: "top-right",
-          autoClose: 4000,
-          hideProgressBar: true,
-          closeOnClick: true,
-          pauseOnHover: true,
-          draggable: true,
-          progress: undefined,
-          transition: Zoom,
-        });
-      } else {
-        Swal.fire({
-          icon: "error",
-          title: "Minimum 2 product in one custom",
-        });
-      }
-    } else {
-      if (capsule.length >= 2) {
-        alert("HOI");
-        dispatch(
-          addProductToDatabaseAction({
-            user_id,
-            capsule,
-            totalQty: dose,
-            totalPrice: grandTotal,
-          })
-        );
-        dispatch(nullifyCustomAction());
-        toast.info("Product Added!", {
-          position: "top-right",
-          autoClose: 4000,
-          hideProgressBar: true,
-          closeOnClick: true,
-          pauseOnHover: true,
-          draggable: true,
-          progress: undefined,
-          transition: Zoom,
-        });
-      } else {
-        Swal.fire({
-          icon: "error",
-          title: "Minimum 2 product in one custom",
-        });
-      }
-    }
+    dispatch(
+      addProductToDatabaseAction({
+        user_id,
+        capsule,
+        totalQty: dose,
+        totalPrice: grandTotal,
+      })
+    );
   };
 
   const details = () => {

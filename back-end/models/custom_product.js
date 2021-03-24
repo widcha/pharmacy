@@ -9,9 +9,12 @@ module.exports = (sequelize, DataTypes) => {
      */
     static associate(models) {
       // define association here
-      // this.hasMany(models.Cart, {
-      // 	foreignKey: "custom_product_uid",
-      // });
+      this.hasMany(models.Cart, {
+        foreignKey: "custom_product_id",
+      });
+      this.belongsTo(models.User, {
+        foreignKey: "user_id",
+      });
     }
   }
   Custom_Product.init(
@@ -22,12 +25,18 @@ module.exports = (sequelize, DataTypes) => {
         primaryKey: true,
         type: DataTypes.INTEGER,
       },
+      custom_product_price: {
+        type: DataTypes.INTEGER,
+      },
       custom_product_qty: {
         type: DataTypes.INTEGER,
       },
-      custom_product_price: {
+      user_id: {
         type: DataTypes.INTEGER,
-        allowNull: false,
+        references: {
+          model: "users",
+          key: "user_id",
+        },
       },
     },
     {

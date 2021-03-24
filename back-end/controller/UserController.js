@@ -1,328 +1,371 @@
 const models = require("../models");
 const {
-  hashPassword,
-  createJWTToken,
-  transpostPromise,
+	hashPassword,
+	createJWTToken,
+	transpostPromise,
 } = require("../helpers");
 const pify = require("pify");
 const { uploader } = require("../handlers");
 const fs = require("fs");
-const { User_Address } = require("../models");
+const { User_Address, Cart, Custom_Product, Product } = require("../models");
 const { Op } = require("sequelize");
 const { emailOne, emailTwo } = require("../helpers/emailTemplate");
 
 // PWP-9-10
 const userRegister = async (req, res) => {
-  try {
-    const { username, email, password, security_question } = req.body;
-    console.log(security_question);
-    const encryptedPassword = hashPassword(password);
-    const user = await models.User.create({
-      user_username: username,
-      user_email: email,
-      user_password: encryptedPassword,
-      user_security_question: security_question,
-    });
+	try {
+		const { username, email, password, security_question } = req.body;
+		console.log(security_question);
+		const encryptedPassword = hashPassword(password);
+		const user = await models.User.create({
+			user_username: username,
+			user_email: email,
+			user_password: encryptedPassword,
+			user_security_question: security_question,
+		});
 
-    const token = createJWTToken({ ...user });
+		const token = createJWTToken({ ...user });
 
-    const mailOptions = {
-      from: "Pharma <pwd.pharma@gmail.com>",
-      to: email,
-      subject: "Your Pharma account: Email address verification",
-      html: emailOne(email, token),
-    };
-    await transpostPromise(mailOptions);
+		const mailOptions = {
+			from: "Pharma <pwd.pharma@gmail.com>",
+			to: email,
+			subject: "Your Pharma account: Email address verification",
+			html: emailOne(email, token),
+		};
+		await transpostPromise(mailOptions);
 
-    return res.send({ message: "New user created successfully" });
-  } catch (err) {
-    console.log(err);
-    return res.status(500).send({ message: "Register Error" });
-  }
+		return res.send({ message: "New user created successfully" });
+	} catch (err) {
+		console.log(err);
+		return res.status(500).send({ message: "Register Error" });
+	}
 };
 
 // PWP-9-10 VERIFY EMAIL
 const userVerification = async (req, res) => {
-  try {
-    const { user_id } = req.user;
-    const response = await models.User.update(
-      { user_isverified: 1 },
-      {
-        where: {
-          user_id,
-        },
-      }
-    );
+	try {
+		const { user_id } = req.user;
+		const response = await models.User.update(
+			{ user_isverified: 1 },
+			{
+				where: {
+					user_id,
+				},
+			}
+		);
 
-    return res.send({ message: "Verification success" });
-  } catch (err) {
-    console.log(err);
-    return res.status(500).send({ message: "Verification Error" });
-  }
+		return res.send({ message: "Verification success" });
+	} catch (err) {
+		console.log(err);
+		return res.status(500).send({ message: "Verification Error" });
+	}
 };
 
 // PWP-8-11-12 LOGIN
 const userLogin = async (req, res) => {
-  try {
-    const { email, password } = req.body;
-    const encryptedPassword = hashPassword(password);
-    const user = await models.User.findAll({
-      where: {
-        user_email: email,
-        user_password: encryptedPassword,
-      },
+	try {
+		const { email, password } = req.body;
+		// console.log(req.body);
+		const encryptedPassword = hashPassword(password);
+		const user = await models.User.findAll({
+			where: {
+				user_email: email,
+				user_password: encryptedPassword,
+			},
 
-      include: [
-        {
-          model: models.Cart,
-          attributes: { exclude: ["createdAt", "updatedAt"] },
-          include: [
-            {
-              model: models.Product,
-              attributes: {
-                exclude: [
-                  "createdAt",
-                  "updatedAt",
-                  "product_desc",
-                  "product_id",
-                  "product_price",
-                  "product_category_id",
-                ],
-              },
-            },
-          ],
-        },
-      ],
-      attributes: { exclude: ["createdAt", "updatedAt", "user_password"] },
-    });
+			// include: [
+			// 	{
+			// 		model: models.Cart,
+			// 		attributes: { exclude: ["createdAt", "updatedAt"] },
+			// 		include: [
+			// 			{
+			// 				model: models.Product,
+			// 				attributes: {
+			// 					exclude: [
+			// 						"createdAt",
+			// 						"updatedAt",
+			// 						"product_desc",
+			// 						"product_id",
+			// 						"product_price",
+			// 						"product_category_id",
+			// 					],
+			// 				},
+			// 			},
+			// 		],
+			// 	},
+			// ],
+			attributes: { exclude: ["createdAt", "updatedAt", "user_password"] },
+		});
 
-    const responseData = { ...user[0].dataValues };
-    const token = createJWTToken(responseData);
-    responseData.token = token;
+		const fetch_cart1 = await Cart.findAll({
+			where: {
+				[Op.and]: {
+					user_id: {
+						[Op.eq]: user[0].user_id,
+					},
+					custom_product_id: {
+						[Op.eq]: null,
+					},
+				},
+			},
 
-    return res.send(responseData);
-  } catch (err) {
-    console.log(err);
-    return res.status(500).send({ message: "Login Error" });
-  }
+			attributes: { exclude: ["createdAt", "updatedAt"] },
+			include: [
+				{
+					model: Product,
+					attributes: { exclude: ["createdAt", "updatedAt"] },
+				},
+			],
+		});
+
+		const fetch_cart2 = await Custom_Product.findAll({
+			where: {
+				user_id: user[0].user_id,
+			},
+			attributes: { exclude: ["createdAt", "updatedAt"] },
+			include: [
+				{
+					model: Cart,
+					include: [
+						{
+							model: Product,
+							attributes: { exclude: ["createdAt", "updatedAt"] },
+						},
+					],
+					attributes: { exclude: ["createdAt", "updatedAt"] },
+				},
+			],
+		});
+		// console.log(user[0].user_id);
+		// console.log([...fetch_cart1]);
+		const responseData = { ...user[0].dataValues };
+		const token = createJWTToken(responseData);
+		responseData.token = token;
+		responseData.cart = [...fetch_cart1, ...fetch_cart2];
+
+		return res.send(responseData);
+	} catch (err) {
+		console.log(err);
+		return res.status(500).send({ message: "Login Error" });
+	}
 };
 
 // PWP-14 SEND RESET EMAIL
 const userSendReset = async (req, res) => {
-  try {
-    const { email } = req.body;
-    const userData = req.user;
+	try {
+		const { email } = req.body;
+		const userData = req.user;
 
-    const token = createJWTToken({ ...userData });
+		const token = createJWTToken({ ...userData });
 
-    const mailOptions = {
-      from: "Pharma <pwd.pharma@gmail.com>",
-      to: email,
-      subject: "Your Pharma account: Reset password",
-      html: emailTwo(token),
-    };
-    await transpostPromise(mailOptions);
+		const mailOptions = {
+			from: "Pharma <pwd.pharma@gmail.com>",
+			to: email,
+			subject: "Your Pharma account: Reset password",
+			html: emailTwo(token),
+		};
+		await transpostPromise(mailOptions);
 
-    return res.send({ message: "Reset password sent" });
-  } catch (err) {
-    console.log(err);
-    return res.status(500).send({ message: "Send Reset Email Error" });
-  }
+		return res.send({ message: "Reset password sent" });
+	} catch (err) {
+		console.log(err);
+		return res.status(500).send({ message: "Send Reset Email Error" });
+	}
 };
 
 // PWP-14 CHANGE PASSWORD
 const userChangePassword = async (req, res) => {
-  try {
-    const { user_id } = req.user;
-    const { password } = req.body;
-    const encryptedPassword = hashPassword(password);
+	try {
+		const { user_id } = req.user;
+		const { password } = req.body;
+		const encryptedPassword = hashPassword(password);
 
-    const response = await models.User.update(
-      {
-        user_password: encryptedPassword,
-      },
-      {
-        where: {
-          user_id,
-        },
-      }
-    );
+		const response = await models.User.update(
+			{
+				user_password: encryptedPassword,
+			},
+			{
+				where: {
+					user_id,
+				},
+			}
+		);
 
-    return res.send({ message: "Change password success" });
-  } catch (err) {
-    console.log(err);
-    return res.status(500).send({ message: "Change Password Error" });
-  }
+		return res.send({ message: "Change password success" });
+	} catch (err) {
+		console.log(err);
+		return res.status(500).send({ message: "Change Password Error" });
+	}
 };
 
 // PWP-14 CHECK USER VERIFIED
 const userCheck = async (req, res) => {
-  try {
-    const { email } = req.body;
+	try {
+		const { email } = req.body;
 
-    const response = await models.User.findAll({
-      where: {
-        user_email: email,
-      },
-    });
+		const response = await models.User.findAll({
+			where: {
+				user_email: email,
+			},
+		});
 
-    if (response.length !== 0) {
-      if (response[0].user_isverified == 1) {
-        return res.send({ message: "User is verified" });
-      } else if (response[0].user_isverified == 0) {
-        return res.send({ message: "User is not verified" });
-      }
-    } else {
-      return res.send({ message: "Email is not registered" });
-    }
-  } catch (err) {
-    console.log(err);
-    return res.status(500).send({ message: "Check user error" });
-  }
+		if (response.length !== 0) {
+			if (response[0].user_isverified == 1) {
+				return res.send({ message: "User is verified" });
+			} else if (response[0].user_isverified == 0) {
+				return res.send({ message: "User is not verified" });
+			}
+		} else {
+			return res.send({ message: "Email is not registered" });
+		}
+	} catch (err) {
+		console.log(err);
+		return res.status(500).send({ message: "Check user error" });
+	}
 };
 
 // PWP-14 CHECK USER SERCURITY QUESTION
 const userSecurityQuestion = async (req, res) => {
-  try {
-    const { email, answer } = req.body;
+	try {
+		const { email, answer } = req.body;
 
-    const response = await models.User.findAll({
-      where: {
-        user_email: email,
-      },
-    });
+		const response = await models.User.findAll({
+			where: {
+				user_email: email,
+			},
+		});
 
-    const token = createJWTToken({ ...response[0] });
+		const token = createJWTToken({ ...response[0] });
 
-    if (response[0].user_security_question === answer) {
-      return res.send({ message: token });
-    } else {
-      return res.send({ message: "Your answer is wrong" });
-    }
-  } catch (err) {
-    console.log(err);
-    return res.status(500).send({ message: "Security question error" });
-  }
+		if (response[0].user_security_question === answer) {
+			return res.send({ message: token });
+		} else {
+			return res.send({ message: "Your answer is wrong" });
+		}
+	} catch (err) {
+		console.log(err);
+		return res.status(500).send({ message: "Security question error" });
+	}
 };
 
 // PWP-47 USER ADDRESS
 const addNewUserAddress = async (req, res) => {
-  try {
-    const { id } = req.params;
-    const { user_address } = req.body;
-    console.log(user_address);
-    await User_Address.create({
-      user_address,
-      user_id: id,
-    });
-    return res.status(200).send({ message: "New Address Successfully Added" });
-  } catch (err) {
-    return res.status(500).send({ message: "Failed to Add New Address" });
-  }
+	try {
+		const { id } = req.params;
+		const { user_address } = req.body;
+		console.log(user_address);
+		await User_Address.create({
+			user_address,
+			user_id: id,
+		});
+		return res.status(200).send({ message: "New Address Successfully Added" });
+	} catch (err) {
+		return res.status(500).send({ message: "Failed to Add New Address" });
+	}
 };
 
 const getUserAddress = async (req, res) => {
-  try {
-    let response;
-    const { id } = req.params;
-    const { search } = req.query;
-    if (search) {
-      response = await User_Address.findAll({
-        where: {
-          [Op.and]: {
-            user_id: id,
-            user_address: {
-              [Op.substring]: `${search}`,
-            },
-          },
-        },
-      });
-    } else {
-      response = await User_Address.findAll({
-        where: {
-          user_id: id,
-        },
-      });
-    }
+	try {
+		let response;
+		const { id } = req.params;
+		const { search } = req.query;
+		if (search) {
+			response = await User_Address.findAll({
+				where: {
+					[Op.and]: {
+						user_id: id,
+						user_address: {
+							[Op.substring]: `${search}`,
+						},
+					},
+				},
+			});
+		} else {
+			response = await User_Address.findAll({
+				where: {
+					user_id: id,
+				},
+			});
+		}
 
-    return res.status(200).send(response);
-  } catch (err) {
-    return res.status(500).send({
-      message: "Failed to Get the Address",
-    });
-  }
+		return res.status(200).send(response);
+	} catch (err) {
+		return res.status(500).send({
+			message: "Failed to Get the Address",
+		});
+	}
 };
 const editUserAddress = async (req, res) => {
-  try {
-    const { id } = req.params;
-    const { user_address } = req.body;
-    await User_Address.update(
-      { user_address },
-      {
-        where: { user_address_id: id },
-      }
-    );
-    return res.status(200).send({ message: "Address Updated" });
-  } catch (err) {
-    return res
-      .status(500)
-      .send({ message: "Failed to Update the Selected Address" });
-  }
+	try {
+		const { id } = req.params;
+		const { user_address } = req.body;
+		await User_Address.update(
+			{ user_address },
+			{
+				where: { user_address_id: id },
+			}
+		);
+		return res.status(200).send({ message: "Address Updated" });
+	} catch (err) {
+		return res
+			.status(500)
+			.send({ message: "Failed to Update the Selected Address" });
+	}
 };
 
 const deleteUserAddress = async (req, res) => {
-  try {
-    const { id } = req.params;
-    await User_Address.destroy({
-      where: { user_address_id: id },
-    });
-    return res.status(200).send({ message: "Address deleted" });
-  } catch (err) {
-    return res
-      .status(500)
-      .send({ message: "Failed to Delete the Selected Address" });
-  }
+	try {
+		const { id } = req.params;
+		await User_Address.destroy({
+			where: { user_address_id: id },
+		});
+		return res.status(200).send({ message: "Address deleted" });
+	} catch (err) {
+		return res
+			.status(500)
+			.send({ message: "Failed to Delete the Selected Address" });
+	}
 };
 
 const userAddRecipes = async (req, res) => {
-  try {
-    const path = "/recipes";
-    const upload = pify(uploader(path, "RCP").fields([{ name: "image" }]));
+	try {
+		const path = "/recipes";
+		const upload = pify(uploader(path, "RCP").fields([{ name: "image" }]));
 
-    upload(req, res, async (err) => {
-      const { image } = req.files;
-      const { user_id } = JSON.parse(req.body.data);
-      console.log(user_id);
-      const imagepath = image ? `${path}/${image[0].filename}` : null;
+		upload(req, res, async (err) => {
+			const { image } = req.files;
+			const { user_id } = JSON.parse(req.body.data);
+			console.log(user_id);
+			const imagepath = image ? `${path}/${image[0].filename}` : null;
 
-      const response = await models.Recipes.create({
-        user_id,
-        recipes_status: "Pending",
-        recipes_image_path: imagepath,
-      });
-      if (response) {
-        return res.status(201).send(response);
-      } else {
-        fs.unlinkSync(`public${imagepath}`);
-        return res.status(500).send(err.message);
-      }
-    });
-  } catch (err) {
-    return res.status(500).send(err.message);
-  }
+			const response = await models.Recipes.create({
+				user_id,
+				recipes_status: "Pending",
+				recipes_image_path: imagepath,
+			});
+			if (response) {
+				return res.status(201).send(response);
+			} else {
+				fs.unlinkSync(`public${imagepath}`);
+				return res.status(500).send(err.message);
+			}
+		});
+	} catch (err) {
+		return res.status(500).send(err.message);
+	}
 };
 
 module.exports = {
-  userRegister,
-  userVerification,
-  userLogin,
-  userSendReset,
-  userChangePassword,
-  userCheck,
-  userSecurityQuestion,
-  getUserAddress,
-  addNewUserAddress,
-  editUserAddress,
-  deleteUserAddress,
-  userAddRecipes,
+	userRegister,
+	userVerification,
+	userLogin,
+	userSendReset,
+	userChangePassword,
+	userCheck,
+	userSecurityQuestion,
+	getUserAddress,
+	addNewUserAddress,
+	editUserAddress,
+	deleteUserAddress,
+	userAddRecipes,
 };

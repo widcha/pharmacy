@@ -58,24 +58,45 @@ export const Cart = () => {
 
 	const renderCart = () => {
 		return cart_list.map((val, index) => {
-			let price = val.product_price / val.Product.product_vol;
-			let total = price * val.product_qty;
-			return (
-				<CartCard
-					total={Math.ceil(total)}
-					image={val.Product.product_image_path}
-					name={val.Product.product_name}
-					user_id={val.user_id}
-					product_id={val.product_id}
-					qty={val.product_qty}
-					price={Math.ceil(price)}
-					stock={val.Product.product_stock_total}
-					vol={val.Product.product_stock_total}
-					increment={handleIncrement}
-					decrement={handleDecrement}
-					del={handleDelete}
-				/>
-			);
+			if (val.custom_product_id === null) {
+				let price = val.product_price / val.Product.product_vol;
+				let total = price * val.product_qty;
+				return (
+					<CartCard
+						total={Math.ceil(total)}
+						image={val.Product.product_image_path}
+						name={val.Product.product_name}
+						user_id={val.user_id}
+						product_id={val.product_id}
+						qty={val.product_qty}
+						price={Math.ceil(price)}
+						stock={val.Product.product_stock_total}
+						vol={val.Product.product_stock_total}
+						increment={handleIncrement}
+						decrement={handleDecrement}
+						del={handleDelete}
+					/>
+				);
+			} else {
+				let total = val.custom_product_qty * val.custom_product_price;
+				return (
+					<CartCard
+						totalCustom={Math.ceil(total)}
+						data={val.Carts}
+						// image={val.Product.product_image_path}
+						// name={val.Product.product_name}
+						// user_id={val.user_id}
+						// product_id={val.product_id}
+						// qty={val.product_qty}
+						// price={Math.ceil(price)}
+						// stock={val.Product.product_stock_total}
+						// vol={val.Product.product_stock_total}
+						// increment={handleIncrement}
+						// decrement={handleDecrement}
+						// del={handleDelete}
+					/>
+				);
+			}
 		});
 	};
 

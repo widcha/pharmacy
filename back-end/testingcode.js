@@ -1,2 +1,2 @@
-const date = new Date();
-console.log(date.getTime());
+const uid = Date.now();
+console.log(uid / 100);
