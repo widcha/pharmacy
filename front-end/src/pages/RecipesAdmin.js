@@ -78,6 +78,7 @@ const RecipesAdmin = () => {
           style={{
             display: "flex",
             flexDirection: "row",
+            flexWrap: "wrap",
           }}
         >
           {data

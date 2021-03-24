@@ -18,7 +18,7 @@ module.exports = {
       let orderSort;
       if (sort === "OLD") {
         orderSort = [["createdAt", "ASC"]];
-      } else if (sort === "NEW" || sort === "") {
+      } else {
         orderSort = [["createdAt", "DESC"]];
       }
       if (status) {

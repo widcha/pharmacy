@@ -11,8 +11,11 @@ import {
   customQtyAction,
   nullifyCustomAction,
 } from "../redux/actions/customOrderAction";
+import queryString from "querystring";
+import Zoom from "react-medium-image-zoom";
+import {fetchRecipeAction} from "../redux/actions/adminAction";
 
-const CustomOrder = () => {
+const CustomAdmin = () => {
   const {capsule} = useSelector((state) => state.customOrder);
   const [filterData, setFilterData] = useState([]);
   const [suggestion, setSuggestion] = useState(false);
@@ -39,6 +42,28 @@ const CustomOrder = () => {
     }, 500);
     return () => clearTimeout(timer);
   }, [name]);
+
+  // unique querystring percustomer per image
+  const [recId, setResId] = useState("");
+  const [userId, setUserId] = useState("");
+  const [img, setImg] = useState("");
+
+  useEffect(() => {
+    const que = queryString.parse(window.location.search)["?recipes"];
+    const secQue = queryString.parse(window.location.search)["userid"];
+    const pict = queryString.parse(window.location.search)["img"];
+    setResId(que);
+    setUserId(secQue);
+    setImg(pict);
+  }, []);
+
+  // everytime admin hasn't add custom order to user cart and leave the page -> it'll be nullified
+  useEffect(() => {
+    if (recId && userId) {
+      dispatch(nullifyCustomAction());
+    }
+    dispatch(fetchRecipeAction());
+  }, [recId, userId, dispatch]);
 
   const addBtn = (value) => {
     let newArr = [...capsule];
@@ -158,6 +183,8 @@ const CustomOrder = () => {
           decBtn={() => decQty(index)}
           deleteBtn={() => deleteBtn(index)}
           pricePerMl={val.product_price / val.product_vol}
+          userID={userId}
+          recipeID={recId}
         />
       );
     });
@@ -168,36 +195,52 @@ const CustomOrder = () => {
   }
   return (
     <div className="grid grid-cols-3 gap-4 my-5 mx-5">
-      <div className="col-span-2">
-        <div className="flex flex-col">
-          <h3 className="flex text-gray-700 font-semibold text-2xl mx-5">
-            <svg
-              className="h-7 w-7 mt-1 mr-2"
-              xmlns="http://www.w3.org/2000/svg"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
-            >
-              <path
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                stroke-width="2"
-                d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"
+      <div className="col-span-2" style={{width: "660px"}}>
+        <div
+          style={{
+            display: "flex",
+            flexDirection: "row",
+          }}
+        >
+          <div style={{marginTop: "10px", minWidth: "75px"}}>
+            <Zoom>
+              <img
+                src={`${api_url}${img}`}
+                alt=""
+                style={{height: "75px", width: "75px"}}
               />
-            </svg>
-            Create your own custom prescription
-          </h3>
-          <div className="w-96 mt-5 ml-5">{searchComponent()}</div>
-          <div className="mx-5 mt-3 space-y-3 flex flex-wrap">
-            {cardCustom()}
+            </Zoom>
+          </div>
+          <div className="flex flex-col">
+            <h3 className="flex text-gray-700 font-semibold text-2xl mx-5">
+              <svg
+                className="h-7 w-7 mt-1 mr-2"
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"
+                />
+              </svg>
+              Create your customer prescription
+            </h3>
+            <div className="w-96 mt-5 ml-5">{searchComponent()}</div>
+            <div className="mx-5 mt-3 space-y-3 flex flex-wrap">
+              {cardCustom()}
+            </div>
           </div>
         </div>
       </div>
       <div className="mt-2">
-        <SummaryCustom />
+        <SummaryCustom userID={userId} recipeID={recId} />
       </div>
     </div>
   );
 };
 
-export default CustomOrder;
+export default CustomAdmin;

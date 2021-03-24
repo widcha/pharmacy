@@ -147,7 +147,7 @@ const ImagesModal = ({
                   </button>
                   {modalName === "Prescription" ? (
                     <Link
-                      to={`/custom-order?recipes=${recipes_id}&userid=${user_id}`}
+                      to={`/custom-order?recipes=${recipes_id}&userid=${user_id}&img=${imageUrl}`}
                       disabled={status === "Done"}
                     >
                       <button

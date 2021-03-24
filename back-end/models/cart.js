@@ -48,6 +48,9 @@ module.exports = (sequelize, DataTypes) => {
       product_price: {
         type: DataTypes.INTEGER,
       },
+      notes: {
+        type: DataTypes.STRING(1000),
+      },
       custom_product_id: {
         type: DataTypes.INTEGER,
         references: {

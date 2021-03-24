@@ -9,8 +9,6 @@ const CardCustomOrder = ({
   decBtn,
   deleteBtn,
   pricePerMl,
-  userID,
-  recipeID,
 }) => {
   const counterBtn = () => {
     return (
