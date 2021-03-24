@@ -12,6 +12,9 @@ module.exports = (sequelize, DataTypes) => {
       this.hasMany(models.Cart, {
         foreignKey: "custom_product_id",
       });
+      this.hasMany(models.Transaction, {
+        foreignKey: "custom_product_id",
+      });
       this.belongsTo(models.User, {
         foreignKey: "user_id",
       });
