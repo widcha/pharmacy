@@ -77,8 +77,8 @@ const UserAddress = () => {
 
   const saveButton = (id) => {
     if (user_address) {
-      dispatch(editAddressAction({user_address, user_address_id: id, user_id}));
       setClick(false);
+      dispatch(editAddressAction({user_address, user_address_id: id, user_id}));
     }
   };
 
@@ -120,7 +120,7 @@ const UserAddress = () => {
 
   const renderRow = () => {
     return data.map((row, index) => (
-      <TableRow key={row.user_address_id} style={{maxWidth: "1000px"}}>
+      <TableRow key={row.user_address_id} style={{maxWidth: "700px"}}>
         <TableCell>{page === 0 ? index + 1 : index + 1 + page * 10}</TableCell>
         {clicked && row.user_address_id === idAddress && addClick === false ? (
           <>
@@ -138,7 +138,7 @@ const UserAddress = () => {
             <TableCell align="center">
               <Button
                 onClick={() => saveButton(row.user_address_id)}
-                style={{backgroundColor: "#4a91bb", color: "white"}}
+                style={{backgroundColor: "#4a91bb", color: "white", outline: 0}}
               >
                 Save
               </Button>
@@ -148,6 +148,7 @@ const UserAddress = () => {
                   backgroundColor: "red",
                   color: "white",
                   marginLeft: "20px",
+                  outline: 0,
                 }}
               >
                 Cancel
@@ -156,14 +157,24 @@ const UserAddress = () => {
           </>
         ) : (
           <>
-            <TableCell style={{flexWrap: "wrap", width: "500px"}}>
+            <TableCell
+              style={{
+                flexWrap: "wrap",
+                maxWidth: "500px",
+                wordWrap: "break-word",
+              }}
+            >
               {row.user_address}
             </TableCell>
             <TableCell align="center">
               <Button
                 onClick={() => editButton(row.user_address_id)}
-                style={{backgroundColor: "#4a91bb", color: "whitesmoke"}}
-                disabled={addClick}
+                style={{
+                  backgroundColor: "#4a91bb",
+                  color: "whitesmoke",
+                  outline: 0,
+                }}
+                disabled={clicked}
               >
                 Edit
               </Button>
@@ -173,8 +184,9 @@ const UserAddress = () => {
                   backgroundColor: "red",
                   color: "white",
                   marginLeft: "20px",
+                  outline: 0,
                 }}
-                disabled={addClick}
+                disabled={clicked || addClick}
               >
                 Delete
               </Button>
@@ -200,7 +212,7 @@ const UserAddress = () => {
         <TableCell align="center">
           <Button
             onClick={() => saveAddBtn(user_address)}
-            style={{backgroundColor: "#4a91bb", color: "white"}}
+            style={{backgroundColor: "#4a91bb", color: "white", outline: 0}}
           >
             Save
           </Button>
@@ -210,6 +222,7 @@ const UserAddress = () => {
               backgroundColor: "red",
               color: "white",
               marginLeft: "20px",
+              outline: 0,
             }}
           >
             Cancel
@@ -270,7 +283,8 @@ const UserAddress = () => {
             </div>
             <Button
               onClick={searchBtn}
-              style={{backgroundColor: "#2460A7FF", color: "white"}}
+              style={{backgroundColor: "#2460A7FF", color: "white", outline: 0}}
+              disabled={clicked || addClick}
             >
               Search
             </Button>
@@ -279,8 +293,10 @@ const UserAddress = () => {
                 backgroundColor: "#759cd8",
                 color: "whitesmoke",
                 marginTop: "10px",
+                outline: 0,
               }}
               onClick={addNewBtn}
+              disabled={clicked}
             >
               Add New Address
             </Button>
