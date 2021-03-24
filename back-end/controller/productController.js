@@ -33,7 +33,7 @@ module.exports = {
             [Op.and]: {
               product_price: {[Op.gte]: minPrice ? minPrice : 0},
               product_name: {[Op.substring]: `${search ? search : ""}`},
-              isAvailable: 1,
+              product_is_available: 1,
             },
           },
           order: orderSort,
@@ -62,7 +62,7 @@ module.exports = {
                   },
                 },
                 product_name: {[Op.substring]: `${search ? search : ""}`},
-                isAvailable: 1,
+                product_is_available: 1,
               },
             },
             order: orderSort,
@@ -92,7 +92,7 @@ module.exports = {
         where: {
           [Op.and]: {
             product_id: id,
-            isAvailable: 1,
+            product_is_available: 1,
           },
         },
         attributes: {
@@ -119,7 +119,7 @@ module.exports = {
         where: {
           [Op.and]: {
             product_category_id: id,
-            isAvailable: 1,
+            product_is_available: 1,
           },
         },
       });
@@ -155,7 +155,7 @@ module.exports = {
           product_desc: newDesc,
           product_category_id: selectedCategory,
           product_image_path: imagepath,
-          isAvailable: 1,
+          product_is_available: 1,
         });
 
         if (response) {
@@ -308,7 +308,7 @@ module.exports = {
         {
           product_stock: stock,
           product_stock_total: stock,
-          isAvailable: isAvail,
+          product_is_available: isAvail,
         },
         {
           where: {
@@ -337,7 +337,7 @@ module.exports = {
           where: {
             [Op.and]: {
               product_category_id: id,
-              isAvailable: 1,
+              product_is_available: 1,
             },
           },
         });
@@ -362,7 +362,7 @@ module.exports = {
               product_category_id: {
                 [Op.eq]: category,
               },
-              isAvailable: 1,
+              product_is_available: 1,
             },
           },
         });
@@ -384,7 +384,7 @@ module.exports = {
             product_name: {
               [Op.substring]: search,
             },
-            isAvailable: 1,
+            product_is_available: 1,
           },
         },
       });
@@ -400,7 +400,7 @@ module.exports = {
       if (highest_price === "true") {
         const response = await Product.findAll({
           where: {
-            isAvailable: 1,
+            product_is_available: 1,
           },
           attributes: [
             [sequelize.fn("max", sequelize.col("product_price")), "maxPrice"],
@@ -422,7 +422,7 @@ module.exports = {
                 product_category_id: {
                   [Op.eq]: category,
                 },
-                isAvailable: 1,
+                product_is_available: 1,
               },
             },
           });
@@ -436,7 +436,7 @@ module.exports = {
                   [Op.lte]: price_to,
                 },
               },
-              isAvailable: 1,
+              product_is_available: 1,
             },
           });
           return res.status(200).send(response);
@@ -444,7 +444,7 @@ module.exports = {
       } else {
         const response = await Product.findAll({
           where: {
-            isAvailable: 1,
+            product_is_available: 1,
           },
           order: [["createdAt", "DESC"]],
         });
@@ -461,7 +461,7 @@ module.exports = {
         where: {
           [Op.and]: {
             product_name: {[Op.substring]: `${search ? search : ""}`},
-            [Op.or]: [{isAvailable: 0}, {isAvailable: 1}],
+            [Op.or]: [{product_is_available: 0}, {product_is_available: 1}],
           },
         },
         attributes: {
