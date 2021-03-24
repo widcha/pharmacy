@@ -46,6 +46,7 @@ const SummaryCustom = ({userID, recipeID, toggle}) => {
           confirmButtonText: "Yes, add to cart",
         }).then((result) => {
           if (result.isConfirmed) {
+            //admin menambahkan catatan apoteker
             Swal.fire({
               title: "Submit notes for this prescription",
               input: "text",
