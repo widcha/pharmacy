@@ -18,7 +18,7 @@ const SignUp = () => {
   const dispatch = useDispatch();
   const user = useSelector((state) => state.user);
 
-  const reUppercase = /[0-9]/;
+  const reNumber = /[0-9]/;
   const re6Chars = /^.{6,}$/;
   const reSpecialChar = /\W|_/;
 
@@ -116,7 +116,7 @@ const SignUp = () => {
               <ul className="flex flex-row justify-content-between p-1 pl-3 space-x-4">
                 <li
                   style={{
-                    color: reUppercase.test(userInput.password)
+                    color: reNumber.test(userInput.password)
                       ? "#7dbf5c"
                       : "red",
                   }}

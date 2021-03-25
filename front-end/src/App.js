@@ -1,11 +1,11 @@
 import "./App.css";
-import React, {useEffect} from "react";
-import {Route} from "react-router-dom";
-import {useDispatch, useSelector} from "react-redux";
-import {nullifyErrorAction} from "./redux/actions";
+import React, { useEffect } from "react";
+import { Route } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
+import { nullifyErrorAction } from "./redux/actions";
 import SideBar from "./components/SideBar";
-import {Nav} from "./components/Navbar";
-import {NavAdmin} from "./components/NavbarAdmin";
+import { Nav } from "./components/Navbar";
+import { NavAdmin } from "./components/NavbarAdmin";
 import {
   HomeAdmin,
   ProductAdmin,
@@ -27,12 +27,13 @@ import {
   ProductFlowDetail,
   CheckOut,
   CustomAdmin,
+  PurchaseHistory,
 } from "./pages";
-import {ToastContainer, Zoom} from "react-toastify";
+import { ToastContainer, Zoom } from "react-toastify";
 
 function App() {
   const dispatch = useDispatch();
-  const {user_role_id} = useSelector((state) => state.user);
+  const { user_role_id } = useSelector((state) => state.user);
 
   useEffect(() => {
     dispatch(nullifyErrorAction());
@@ -57,11 +58,11 @@ function App() {
         <div className="nav">
           <NavAdmin />
         </div>
-        <div className="sidebar" style={{marginTop: "56px"}}>
+        <div className="sidebar" style={{ marginTop: "56px" }}>
           <SideBar />
         </div>
         <div
-          style={{overflowY: "auto", marginLeft: "210px", marginTop: "45px"}}
+          style={{ overflowY: "auto", marginLeft: "210px", marginTop: "45px" }}
         >
           <Route path="/" exact component={HomeAdmin} />
           <Route path="/product" component={ProductAdmin} />
@@ -103,6 +104,11 @@ function App() {
         <Route exact path="/custom-order" component={CustomOrder} />
         <Route exact path="/user/cart" component={Cart} />
         <Route exact path="/user/payment/checkout" component={CheckOut} />
+        <Route
+          exact
+          path="/user/purchase-history"
+          component={PurchaseHistory}
+        />
       </div>
     );
   }
