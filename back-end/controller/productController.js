@@ -20,13 +20,7 @@ module.exports = {
       }
 
       let response;
-      if (
-        maxPrice === undefined ||
-        maxPrice === 0 ||
-        maxPrice === null ||
-        maxPrice === "" ||
-        maxPrice === "false"
-      ) {
+      if (!maxPrice) {
         //KALAU MAXPRICE TIDAK ADA
         response = await Product.findAll({
           where: {

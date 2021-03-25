@@ -154,10 +154,10 @@ const useStyles = makeStyles((theme) => ({
     paddingBottom: "7px",
     paddingTop: "7px",
     "&:hover": {
-      color: "whitesmoke",
+      color: "#424242",
     },
     "&:focus": {
-      color: "whitesmoke",
+      color: "#424242",
     },
   },
 }));

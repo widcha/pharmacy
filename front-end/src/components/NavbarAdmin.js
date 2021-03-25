@@ -18,7 +18,7 @@ export const NavAdmin = () => {
 
   const loginBtn = () => {
     return (
-      <ul class="flex items-center hidden space-x-5 lg:flex" style={{}}>
+      <ul class="flex items-center hidden space-x-5 lg:flex">
         <li>
           <Link to="/login">
             <p
@@ -176,7 +176,11 @@ export const NavAdmin = () => {
 
   return (
     <div
-      style={{position: "fixed", minWidth: "100%", backgroundColor: "white"}}
+      style={{
+        position: "fixed",
+        minWidth: "100%",
+        backgroundColor: "white",
+      }}
       class="px-4 py-2 sm:max-w-xl md:max-w-full md:px-24 lg:px-8 shadow p-4"
     >
       <div

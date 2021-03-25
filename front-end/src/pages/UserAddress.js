@@ -26,16 +26,7 @@ const UserAddress = () => {
   const address = useSelector((state) => state.user.user_address);
   const {user_id} = useSelector((state) => state.user);
 
-  const [perPage] = useState(10);
-  const [page, setPage] = useState(0);
-  const from = page * perPage;
-  const to = (page + 1) * perPage;
   const {loading} = useSelector((state) => state.product);
-  const [pageCount, setPageCount] = useState(address.length / perPage);
-
-  const data = address.filter((val, index) => {
-    return index >= from && index < to;
-  });
 
   useEffect(() => {
     dispatch(fetchAddressAction({user_id}));
@@ -52,7 +43,6 @@ const UserAddress = () => {
     },
   });
   const classes = useStyles();
-  const [searchWord, setSearch] = useState("");
 
   const toggle = (id) => {
     Swal.fire({
@@ -87,20 +77,14 @@ const UserAddress = () => {
     setAddClick(false);
   };
 
-  const searchBtn = () => {
-    const a = `?search=${searchWord}`;
-    dispatch(fetchAddressAction({a, user_id}));
-  };
-
   const addNewBtn = () => {
-    if (address.length < 15) {
+    if (address.length < 3) {
       setAddClick(true);
     } else {
       Swal.fire({
         icon: "warning",
-        title: "Max. address per user is 15",
-        text:
-          "Please consider deleting or editing some of your address or contact admin for another solution",
+        title: "Max. address is 3",
+        text: "You can edit / delete one of your address",
       });
     }
   };
@@ -119,9 +103,9 @@ const UserAddress = () => {
   };
 
   const renderRow = () => {
-    return data.map((row, index) => (
+    return address.map((row, index) => (
       <TableRow key={row.user_address_id} style={{maxWidth: "700px"}}>
-        <TableCell>{page === 0 ? index + 1 : index + 1 + page * 10}</TableCell>
+        <TableCell>{index + 1}</TableCell>
         {clicked && row.user_address_id === idAddress && addClick === false ? (
           <>
             <TableCell style={{width: "500px"}}>
@@ -138,12 +122,12 @@ const UserAddress = () => {
             <TableCell align="center">
               <Button
                 onClick={() => saveButton(row.user_address_id)}
-                style={{backgroundColor: "#4a91bb", color: "white", outline: 0}}
+                style={{backgroundColor: "#0079bf", color: "white", outline: 0}}
               >
                 Save
               </Button>
               <Button
-                onClick={() => cancelButton()}
+                onClick={cancelButton}
                 style={{
                   backgroundColor: "red",
                   color: "white",
@@ -170,7 +154,7 @@ const UserAddress = () => {
               <Button
                 onClick={() => editButton(row.user_address_id)}
                 style={{
-                  backgroundColor: "#4a91bb",
+                  backgroundColor: "#0079bf",
                   color: "whitesmoke",
                   outline: 0,
                 }}
@@ -212,7 +196,7 @@ const UserAddress = () => {
         <TableCell align="center">
           <Button
             onClick={() => saveAddBtn(user_address)}
-            style={{backgroundColor: "#4a91bb", color: "white", outline: 0}}
+            style={{backgroundColor: "#0079bf", color: "white", outline: 0}}
           >
             Save
           </Button>
@@ -230,14 +214,6 @@ const UserAddress = () => {
         </TableCell>
       </TableRow>
     ) : null;
-  };
-  useEffect(() => {
-    setPageCount(address.length / perPage);
-  }, [perPage, address]);
-
-  const handlePageClick = (e) => {
-    const selectedPage = e.selected;
-    setPage(selectedPage);
   };
 
   const renderAll = () => {
@@ -272,25 +248,9 @@ const UserAddress = () => {
               left: "78%",
             }}
           >
-            <div>
-              <TextField
-                placeholder="Search..."
-                label="Search"
-                id="search"
-                onChange={(e) => setSearch(e.target.value)}
-                style={{width: "275px", paddingBottom: "10px"}}
-              />
-            </div>
-            <Button
-              onClick={searchBtn}
-              style={{backgroundColor: "#2460A7FF", color: "white", outline: 0}}
-              disabled={clicked || addClick}
-            >
-              Search
-            </Button>
             <Button
               style={{
-                backgroundColor: "#759cd8",
+                backgroundColor: "#055a8c",
                 color: "whitesmoke",
                 marginTop: "10px",
                 outline: 0,
@@ -308,24 +268,9 @@ const UserAddress = () => {
   return (
     <div
       className="flex flex-col mx-2"
-      style={{paddingLeft: "50px", paddingTop: "10px"}}
+      style={{paddingLeft: "175px", paddingTop: "10px"}}
     >
       <div className="flex flex-wrap">{loading ? null : renderAll()}</div>
-      <div className="flex-row align-baseline">
-        <ReactPaginate
-          previousLabel={"Prev"}
-          nextLabel={"Next"}
-          breakLabel={"..."}
-          breakClassName={"break-me"}
-          pageCount={pageCount}
-          marginPagesDisplayed={2}
-          pageRangeDisplayed={5}
-          onPageChange={handlePageClick}
-          containerClassName={"pagination"}
-          subContainerClassName={"pages pagination"}
-          activeClassName={"active"}
-        />
-      </div>
     </div>
   );
 };

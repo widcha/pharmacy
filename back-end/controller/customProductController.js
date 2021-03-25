@@ -8,6 +8,7 @@ module.exports = {
         custom_product_qty: totalQty,
         custom_product_price: totalPrice,
         user_id,
+        notes,
       });
       console.log("CUSTOM BOY", notes);
       await capsule.forEach((val) => {
@@ -16,7 +17,6 @@ module.exports = {
           product_id: val.product_id,
           product_qty: val.qty,
           product_price: val.pricePerMl,
-          notes,
           custom_product_id: response.dataValues.custom_product_id,
         });
       });

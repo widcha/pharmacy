@@ -56,7 +56,7 @@ function App() {
         <div className="nav">
           <NavAdmin />
         </div>
-        <div className="sidebar" style={{marginTop: "56px"}}>
+        <div className="sidebar" style={{marginTop: "55px"}}>
           <SideBar />
         </div>
         <div
