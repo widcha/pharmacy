@@ -6,7 +6,7 @@ import {fetchPaymentProofAction} from "../redux/actions";
 
 const PaymentAdmin = () => {
   const dispatch = useDispatch();
-  const payment_img = useSelector((state) => state.admin.payment_img);
+  const {payment_img, loading} = useSelector((state) => state.admin);
 
   useEffect(() => {
     dispatch(fetchPaymentProofAction());
@@ -16,7 +16,6 @@ const PaymentAdmin = () => {
   const [page, setPage] = useState(0);
   const from = page * perPage;
   const to = (page + 1) * perPage;
-  const {loading} = useSelector((state) => state.product);
   const [pageCount, setPageCount] = useState(payment_img.length / perPage);
 
   const data = payment_img.filter((val, index) => {

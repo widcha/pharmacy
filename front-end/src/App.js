@@ -26,6 +26,7 @@ import {
 	Cart,
 	ProductFlowDetail,
 	CheckOut,
+	CustomAdmin,
 } from "./pages";
 import { ToastContainer, Zoom } from "react-toastify";
 
@@ -40,6 +41,19 @@ function App() {
 	if (user_role_id === 1) {
 		return (
 			<div className="container">
+				<ToastContainer
+					position="bottom-right"
+					autoClose={2000}
+					hideProgressBar
+					newestOnTop={false}
+					closeOnClick
+					rtl={false}
+					pauseOnFocusLoss
+					draggable
+					pauseOnHover
+					transition={Zoom}
+					limit={3}
+				/>
 				<div className="nav">
 					<NavAdmin />
 				</div>
@@ -56,6 +70,7 @@ function App() {
 					<Route path="/payment-proof" component={PaymentAdmin} />
 					<Route path="/product-flow" component={ProductFlowAdmin} />
 					<Route path="/product-flow-detail" component={ProductFlowDetail} />
+					<Route exact path="/custom-order" component={CustomAdmin} />
 				</div>
 			</div>
 		);

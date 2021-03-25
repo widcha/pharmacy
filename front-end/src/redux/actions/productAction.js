@@ -43,6 +43,18 @@ export const fetchProductAction = () => {
   };
 };
 
+export const fetchFlowProductAction = () => {
+  return async (dispatch) => {
+    try {
+      dispatch({type: "FETCH_PRODUCT_START"});
+      const response = await axios.get(`${linkk}/all-state`);
+      dispatch({type: "FETCH_PRODUCT_SUCCESS", payload: response.data});
+    } catch (err) {
+      dispatch({type: "FETCH_PRODUCT_FAILED", payload: err});
+    }
+  };
+};
+
 export const fetchFilterProductAction = ({
   minPrice,
   maxPrice,
@@ -224,7 +236,10 @@ export const deleteProductAction = (id) => {
   return async (dispatch) => {
     try {
       dispatch({type: "FETCH_PRODUCT_START"});
-      await axios.delete(`${linkk}/${id}`);
+      await axios.patch(`${linkk}/delete/${id}`, {
+        isAvail: 0,
+        stock: 0,
+      });
       dispatch(fetchProductAction());
     } catch (err) {
       dispatch({type: "FETCH_PRODUCT_FAILED", payload: err});

@@ -4,9 +4,10 @@ const {
 	Transaction,
 	Product,
 	User,
+	User_Notif,
 	Material_Flow,
-	Payment_Method,
 	Order_Status,
+	Payment_Method,
 } = require("../models");
 const { Op } = require("sequelize");
 
@@ -19,7 +20,7 @@ module.exports = {
 			let orderSort;
 			if (sort === "OLD") {
 				orderSort = [["createdAt", "ASC"]];
-			} else if (sort === "NEW" || sort === "") {
+			} else {
 				orderSort = [["createdAt", "DESC"]];
 			}
 			if (status) {
@@ -100,17 +101,17 @@ module.exports = {
 				orderSort = [["createdAt", "DESC"]];
 			}
 			if (status) {
-				response = await Transaction.findAll({
-					where: {
-						order_status_id: `${status}`,
-					},
+				response = await Payment_Images.findAll({
 					order: orderSort,
 					attributes: {
 						exclude: ["createdAt", "updatedAt"],
 					},
 					include: [
 						{
-							model: Payment_Images,
+							model: Transaction,
+							where: {
+								order_status_id: `${status}`,
+							},
 							attributes: {
 								exclude: ["createdAt", "updatedAt"],
 							},
@@ -118,14 +119,14 @@ module.exports = {
 					],
 				});
 			} else {
-				response = await Transaction.findAll({
+				response = await Payment_Images.findAll({
 					attributes: {
 						exclude: ["createdAt", "updatedAt"],
 					},
 					order: orderSort,
 					include: [
 						{
-							model: Payment_Images,
+							model: Transaction,
 							attributes: {
 								exclude: ["createdAt", "updatedAt"],
 							},
@@ -141,7 +142,12 @@ module.exports = {
 	changeTransactionStatus: async (req, res) => {
 		try {
 			const { id } = req.params;
-			const { order_status_id } = req.body;
+			const { order_status_id, reason } = req.body;
+
+			const trans = await Transaction.findAll({
+				where: { transaction_invoice_number: id },
+			});
+
 			await Transaction.update(
 				{ order_status_id },
 				{
@@ -150,6 +156,15 @@ module.exports = {
 					},
 				}
 			);
+			if (reason) {
+				await User_Notif.create({
+					user_notif_messages: reason,
+					user_notif_status: 0,
+					user_id: trans.dataValues.user_id,
+					transaction_invoice_number: id,
+					order_status_id,
+				});
+			}
 			return res
 				.status(200)
 				.send({ message: "Order status successfully changed" });

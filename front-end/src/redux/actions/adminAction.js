@@ -75,7 +75,10 @@ export const changeOrderStatusAction = ({id, order_status_id, reason}) => {
   return async (dispatch) => {
     try {
       dispatch({type: "FETCH_DATA_START"});
-      await axios.patch(`${url}/change/transaction/${id}`, {order_status_id});
+      await axios.patch(`${url}/change/transaction/${id}`, {
+        order_status_id,
+        reason,
+      });
       dispatch(fetchPaymentProofAction());
     } catch (err) {
       dispatch({type: "FETCH_DATA_FAILED", payload: err.message});

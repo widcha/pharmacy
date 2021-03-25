@@ -13,10 +13,8 @@ import {
   TableContainer,
   TableHead,
   TableRow,
-  Typography,
 } from "@material-ui/core";
 import {Link} from "react-router-dom";
-import {api_url} from "../helpers";
 
 const ProductFlowDetail = () => {
   const dispatch = useDispatch();

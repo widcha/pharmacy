@@ -7,8 +7,9 @@ import {
 	nullifyCustomAction,
 } from "../redux/actions/customOrderAction";
 import { toast, Zoom } from "react-toastify";
+import { changeRecipeStatus } from "../redux/actions/adminAction";
 
-const SummaryCustom = () => {
+const SummaryCustom = ({ userID, recipeID, toggle }) => {
 	const { capsule } = useSelector((state) => state.customOrder);
 	const { user_id } = useSelector((state) => state.user);
 	const [totalPrice, setTotalPrice] = useState(0);
@@ -34,25 +35,85 @@ const SummaryCustom = () => {
 
 	const addToCartBtn = () => {
 		if (capsule.length >= 2) {
-			dispatch(
-				addProductToDatabaseAction({
-					user_id,
-					capsule,
-					totalQty: dose,
-					totalPrice: grandTotal,
-				})
-			);
-			dispatch(nullifyCustomAction());
-			toast.info("Product Added!", {
-				position: "top-right",
-				autoClose: 4000,
-				hideProgressBar: true,
-				closeOnClick: true,
-				pauseOnHover: true,
-				draggable: true,
-				progress: undefined,
-				transition: Zoom,
-			});
+			if (userID && recipeID) {
+				Swal.fire({
+					title: "Are you sure?",
+					text: "This custom prescription will be submitted to customer's cart",
+					icon: "warning",
+					showCancelButton: true,
+					confirmButtonColor: "#3085d6",
+					cancelButtonColor: "#d33",
+					confirmButtonText: "Yes, add to cart",
+				}).then((result) => {
+					if (result.isConfirmed) {
+						//admin menambahkan catatan apoteker
+						Swal.fire({
+							title: "Submit notes for this prescription",
+							input: "text",
+							inputAttributes: {
+								autocapitalize: "off",
+							},
+							inputValidator: (value) => {
+								return !value && "You need to write something!";
+							},
+							showCancelButton: true,
+							confirmButtonText: "Submit",
+							showLoaderOnConfirm: true,
+						}).then((results) => {
+							if (results.isConfirmed) {
+								Swal.fire({
+									icon: "info",
+									title: "Order submitted to customer cart",
+									text: `Note: ${results.value}`,
+								}).then((res) => (res ? (window.location = "/recipe") : ""));
+								dispatch(
+									addProductToDatabaseAction({
+										user_id: userID,
+										capsule,
+										totalQty: dose,
+										totalPrice: grandTotal,
+										notes: `${results.value}`,
+									})
+								);
+								dispatch(
+									changeRecipeStatus({ id: recipeID, recipes_status: "Done" })
+								);
+								dispatch(nullifyCustomAction());
+								toast.info("Product Added To Customer's Cart!", {
+									position: "top-right",
+									autoClose: 4000,
+									hideProgressBar: true,
+									closeOnClick: true,
+									pauseOnHover: true,
+									draggable: true,
+									progress: undefined,
+									transition: Zoom,
+								});
+							}
+						});
+					}
+				});
+			} else {
+				dispatch(
+					addProductToDatabaseAction({
+						user_id,
+						capsule,
+						totalQty: dose,
+						totalPrice: grandTotal,
+					})
+				);
+				dispatch(nullifyCustomAction());
+				toast.info("Product Added!", {
+					position: "top-right",
+					autoClose: 4000,
+					hideProgressBar: true,
+					closeOnClick: true,
+					pauseOnHover: true,
+					draggable: true,
+					progress: undefined,
+					transition: Zoom,
+				});
+			}
 		} else {
 			Swal.fire({
 				icon: "error",
@@ -96,7 +157,6 @@ const SummaryCustom = () => {
 				return (check += 1);
 			}
 		});
-		console.log(check);
 		if (check === 0) {
 			setDose(dose + 1);
 		} else {

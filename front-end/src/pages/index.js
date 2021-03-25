@@ -16,6 +16,7 @@ import { Cart } from "./Cart";
 import Landing from "./Landing";
 import CustomOrder from "./CustomOrder";
 import ProductFlowDetail from "./ProductFlowDetail";
+import CustomAdmin from "./CustomAdmin";
 import { CheckOut } from "./CheckOut";
 
 export {
@@ -38,4 +39,5 @@ export {
 	Cart,
 	CustomOrder,
 	CheckOut,
+	CustomAdmin,
 };
