@@ -276,59 +276,123 @@ module.exports = {
   },
   userDeleteProductInCart: async (req, res) => {
     try {
-      const {user_id, product_id} = req.query;
-      await Cart.destroy({
-        where: {
-          [Op.and]: {
-            user_id: user_id,
-            product_id: product_id,
-            custom_product_id: null,
-          },
-        },
-      });
-      const response = await Cart.findAll({
-        where: {
-          [Op.and]: {
-            user_id: {
-              [Op.eq]: user_id,
-            },
-            custom_product_id: {
-              [Op.eq]: null,
+      const {user_id, product_id, custom_product_id} = req.query;
+      if (user_id && product_id) {
+        await Cart.destroy({
+          where: {
+            [Op.and]: {
+              user_id: user_id,
+              product_id: product_id,
+              custom_product_id: null,
             },
           },
-        },
-
-        attributes: {exclude: ["createdAt", "updatedAt"]},
-        include: [
-          {
-            model: Product,
-            attributes: {exclude: ["createdAt", "updatedAt"]},
-          },
-        ],
-      });
-
-      const customProducts = await Custom_Product.findAll({
-        where: {
-          [Op.and]: {
-            user_id: user_id,
-            is_checkout: 0,
-          },
-        },
-        attributes: {exclude: ["createdAt", "updatedAt"]},
-        include: [
-          {
-            model: Cart,
-            include: [
-              {
-                model: Product,
-                attributes: {exclude: ["createdAt", "updatedAt"]},
+        });
+        const response = await Cart.findAll({
+          where: {
+            [Op.and]: {
+              user_id: {
+                [Op.eq]: user_id,
               },
-            ],
-            attributes: {exclude: ["createdAt", "updatedAt"]},
+              custom_product_id: {
+                [Op.eq]: null,
+              },
+            },
           },
-        ],
-      });
-      return res.send([...response, ...customProducts]);
+
+          attributes: {exclude: ["createdAt", "updatedAt"]},
+          include: [
+            {
+              model: Product,
+              attributes: {exclude: ["createdAt", "updatedAt"]},
+            },
+          ],
+        });
+
+        const customProducts = await Custom_Product.findAll({
+          where: {
+            [Op.and]: {
+              user_id: user_id,
+              is_checkout: 0,
+            },
+          },
+          attributes: {exclude: ["createdAt", "updatedAt"]},
+          include: [
+            {
+              model: Cart,
+              include: [
+                {
+                  model: Product,
+                  attributes: {exclude: ["createdAt", "updatedAt"]},
+                },
+              ],
+              attributes: {exclude: ["createdAt", "updatedAt"]},
+            },
+          ],
+        });
+        return res.send([...response, ...customProducts]);
+      } else if (user_id && custom_product_id) {
+        await Cart.destroy({
+          where: {
+            [Op.and]: {
+              user_id: user_id,
+              custom_product_id: custom_product_id,
+            },
+          },
+        });
+
+        await Custom_Product.destroy({
+          where: {
+            [Op.and]: {
+              user_id: user_id,
+              custom_product_id: custom_product_id,
+              is_checkout: 0,
+            },
+          },
+        });
+        const response = await Cart.findAll({
+          where: {
+            [Op.and]: {
+              user_id: {
+                [Op.eq]: user_id,
+              },
+              custom_product_id: {
+                [Op.eq]: null,
+              },
+            },
+          },
+
+          attributes: {exclude: ["createdAt", "updatedAt"]},
+          include: [
+            {
+              model: Product,
+              attributes: {exclude: ["createdAt", "updatedAt"]},
+            },
+          ],
+        });
+
+        const customProducts = await Custom_Product.findAll({
+          where: {
+            [Op.and]: {
+              user_id: user_id,
+              is_checkout: 0,
+            },
+          },
+          attributes: {exclude: ["createdAt", "updatedAt"]},
+          include: [
+            {
+              model: Cart,
+              include: [
+                {
+                  model: Product,
+                  attributes: {exclude: ["createdAt", "updatedAt"]},
+                },
+              ],
+              attributes: {exclude: ["createdAt", "updatedAt"]},
+            },
+          ],
+        });
+        return res.send([...response, ...customProducts]);
+      }
     } catch (err) {
       return res.status(500).send({message: err.message});
     }
