@@ -32,6 +32,7 @@ export const loginAction = (data) => {
 			});
 			dispatch({ type: "API_USER_SUCCESS" });
 			dispatch({ type: "USER_FETCH_CART", payload: cart });
+			dispatch(fetchAddressAction({ user_id }));
 		} catch (err) {
 			console.log(err);
 			dispatch({ type: "API_USER_FAILED", payload: err.response.data.message });
