@@ -33,6 +33,8 @@ export const customOrderReducer = (state = INITIAL_STATE, action) => {
         ...state,
         capsule: action.payload,
       };
+    case "NULLIFY_CUSTOM_PRODUCT":
+      return INITIAL_STATE;
     default:
       return state;
   }

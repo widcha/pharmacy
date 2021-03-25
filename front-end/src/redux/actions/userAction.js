@@ -1,5 +1,6 @@
 import axios from "axios";
 import { api_url } from "../../helpers";
+import { nullifyCustomAction } from "./customOrderAction";
 
 const url = api_url + "/user";
 
@@ -149,6 +150,7 @@ export const logoutAction = () => {
 				type: "CLEAR_CART",
 			});
 			dispatch({ type: "API_USER_SUCCESS" });
+			dispatch(nullifyCustomAction());
 		} catch (err) {
 			console.log(err);
 			dispatch({

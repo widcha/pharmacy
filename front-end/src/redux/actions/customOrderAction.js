@@ -56,3 +56,9 @@ export const addProductToDatabaseAction = ({
 		}
 	};
 };
+
+export const nullifyCustomAction = () => {
+  return async (dispatch) => {
+    dispatch({ type: "NULLIFY_CUSTOM_PRODUCT" });
+  };
+};
