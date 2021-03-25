@@ -16,22 +16,7 @@ module.exports = (sequelize, DataTypes) => {
 			this.belongsTo(models.Order_Status, {
 				foreignKey: "order_status_id",
 			});
-			this.hasMany(models.Payment_Images, {
-				foreignKey: "transaction_invoice_number",
-				onDelete: "cascade",
-			});
-			this.hasMany(models.Finance, {
-				foreignKey: "transaction_invoice_number",
-				onDelete: "cascade",
-			});
-			this.hasMany(models.Admin_Notif, {
-				foreignKey: "transaction_invoice_number",
-				onDelete: "cascade",
-			});
-			this.hasMany(models.User_Notif, {
-				foreignKey: "transaction_invoice_number",
-				onDelete: "cascade",
-			});
+
 			this.belongsTo(models.Custom_Product, {
 				foreignKey: "custom_product_id",
 			});
@@ -53,7 +38,7 @@ module.exports = (sequelize, DataTypes) => {
 				},
 			},
 			transaction_date: {
-				type: DataTypes.STRING,
+				type: DataTypes.DATE,
 			},
 			transaction_invoice_number: {
 				type: DataTypes.INTEGER,

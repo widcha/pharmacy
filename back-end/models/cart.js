@@ -45,9 +45,7 @@ module.exports = (sequelize, DataTypes) => {
 			product_qty: {
 				type: DataTypes.INTEGER,
 			},
-			notes: {
-				type: DataTypes.STRING,
-			},
+
 			product_price: {
 				type: DataTypes.INTEGER,
 			},

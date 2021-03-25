@@ -2,6 +2,7 @@ import React from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Link } from "react-router-dom";
 import Swal from "sweetalert2";
+import { debounce } from "lodash";
 import capsules from "../assets/icons/capsules.svg";
 import { cart } from "../assets/icons/cart";
 import { userAddProductToCartAction } from "../redux/actions/cartAction";
@@ -9,7 +10,7 @@ import { userAddProductToCartAction } from "../redux/actions/cartAction";
 const CardProductUser = ({ name, price, id, img, qty, pricePerGram }) => {
 	const dispatch = useDispatch();
 	const { user_id } = useSelector((state) => state.user);
-	const handleAddToCart = () => {
+	const handleAddToCart = debounce(() => {
 		if (user_id > 0) {
 			dispatch(
 				userAddProductToCartAction({
@@ -25,7 +26,7 @@ const CardProductUser = ({ name, price, id, img, qty, pricePerGram }) => {
 				title: "You need to login first",
 			});
 		}
-	};
+	}, 200);
 	return (
 		<div class="flex-shrink-0 bg-blue-200m-6 relative overflow-hidden bg-gray-50 rounded-lg max-w-xs w-48 shadow-lg m-5">
 			<svg

@@ -9,9 +9,6 @@ module.exports = (sequelize, DataTypes) => {
 		 */
 		static associate(models) {
 			// define association here
-			this.belongsTo(models.Transaction, {
-				foreignKey: "transaction_invoice_number",
-			});
 		}
 	}
 	Finance.init(
@@ -22,14 +19,8 @@ module.exports = (sequelize, DataTypes) => {
 				primaryKey: true,
 				type: DataTypes.INTEGER,
 			},
-			finance_date: { allowNull: false, type: DataTypes.DATE },
 			transaction_invoice_number: {
-				allowNull: false,
-				type: DataTypes.STRING,
-				references: {
-					model: "transactions",
-					key: "transaction_invoice_number",
-				},
+				type: DataTypes.STRING(500),
 			},
 			finance_earning: { allowNull: false, type: DataTypes.INTEGER },
 		},

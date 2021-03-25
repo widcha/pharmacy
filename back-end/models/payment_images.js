@@ -12,9 +12,6 @@ module.exports = (sequelize, DataTypes) => {
 			this.belongsTo(models.User, {
 				foreignKey: "user_id",
 			});
-			this.belongsTo(models.Transaction, {
-				foreignKey: "transaction_invoice_number",
-			});
 		}
 	}
 	Payment_Images.init(
