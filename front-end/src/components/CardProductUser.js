@@ -72,8 +72,8 @@ const CardProductUser = ({ name, price, id, img, qty, pricePerGram }) => {
         <span class="block opacity-75 -mb-1 text-gray-800 font-semibold">
           {name}
         </span>
-        <span class="bg-gray-300 rounded-full text-blue-500 text-xs font-bold px-3 py-2 leading-none flex items-center ">
-          {`Rp ${pricePerGram}/gram`}
+        <span class="block bg-gray-300 rounded-full text-blue-500 text-xs font-bold px-3 py-2 leading-none flex items-center ">
+          {`Rp ${pricePerGram}/ml`}
         </span>
         <div class="flex justify-between">
           <button

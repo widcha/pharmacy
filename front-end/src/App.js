@@ -27,6 +27,7 @@ import {
   ProductFlowDetail,
   CheckOut,
   CustomAdmin,
+  Transaction,
   PurchaseHistory,
 } from "./pages";
 import { ToastContainer, Zoom } from "react-toastify";
@@ -109,6 +110,7 @@ function App() {
           path="/user/purchase-history"
           component={PurchaseHistory}
         />
+        <Route exact path="/user/transaction" component={Transaction} />
       </div>
     );
   }

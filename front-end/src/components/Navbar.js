@@ -117,12 +117,14 @@ export const Nav = () => {
                     Account settings
                   </p>
                 </Link>
-                <p
-                  className="transition duration-200 font-semibold block px-4 py-2 text-sm text-gray-600 hover:bg-gray-100 hover:text-blue-500 cursor-pointer"
-                  role="menuitem"
-                >
-                  Transaction
-                </p>
+                <Link to="/user/transaction">
+                  <p
+                    className="transition duration-200 font-semibold block px-4 py-2 text-sm text-gray-600 hover:bg-gray-100 hover:text-blue-500 cursor-pointer"
+                    role="menuitem"
+                  >
+                    Transaction
+                  </p>
+                </Link>
                 <Link to="/user/purchase-history">
                   <p
                     className="transition duration-200 font-semibold block px-4 py-2 text-sm text-gray-600 hover:bg-gray-100 hover:text-blue-500 cursor-pointer"

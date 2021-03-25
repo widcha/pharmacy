@@ -1,5 +1,8 @@
-const { addSumn } = require("../controller/transactionController");
+const {
+	fetchUserTransactionDetail,
+} = require("../controller/transactionController");
 
 const router = require("express").Router();
-router.post("/", addSumn);
+
+router.get("/get", fetchUserTransactionDetail);
 module.exports = router;

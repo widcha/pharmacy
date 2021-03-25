@@ -1,25 +1,26 @@
-import React, {useEffect} from "react";
-import {useSelector, useDispatch} from "react-redux";
+import React, { useEffect } from "react";
+import { useSelector, useDispatch } from "react-redux";
 import Swal from "sweetalert2";
-import {debounce} from "lodash";
-import {CartCard} from "../components/CartCard";
+import { debounce } from "lodash";
+import { CartCard } from "../components/CartCard";
 import {
   fetchUserCartByIdAction,
   redirectToCheckoutAction,
   userAddProductToCartAction,
   userCheckoutAction,
+  userDeleteCustomProductInCart,
   userDeleteProductInCart,
   userGetSubTotal,
   userSubProductFromCartAction,
 } from "../redux/actions";
-import {Redirect} from "react-router";
-import {Link} from "react-router-dom";
+import { Redirect } from "react-router";
+import { Link } from "react-router-dom";
 export const Cart = () => {
   const dispatch = useDispatch();
-  const {cart_list, available_products, subTotal, tax, total} = useSelector(
+  const { cart_list, available_products, subTotal, tax, total } = useSelector(
     (state) => state.cart
   );
-  const {user_id} = useSelector((state) => state.user);
+  const { user_id } = useSelector((state) => state.user);
 
   useEffect(() => {
     dispatch(fetchUserCartByIdAction(user_id));
@@ -40,7 +41,9 @@ export const Cart = () => {
   }, 200);
 
   const handleDecrement = debounce((idx, currQty) => {
-    dispatch(userSubProductFromCartAction({user_id, product_id: idx, currQty}));
+    dispatch(
+      userSubProductFromCartAction({ user_id, product_id: idx, currQty })
+    );
   }, 200);
 
   // setTimeout(() => {
@@ -59,6 +62,23 @@ export const Cart = () => {
     }).then((result) => {
       if (result.isConfirmed) {
         dispatch(userDeleteProductInCart(user_id, product_id));
+        Swal.fire("Deleted!", "Your item has been deleted.", "success");
+      }
+    });
+  };
+
+  const handleDeleteCustom = (user_id, custom_product_id) => {
+    Swal.fire({
+      title: "Are you sure?",
+      text: "You won't be able to revert this!",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#3085d6",
+      cancelButtonColor: "#d33",
+      confirmButtonText: "Yes, delete it!",
+    }).then((result) => {
+      if (result.isConfirmed) {
+        dispatch(userDeleteCustomProductInCart(user_id, custom_product_id));
         Swal.fire("Deleted!", "Your item has been deleted.", "success");
       }
     });
@@ -91,6 +111,9 @@ export const Cart = () => {
           <CartCard
             totalCustom={Math.ceil(total)}
             data={val.Carts}
+            custom_product_id={val.custom_product_id}
+            user_id={val.user_id}
+            del={handleDeleteCustom}
             // image={val.Product.product_image_path}
             // name={val.Product.product_name}
             // user_id={val.user_id}

@@ -19,6 +19,7 @@ import ProductFlowDetail from "./ProductFlowDetail";
 import CustomAdmin from "./CustomAdmin";
 import { CheckOut } from "./CheckOut";
 import PurchaseHistory from "./PurchaseHistory";
+import { Transaction } from "./Transaction";
 
 export {
   HomeAdmin,
@@ -42,4 +43,5 @@ export {
   CheckOut,
   CustomAdmin,
   PurchaseHistory,
+  Transaction,
 };

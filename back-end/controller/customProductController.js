@@ -1,9 +1,9 @@
-const {Custom_Product, Cart} = require("../models");
+const { Custom_Product, Cart } = require("../models");
 
 module.exports = {
   addCustomProduct: async (req, res) => {
     try {
-      const {totalQty, totalPrice, capsule, user_id, notes} = req.body;
+      const { totalQty, totalPrice, capsule, user_id, notes } = req.body;
       const response = await Custom_Product.create({
         custom_product_qty: totalQty,
         custom_product_price: totalPrice,
