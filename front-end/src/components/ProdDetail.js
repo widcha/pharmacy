@@ -27,7 +27,7 @@ export const ProdDetail = ({
 					user_id,
 					product_id: idx,
 					product_qty: qty,
-					product_price: price,
+					product_price: pricePerGram,
 				})
 			);
 		} else {

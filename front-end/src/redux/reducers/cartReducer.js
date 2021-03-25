@@ -6,6 +6,7 @@ const INITIAL_STATE = {
 	subTotal: 0,
 	tax: 0,
 	total: 0,
+	checkout_ready: false,
 };
 
 export const cartReducer = (state = INITIAL_STATE, action) => {
@@ -45,6 +46,16 @@ export const cartReducer = (state = INITIAL_STATE, action) => {
 				subTotal: action.payload.subTotal,
 				tax: action.payload.subTotal * 0.1,
 				total: action.payload.subTotal + action.payload.subTotal * 0.1,
+			};
+		case "USER_READY_CHECKOUT":
+			return {
+				...state,
+				checkout_ready: true,
+			};
+		case "USER_FINISH_CHECKOUT":
+			return {
+				...state,
+				checkout_ready: false,
 			};
 		default:
 			return state;
