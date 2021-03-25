@@ -10,7 +10,6 @@ module.exports = {
 				user_id,
 				notes,
 			});
-			console.log("CUSTOM BOY", notes);
 			await capsule.forEach((val) => {
 				Cart.create({
 					user_id,

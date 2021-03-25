@@ -45,7 +45,7 @@ const CardProduct = ({
   const useStyles = makeStyles({
     root: {
       minWidth: 700,
-      backgroundColor: "#D5F5EE",
+      backgroundColor: "#E0E0E0",
     },
     media: {
       height: 250,

@@ -35,8 +35,8 @@
 
 .sidebar {
   position: fixed;
-  background-color: #2460a7ff;
-  color: #ffffff;
+  background-color: #fafafa;
+  color: #212121;
   width: 100%;
   max-width: 195px;
   min-height: 100vh;
