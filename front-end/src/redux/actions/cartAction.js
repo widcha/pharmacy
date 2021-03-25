@@ -198,3 +198,32 @@ export const finishCheckoutAction = () => {
 		type: "USER_FINISH_CHECKOUT",
 	};
 };
+
+export const userDeleteCustomProductInCart = (user_id, custom_product_id) => {
+	return async (dispatch) => {
+		try {
+			dispatch({
+				type: "API_CART_START",
+			});
+			console.log(user_id, custom_product_id);
+
+			const response = await axios.delete(
+				`${api}/remove?user_id=${user_id}&custom_product_id=${custom_product_id}`
+			);
+			dispatch({
+				type: "USER_FETCH_CART",
+				payload: response.data,
+			});
+			const filtered = await axios.get(`${api}/total?user_id=${user_id}`);
+			dispatch({
+				type: "USER_FETCH_SUBTOTAL",
+				payload: filtered.data,
+			});
+		} catch (err) {
+			dispatch({
+				type: "API_CART_FAILED",
+				payload: err.response.data.message,
+			});
+		}
+	};
+};

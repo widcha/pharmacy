@@ -8,6 +8,7 @@ import {
 	redirectToCheckoutAction,
 	userAddProductToCartAction,
 	userCheckoutAction,
+	userDeleteCustomProductInCart,
 	userDeleteProductInCart,
 	userGetSubTotal,
 	userSubProductFromCartAction,
@@ -66,6 +67,23 @@ export const Cart = () => {
 		});
 	};
 
+	const handleDeleteCustom = (user_id, custom_product_id) => {
+		Swal.fire({
+			title: "Are you sure?",
+			text: "You won't be able to revert this!",
+			icon: "warning",
+			showCancelButton: true,
+			confirmButtonColor: "#3085d6",
+			cancelButtonColor: "#d33",
+			confirmButtonText: "Yes, delete it!",
+		}).then((result) => {
+			if (result.isConfirmed) {
+				dispatch(userDeleteCustomProductInCart(user_id, custom_product_id));
+				Swal.fire("Deleted!", "Your item has been deleted.", "success");
+			}
+		});
+	};
+
 	const renderCart = () => {
 		return cart_list.map((val, index) => {
 			if (val.custom_product_id === null) {
@@ -93,6 +111,9 @@ export const Cart = () => {
 					<CartCard
 						totalCustom={Math.ceil(total)}
 						data={val.Carts}
+						custom_product_id={val.custom_product_id}
+						user_id={val.user_id}
+						del={handleDeleteCustom}
 						// image={val.Product.product_image_path}
 						// name={val.Product.product_name}
 						// user_id={val.user_id}
