@@ -41,6 +41,12 @@ module.exports = (sequelize, DataTypes) => {
           key: "user_id",
         },
       },
+      is_checkout: {
+        type: DataTypes.INTEGER,
+      },
+      notes: {
+        type: DataTypes.STRING(1000),
+      },
     },
     {
       sequelize,

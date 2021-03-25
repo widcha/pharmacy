@@ -10,6 +10,7 @@ const {
   User,
   Transaction,
 } = require("../models");
+const {truncate} = require("lodash");
 module.exports = {
   userAddProductToCart: async (req, res) => {
     try {
@@ -47,11 +48,7 @@ module.exports = {
               },
             }
           );
-          // const response = await Cart.findAll({
-          // 	where: {
-          // 		cart_id: { [Op.eq]: cart_check[0].cart_id },
-          // 	},
-          // });
+
           const response = await Cart.findAll({
             where: {
               [Op.and]: {
@@ -75,7 +72,10 @@ module.exports = {
 
           const customProducts = await Custom_Product.findAll({
             where: {
-              user_id: user_id,
+              [Op.and]: {
+                user_id: user_id,
+                is_checkout: 0,
+              },
             },
             attributes: {exclude: ["createdAt", "updatedAt"]},
             include: [
@@ -133,7 +133,10 @@ module.exports = {
 
           const customProducts = await Custom_Product.findAll({
             where: {
-              user_id: user_id,
+              [Op.and]: {
+                user_id: user_id,
+                is_checkout: 0,
+              },
             },
             attributes: {exclude: ["createdAt", "updatedAt"]},
             include: [
@@ -185,7 +188,10 @@ module.exports = {
 
       const customProducts = await Custom_Product.findAll({
         where: {
-          user_id: id,
+          [Op.and]: {
+            user_id: id,
+            is_checkout: 0,
+          },
         },
         attributes: {exclude: ["createdAt", "updatedAt"]},
         include: [
@@ -244,7 +250,10 @@ module.exports = {
 
       const customProducts = await Custom_Product.findAll({
         where: {
-          user_id: user_id,
+          [Op.and]: {
+            user_id: user_id,
+            is_checkout: 0,
+          },
         },
         attributes: {exclude: ["createdAt", "updatedAt"]},
         include: [
@@ -300,7 +309,10 @@ module.exports = {
 
       const customProducts = await Custom_Product.findAll({
         where: {
-          user_id: user_id,
+          [Op.and]: {
+            user_id: user_id,
+            is_checkout: 0,
+          },
         },
         attributes: {exclude: ["createdAt", "updatedAt"]},
         include: [
@@ -347,7 +359,10 @@ module.exports = {
 
       const customProducts = await Custom_Product.findAll({
         where: {
-          user_id: user_id,
+          [Op.and]: {
+            user_id: user_id,
+            is_checkout: 0,
+          },
         },
         attributes: {exclude: ["createdAt", "updatedAt"]},
         include: [
@@ -398,43 +413,82 @@ module.exports = {
   },
   userCheckout: async (req, res) => {
     try {
-      const {user_id, data} = req.body;
-      const t_date = moment().format("l");
+      const {user_id, data, total, address} = req.body;
+      const t_date = moment().format("YYYY-MM-DD HH:mm:ss");
       const invoice = `INV/${user_id}/${Date.now()}`;
       data.forEach(async (val) => {
-        await Cart.destroy({
-          where: {
-            product_id: val.product_id,
-            user_id: val.user_id,
-          },
-        });
-
-        await Custom_Product.update(
-          {is_checkout: 1},
-          {
-            where: {
-              user_id: val.user_id,
-            },
-          }
-        );
         if (val.custom_product_id) {
-          await Transaction.create({
-            user_id,
-            custom_product_id: val.custom_product_id,
-            transaction_date: t_date,
-            transaction_invoice_number: invoice,
-            order_status_id: 1,
-            product_id: val.product_id,
-          });
+          try {
+            await Custom_Product.update(
+              {is_checkout: 1},
+              {
+                where: {
+                  [Op.and]: {
+                    user_id: val.user_id,
+                    is_checkout: 0,
+                  },
+                },
+              }
+            );
+            val.Carts.forEach(async (subVal) => {
+              try {
+                await Cart.destroy({
+                  where: {
+                    [Op.and]: {
+                      custom_product_id: subVal.custom_product_id,
+                      product_id: subVal.product_id,
+                      user_id: subVal.user_id,
+                    },
+                  },
+                });
+                await Transaction.create({
+                  user_id,
+                  custom_product_id: subVal.custom_product_id,
+                  transaction_date: t_date,
+                  transaction_invoice_number: invoice,
+                  order_status_id: 1,
+                  product_id: subVal.product_id,
+                  product_name: subVal.Product.product_name,
+                  transaction_payment_details: total,
+                  user_address: address,
+                  payment_method_id: 1,
+                  product_qty: subVal.product_qty,
+                });
+              } catch (err) {
+                console.log(err);
+              }
+            });
+          } catch (err) {
+            console.log(err);
+          }
+        } else {
+          try {
+            await Cart.destroy({
+              where: {
+                [Op.and]: {
+                  product_id: val.product_id,
+                  user_id: val.user_id,
+                },
+              },
+            });
+            await Transaction.create({
+              user_id,
+              transaction_date: t_date,
+              transaction_invoice_number: invoice,
+              order_status_id: 1,
+              product_id: val.product_id,
+              product_name: val.Product.product_name,
+              transaction_payment_details: total,
+              user_address: address,
+              payment_method_id: 1,
+              product_qty: val.product_qty,
+            });
+          } catch (err) {
+            console.log(err);
+          }
         }
-        await Transaction.create({
-          user_id,
-          transaction_date: t_date,
-          transaction_invoice_number: invoice,
-          order_status_id: 1,
-          product_id: val.product_id,
-        });
       });
+      return res.status(200).send({message: "Checkout"});
     } catch (err) {
       return res.status(500).send({message: err.message});
     }

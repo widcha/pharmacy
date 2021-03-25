@@ -116,7 +116,10 @@ const userLogin = async (req, res) => {
 
     const fetch_cart2 = await Custom_Product.findAll({
       where: {
-        user_id: user[0].user_id,
+        [Op.and]: {
+          user_id: user[0].user_id,
+          is_checkout: 0,
+        },
       },
       attributes: {exclude: ["createdAt", "updatedAt"]},
       include: [

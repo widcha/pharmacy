@@ -1,14 +1,19 @@
 import React, {useEffect} from "react";
 import {useSelector, useDispatch} from "react-redux";
 import Swal from "sweetalert2";
+import {debounce} from "lodash";
 import {CartCard} from "../components/CartCard";
 import {
   fetchUserCartByIdAction,
+  redirectToCheckoutAction,
   userAddProductToCartAction,
+  userCheckoutAction,
   userDeleteProductInCart,
   userGetSubTotal,
   userSubProductFromCartAction,
 } from "../redux/actions";
+import {Redirect} from "react-router";
+import {Link} from "react-router-dom";
 export const Cart = () => {
   const dispatch = useDispatch();
   const {cart_list, available_products, subTotal, tax, total} = useSelector(
@@ -20,7 +25,7 @@ export const Cart = () => {
     dispatch(fetchUserCartByIdAction(user_id));
     dispatch(userGetSubTotal(user_id));
   }, [dispatch, user_id]);
-  const handleIncrement = (idx, qty, price) => {
+  const handleIncrement = debounce((idx, qty, price) => {
     dispatch(
       userAddProductToCartAction(
         {
@@ -32,10 +37,15 @@ export const Cart = () => {
         "cart"
       )
     );
-  };
-  const handleDecrement = (idx, currQty) => {
+  }, 200);
+
+  const handleDecrement = debounce((idx, currQty) => {
     dispatch(userSubProductFromCartAction({user_id, product_id: idx, currQty}));
-  };
+  }, 200);
+
+  // setTimeout(() => {
+
+  // }, 500);
 
   const handleDelete = (user_id, product_id) => {
     Swal.fire({
@@ -99,7 +109,7 @@ export const Cart = () => {
   };
 
   const handleCheckout = () => {
-    console.log(available_products);
+    dispatch(redirectToCheckoutAction());
   };
   if (cart_list.length === 0) {
     return (
@@ -223,25 +233,27 @@ export const Cart = () => {
                       Rp. {total.toLocaleString()}
                     </div>
                   </div>
-                  <button
-                    className="flex justify-center w-full px-10 py-3 mt-6 font-medium text-white uppercase bg-gray-800 rounded-full shadow item-center hover:bg-gray-700 focus:shadow-outline focus:outline-none"
-                    onClick={handleCheckout}
-                  >
-                    <svg
-                      aria-hidden="true"
-                      data-prefix="far"
-                      data-icon="credit-card"
-                      className="w-8"
-                      xmlns="http://www.w3.org/2000/svg"
-                      viewBox="0 0 576 512"
+                  <Link to="/user/payment/checkout">
+                    <button
+                      className="flex justify-center w-full px-10 py-3 mt-6 font-medium text-white uppercase bg-gray-800 rounded-full shadow item-center hover:bg-gray-700 focus:shadow-outline focus:outline-none"
+                      onClick={handleCheckout}
                     >
-                      <path
-                        fill="currentColor"
-                        d="M527.9 32H48.1C21.5 32 0 53.5 0 80v352c0 26.5 21.5 48 48.1 48h479.8c26.6 0 48.1-21.5 48.1-48V80c0-26.5-21.5-48-48.1-48zM54.1 80h467.8c3.3 0 6 2.7 6 6v42H48.1V86c0-3.3 2.7-6 6-6zm467.8 352H54.1c-3.3 0-6-2.7-6-6V256h479.8v170c0 3.3-2.7 6-6 6zM192 332v40c0 6.6-5.4 12-12 12h-72c-6.6 0-12-5.4-12-12v-40c0-6.6 5.4-12 12-12h72c6.6 0 12 5.4 12 12zm192 0v40c0 6.6-5.4 12-12 12H236c-6.6 0-12-5.4-12-12v-40c0-6.6 5.4-12 12-12h136c6.6 0 12 5.4 12 12z"
-                      />
-                    </svg>
-                    <span className="ml-2 mt-5px">Procceed to checkout</span>
-                  </button>
+                      <svg
+                        aria-hidden="true"
+                        data-prefix="far"
+                        data-icon="credit-card"
+                        className="w-8"
+                        xmlns="http://www.w3.org/2000/svg"
+                        viewBox="0 0 576 512"
+                      >
+                        <path
+                          fill="currentColor"
+                          d="M527.9 32H48.1C21.5 32 0 53.5 0 80v352c0 26.5 21.5 48 48.1 48h479.8c26.6 0 48.1-21.5 48.1-48V80c0-26.5-21.5-48-48.1-48zM54.1 80h467.8c3.3 0 6 2.7 6 6v42H48.1V86c0-3.3 2.7-6 6-6zm467.8 352H54.1c-3.3 0-6-2.7-6-6V256h479.8v170c0 3.3-2.7 6-6 6zM192 332v40c0 6.6-5.4 12-12 12h-72c-6.6 0-12-5.4-12-12v-40c0-6.6 5.4-12 12-12h72c6.6 0 12 5.4 12 12zm192 0v40c0 6.6-5.4 12-12 12H236c-6.6 0-12-5.4-12-12v-40c0-6.6 5.4-12 12-12h136c6.6 0 12 5.4 12 12z"
+                        />
+                      </svg>
+                      <span className="ml-2 mt-5px">Procceed to checkout</span>
+                    </button>
+                  </Link>
                 </div>
               </div>
             </div>

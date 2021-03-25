@@ -25,6 +25,7 @@ import {
   CustomOrder,
   Cart,
   ProductFlowDetail,
+  CheckOut,
   CustomAdmin,
 } from "./pages";
 import {ToastContainer, Zoom} from "react-toastify";
@@ -56,7 +57,7 @@ function App() {
         <div className="nav">
           <NavAdmin />
         </div>
-        <div className="sidebar" style={{marginTop: "55px"}}>
+        <div className="sidebar" style={{marginTop: "56px"}}>
           <SideBar />
         </div>
         <div
@@ -101,6 +102,7 @@ function App() {
         <Route exact path="/user/address" component={UserAddress} />
         <Route exact path="/custom-order" component={CustomOrder} />
         <Route exact path="/user/cart" component={Cart} />
+        <Route exact path="/user/payment/checkout" component={CheckOut} />
       </div>
     );
   }

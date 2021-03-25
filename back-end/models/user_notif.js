@@ -12,9 +12,6 @@ module.exports = (sequelize, DataTypes) => {
 			this.belongsTo(models.User, {
 				foreignKey: "user_id",
 			});
-			this.belongsTo(models.Transaction, {
-				foreignKey: "transaction_invoice_number",
-			});
 			this.belongsTo(models.Order_Status, {
 				foreignKey: "order_status_id",
 			});
@@ -39,11 +36,7 @@ module.exports = (sequelize, DataTypes) => {
 				},
 			},
 			transaction_invoice_number: {
-				type: DataTypes.STRING,
-				references: {
-					model: "transactions",
-					key: "transaction_invoice_number",
-				},
+				type: DataTypes.STRING(500),
 			},
 			order_status_id: {
 				allowNull: false,
