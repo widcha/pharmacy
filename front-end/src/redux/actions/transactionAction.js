@@ -1,13 +1,15 @@
 import axios from "axios";
 import { api_url } from "../../helpers";
 const api = `${api_url}/transaction`;
-export const fetchUserTransactionDetails = (user_id) => {
+export const fetchUserTransactionDetails = (user_id, query) => {
 	return async (dispatch) => {
 		try {
 			dispatch({
 				type: "API_TRANSACTION_START",
 			});
-			const response = await axios.get(`${api}/get?user_id=${user_id}`);
+			const response = await axios.get(
+				`${api}/get?user_id=${user_id}&order_status=${query}`
+			);
 
 			dispatch({
 				type: "USER_FETCH_TRANSACTION",

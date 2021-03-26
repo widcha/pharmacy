@@ -17,7 +17,7 @@ const upload = pify(uploader(path, "PYMS").fields([{ name: "image" }]));
 module.exports = {
 	fetchUserTransactionDetail: async (req, res) => {
 		try {
-			const { user_id } = req.query;
+			const { user_id, order_status } = req.query;
 			// * iniiiiiiiiiiiiiiiii buat ambil transaction invoice dan totalnya
 			const response4 = await Transaction.findAll({
 				where: {
@@ -131,12 +131,17 @@ module.exports = {
 					}),
 				};
 			});
-
-			const result = arr.filter((val) => {
-				return val.order_status_id !== 5 && val.order_status_id !== 4;
-			});
-
-			return res.send(result);
+			if (order_status > 0) {
+				const result = arr.filter((val) => {
+					return val.order_status_id === parseInt(order_status);
+				});
+				return res.send(result);
+			} else {
+				const result = arr.filter((val) => {
+					return val.order_status_id !== 5 && val.order_status_id !== 4;
+				});
+				return res.send(result);
+			}
 		} catch (err) {
 			return res.status(500).send(err.message);
 		}
