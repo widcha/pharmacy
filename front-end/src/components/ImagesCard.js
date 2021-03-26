@@ -72,13 +72,13 @@ const ImagesCard = ({
         </div>
         <div class="relative text-gray-800 px-6 pb-6 mt-6">
           {modName === "Order Confirmation" ? (
-            <span class="block opacity-75 -mb-1 text-gray-800">
+            <span class="block opacity-75 text-gray-800">
               {transaction_invoice_number}
             </span>
           ) : (
             <span class="block opacity-75 -mb-1 text-gray-800">{status}</span>
           )}
-          <div class="flex justify-between">
+          <div class="flex justify-between mt-1">
             {modName === "Order Confirmation" ? (
               <span class="block font-semibold text-lg">{status}</span>
             ) : (

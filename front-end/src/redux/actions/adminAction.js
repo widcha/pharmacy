@@ -87,7 +87,8 @@ export const changeOrderStatusAction = ({id, order_status_id, reason}) => {
   return async (dispatch) => {
     try {
       dispatch({type: "FETCH_DATA_START"});
-      await axios.patch(`${url}/change/transaction/${id}`, {
+      console.log(id);
+      await axios.patch(`${url}/change/transaction?id=${id}`, {
         order_status_id,
         reason,
       });

@@ -22,7 +22,7 @@ router.get("/get/recipe", getRecipe);
 router.patch("/change/recipe/:id", editRecipeStatus);
 
 router.get("/get/payment-proof", getPaymentProof);
-router.patch("change/transaction/:id", changeTransactionStatus);
+router.patch("/change/transaction", changeTransactionStatus);
 
 router.get("/get-all-transaction", adminFetchTransaction);
 

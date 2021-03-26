@@ -89,59 +89,9 @@ module.exports = {
         .send({message: "Failed to change prescription status"});
     }
   },
-  getPaymentProof: async (req, res) => {
-    try {
-      let response;
-      const {sort, search, status} = req.query;
-
-      let orderSort;
-      if (sort === "OLD") {
-        orderSort = [["createdAt", "ASC"]];
-      } else if (sort === "NEW" || sort === "") {
-        orderSort = [["createdAt", "DESC"]];
-      }
-      if (status) {
-        response = await Payment_Images.findAll({
-          order: orderSort,
-          attributes: {
-            exclude: ["createdAt", "updatedAt"],
-          },
-          include: [
-            {
-              model: Transaction,
-              where: {
-                order_status_id: `${status}`,
-              },
-              attributes: {
-                exclude: ["createdAt", "updatedAt"],
-              },
-            },
-          ],
-        });
-      } else {
-        response = await Payment_Images.findAll({
-          attributes: {
-            exclude: ["createdAt", "updatedAt"],
-          },
-          order: orderSort,
-          include: [
-            {
-              model: Transaction,
-              attributes: {
-                exclude: ["createdAt", "updatedAt"],
-              },
-            },
-          ],
-        });
-      }
-      return res.status(200).send(response);
-    } catch (err) {
-      return res.send(err.message);
-    }
-  },
   changeTransactionStatus: async (req, res) => {
     try {
-      const {id} = req.params;
+      const {id} = req.query;
       const {order_status_id, reason} = req.body;
 
       const trans = await Transaction.findAll({
@@ -160,7 +110,7 @@ module.exports = {
         await User_Notif.create({
           user_notif_messages: reason,
           user_notif_status: 0,
-          user_id: trans.dataValues.user_id,
+          user_id: trans[0].user_id,
           transaction_invoice_number: id,
           order_status_id,
         });
@@ -424,6 +374,36 @@ module.exports = {
       return res
         .status(500)
         .send({message: "Failed to get admin notification"});
+    }
+  },
+  getPaymentProof: async (req, res) => {
+    try {
+      const {sort, search} = req.query;
+
+      let orderSort;
+      if (sort === "ASC") {
+        orderSort = [["createdAt", "ASC"]];
+      } else if (sort === "DESC" || sort === "") {
+        orderSort = [["createdAt", "DESC"]];
+      }
+      let response = await Payment_Images.findAll({
+        attributes: {
+          exclude: ["createdAt", "updatedAt"],
+        },
+        order: orderSort,
+        include: [
+          {
+            model: User,
+            where: {
+              user_username: {[Op.substring]: `${search ? search : ""}`},
+            },
+            attributes: ["user_username"],
+          },
+        ],
+      });
+      return res.status(200).send(response);
+    } catch (err) {
+      return res.send(err.message);
     }
   },
 };

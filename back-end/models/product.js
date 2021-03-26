@@ -62,6 +62,7 @@ module.exports = (sequelize, DataTypes) => {
         type: DataTypes.INTEGER,
         allowNull: false,
       },
+      price_per_ml: {type: DataTypes.INTEGER, allowNull: false},
     },
     {
       sequelize,

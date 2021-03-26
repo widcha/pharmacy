@@ -194,6 +194,7 @@ module.exports = {
         } = JSON.parse(req.body.data);
         const imagepath = image ? `${path}/${image[0].filename}` : null;
 
+        const perML = parseInt(newPrice) / parseInt(newVol);
         const stock_total = parseInt(newVol) * parseInt(newStock);
         const response = await Product.create({
           product_name: newName,
@@ -205,14 +206,15 @@ module.exports = {
           product_category_id: selectedCategory,
           product_image_path: imagepath,
           product_is_available: 1,
+          price_per_ml: parseInt(perML),
         });
 
         if (response) {
           Material_Flow.create({
             product_id: response.dataValues.product_id,
-            material_flow_stock: newStock,
-            material_flow_info: "Stock added by admin - new Product",
-            stock: newStock,
+            material_flow_stock: stock_total,
+            material_flow_info: "New Product",
+            stock: stock_total,
           });
           return res.status(201).send(response);
         } else {
@@ -233,6 +235,7 @@ module.exports = {
           product_id: id,
         },
       });
+      const old_total = parseInt(products.dataValues.product_stock_total);
       const old_stock = parseInt(products.dataValues.product_stock);
       const newStock = old_stock + parseInt(product_stock);
       const stock_total =
@@ -254,9 +257,9 @@ module.exports = {
       if (product_stock !== 0) {
         await Material_Flow.create({
           product_id: id,
-          material_flow_stock: product_stock,
+          material_flow_stock: parseInt(stock_total) - parseInt(old_total),
           material_flow_info: "Stock added by admin",
-          stock: newStock,
+          stock: stock_total,
         });
       }
       return res.status(200).send({
@@ -294,6 +297,7 @@ module.exports = {
 
         const imagePath = image ? `${path}/${image[0].filename}` : oldImagepath;
 
+        const perML = parseInt(newPrice) / parseInt(newVol);
         const response = await Product.update(
           {
             product_name: newName,
@@ -304,6 +308,7 @@ module.exports = {
             product_desc: newDesc,
             product_category_id: parseInt(selectedCategory),
             product_image_path: imagePath,
+            price_per_ml: parseInt(perML),
           },
           {
             where: {
@@ -313,9 +318,9 @@ module.exports = {
         );
 
         //MATERIAL FLOW WHEN ADMIN CAN CHANGE DATA
-        const stockk = prods.dataValues.product_stock;
+        const stockk = prods.dataValues.product_stock_total;
         let info = "";
-        let stockChanged = stockk - oldStock;
+        let stockChanged = stockk - stock_total;
         if (stockk > oldStock) {
           info = "Stock decreased by admin";
         } else if (stockk < oldStock) {
@@ -327,7 +332,7 @@ module.exports = {
             product_id: id,
             material_flow_stock: `${-stockChanged}`,
             material_flow_info: `${info}`,
-            stock: oldStock,
+            stock: stock_total,
           });
         }
         if (response) {
@@ -368,7 +373,7 @@ module.exports = {
 
       await Material_Flow.create({
         product_id: id,
-        material_flow_stock: `${-prods.dataValues.product_stock}`,
+        material_flow_stock: `${-prods.dataValues.product_stock_total}`,
         material_flow_info: "Product deleted by admin",
         stock: stock,
       });
