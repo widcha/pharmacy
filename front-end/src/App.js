@@ -29,6 +29,8 @@ import {
   CustomAdmin,
   Transaction,
   PurchaseHistory,
+  NotificationAdmin,
+  TransactionAdmin,
 } from "./pages";
 import { ToastContainer, Zoom } from "react-toastify";
 
@@ -73,6 +75,8 @@ function App() {
           <Route path="/product-flow" component={ProductFlowAdmin} />
           <Route path="/product-flow-detail" component={ProductFlowDetail} />
           <Route exact path="/custom-order" component={CustomAdmin} />
+          <Route exact path="/transaction" component={TransactionAdmin} />
+          <Route exact path="/notifs" component={NotificationAdmin} />
         </div>
       </div>
     );

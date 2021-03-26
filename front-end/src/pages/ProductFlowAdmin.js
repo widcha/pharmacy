@@ -18,16 +18,17 @@ import React, {useEffect, useState} from "react";
 import {useDispatch, useSelector} from "react-redux";
 import {
   fetchCategoryAction,
-  fetchFilterProductAction,
   fetchFlowProductAction,
+  fetchProductAction,
   getStockFlowAction,
 } from "../redux/actions";
 import ReactPaginate from "react-paginate";
-import {Link} from "react-router-dom";
+import {Link, useHistory} from "react-router-dom";
 import {api_url} from "../helpers";
 
 const ProductFlowAdmin = () => {
   const dispatch = useDispatch();
+  const history = useHistory();
 
   useEffect(() => {
     dispatch(getStockFlowAction());
@@ -61,12 +62,8 @@ const ProductFlowAdmin = () => {
     return index >= from && index < to;
   });
 
-  const [sort, setSort] = useState("");
   const [open, setOpen] = useState(false);
 
-  const handleSort = (e) => {
-    setSort(e.target.value);
-  };
   const handleOpen = () => {
     setOpen(true);
   };
@@ -88,10 +85,16 @@ const ProductFlowAdmin = () => {
     setFilterCategory(e.target.value);
   };
   const searchBtn = () => {
-    dispatch(fetchFilterProductAction({searchWord}));
-  };
-  const searchSecBtn = () => {
-    dispatch(getStockFlowAction({sort}));
+    if (filterCategory === "" && searchWord === "") {
+      history.push("/product-flow?byproduct");
+      dispatch(fetchProductAction());
+    }
+    if (filterCategory || searchWord) {
+      history.push(
+        `/product-flow?byproductCategory=${filterCategory}&search=${searchWord}`
+      );
+      dispatch(fetchProductAction({searchWord, filterCategory}));
+    }
   };
 
   useEffect(() => {
@@ -108,79 +111,40 @@ const ProductFlowAdmin = () => {
   };
   const renderProduct = () => {
     if (secondData) {
-      if (filterCategory) {
-        return secondData
-          .filter((val) => val.product_category_id === filterCategory)
-          .map((row, index) => {
-            return (
-              <TableRow key={row.product_id}>
-                <TableCell>
-                  {page === 0 ? index + 1 : index + 1 + page * 10}
-                </TableCell>
-                <TableCell>{row.product_name}</TableCell>
-                <TableCell align="center">
-                  <img
-                    src={`${api_url}${row.product_image_path}`}
-                    alt={`${row.product_name}`}
-                    style={{height: "150px"}}
-                  />
-                </TableCell>
-                <TableCell align="center">
-                  {row.Product_Category.product_category}
-                </TableCell>
-                <TableCell align="center">{row.product_stock}</TableCell>
-                <TableCell align="center">
-                  <Link to={`/product-flow-detail?id=${row.product_id}`}>
-                    <Button
-                      style={{
-                        backgroundColor: "#2832C2",
-                        outline: 0,
-                        color: "whitesmoke",
-                      }}
-                    >
-                      Info
-                    </Button>
-                  </Link>
-                </TableCell>
-              </TableRow>
-            );
-          });
-      } else {
-        return secondData.map((row, index) => {
-          return (
-            <TableRow key={row.product_id}>
-              <TableCell>
-                {page === 0 ? index + 1 : index + 1 + page * 10}
-              </TableCell>
-              <TableCell>{row.product_name}</TableCell>
-              <TableCell align="center">
-                <img
-                  src={`${api_url}${row.product_image_path}`}
-                  alt={`${row.product_name}`}
-                  style={{height: "150px"}}
-                />
-              </TableCell>
-              <TableCell align="center">
-                {row.Product_Category.product_category}
-              </TableCell>
-              <TableCell align="center">{row.product_stock}</TableCell>
-              <TableCell align="center">
-                <Link to={`/product-flow-detail?id=${row.product_id}`}>
-                  <Button
-                    style={{
-                      backgroundColor: "#2832C2",
-                      outline: 0,
-                      color: "whitesmoke",
-                    }}
-                  >
-                    Info
-                  </Button>
-                </Link>
-              </TableCell>
-            </TableRow>
-          );
-        });
-      }
+      return secondData.map((row, index) => {
+        return (
+          <TableRow key={row.product_id}>
+            <TableCell>
+              {page === 0 ? index + 1 : index + 1 + page * 10}
+            </TableCell>
+            <TableCell>{row.product_name}</TableCell>
+            <TableCell align="center">
+              <img
+                src={`${api_url}${row.product_image_path}`}
+                alt={`${row.product_name}`}
+                style={{height: "150px"}}
+              />
+            </TableCell>
+            <TableCell align="center">
+              {row.Product_Category.product_category}
+            </TableCell>
+            <TableCell align="center">{row.product_stock}</TableCell>
+            <TableCell align="center">
+              <Link to={`/product-flow-detail?id=${row.product_id}`}>
+                <Button
+                  style={{
+                    backgroundColor: "#2832C2",
+                    outline: 0,
+                    color: "whitesmoke",
+                  }}
+                >
+                  Info
+                </Button>
+              </Link>
+            </TableCell>
+          </TableRow>
+        );
+      });
     }
   };
   const renderRow = () => {
@@ -284,16 +248,6 @@ const ProductFlowAdmin = () => {
             >
               Search
             </Button>
-            <Button
-              onClick={() => dispatch(fetchFlowProductAction())}
-              style={{
-                backgroundColor: "#759cd8",
-                marginTop: "10px",
-                outline: 0,
-              }}
-            >
-              All Products
-            </Button>
           </div>
         </div>
       </div>
@@ -332,6 +286,13 @@ const ProductFlowAdmin = () => {
     setSelectProduct(false);
   };
 
+  const doSort = (dataSort) => {
+    if (dataSort) {
+      history.push(`/product-flow?sort=${dataSort}`);
+      dispatch(getStockFlowAction({sort: dataSort}));
+    }
+  };
+
   const header = () => {
     return (
       <div
@@ -343,27 +304,48 @@ const ProductFlowAdmin = () => {
         }}
       >
         <div>
-          <Button
-            onClick={backToAll}
-            style={{
-              backgroundColor: "#2460A7FF",
-              color: "whitesmoke",
-              outline: 0,
-            }}
-          >
-            All
-          </Button>
-          <Button
-            onClick={() => setSelectProduct(true)}
-            style={{
-              marginLeft: "15px",
-              backgroundColor: "#0492C2",
-              color: "white",
-              outline: 0,
-            }}
-          >
-            Select By Product
-          </Button>
+          <div>
+            <Link to="/product-flow">
+              <Button
+                onClick={backToAll}
+                style={{
+                  backgroundColor: "#2460A7FF",
+                  color: "whitesmoke",
+                  outline: 0,
+                }}
+              >
+                All
+              </Button>
+            </Link>
+            <Link to="/product-flow?byproduct">
+              <Button
+                onClick={() => setSelectProduct(true)}
+                style={{
+                  marginLeft: "15px",
+                  backgroundColor: "#0492C2",
+                  color: "white",
+                  outline: 0,
+                }}
+              >
+                Select By Product
+              </Button>
+            </Link>
+            <div className="flex-row align-baseline">
+              <ReactPaginate
+                previousLabel={"Prev"}
+                nextLabel={"Next"}
+                breakLabel={"..."}
+                breakClassName={"break-me"}
+                pageCount={pageCount}
+                marginPagesDisplayed={2}
+                pageRangeDisplayed={5}
+                onPageChange={handlePageClick}
+                containerClassName={"pagination"}
+                subContainerClassName={"pages pagination"}
+                activeClassName={"active"}
+              />
+            </div>
+          </div>
         </div>
         {selectProduct ? null : (
           <div>
@@ -377,24 +359,15 @@ const ProductFlowAdmin = () => {
                 open={open}
                 onClose={handleClose}
                 onOpen={handleOpen}
-                onChange={handleSort}
               >
-                <MenuItem value="">All</MenuItem>
-                <MenuItem value="OLD">Date (old to new)</MenuItem>
-                <MenuItem value="NEW">Date (new to old)</MenuItem>
+                <MenuItem value="ASC" onClick={() => doSort("ASC")}>
+                  Latest
+                </MenuItem>
+                <MenuItem value="DESC" onClick={() => doSort("DESC")}>
+                  Newest
+                </MenuItem>
               </Select>
             </FormControl>
-            <Button
-              onClick={searchSecBtn}
-              style={{
-                backgroundColor: "#2460A7FF",
-                color: "white",
-                marginTop: "10px",
-                outline: 0,
-              }}
-            >
-              Search
-            </Button>
           </div>
         )}
       </div>
@@ -406,21 +379,6 @@ const ProductFlowAdmin = () => {
       <div className="flex flex-col mx-2">
         <div className="flex flex-wrap">
           {loading ? null : selectProduct ? renderSpc() : renderAll()}
-        </div>
-        <div className="flex-row align-baseline">
-          <ReactPaginate
-            previousLabel={"Prev"}
-            nextLabel={"Next"}
-            breakLabel={"..."}
-            breakClassName={"break-me"}
-            pageCount={pageCount}
-            marginPagesDisplayed={2}
-            pageRangeDisplayed={5}
-            onPageChange={handlePageClick}
-            containerClassName={"pagination"}
-            subContainerClassName={"pages pagination"}
-            activeClassName={"active"}
-          />
         </div>
       </div>
     </div>

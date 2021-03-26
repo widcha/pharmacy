@@ -10,16 +10,15 @@ import {
 import {useDispatch, useSelector} from "react-redux";
 import ReactPaginate from "react-paginate";
 import CardProduct from "../components/CardProduct";
-import {
-  fetchProductAction,
-  fetchCategoryAction,
-  fetchFilterProductAction,
-} from "../redux/actions";
+import {fetchProductAction, fetchCategoryAction} from "../redux/actions";
+import {useHistory} from "react-router-dom";
 import ModalProduct from "../components/ModalProduct";
 
 const ProductAdmin = () => {
   const dispatch = useDispatch();
+  const history = useHistory();
 
+  //Pagination
   const [perPage] = useState(10);
   const [page, setPage] = useState(0);
   const from = page * perPage;
@@ -27,6 +26,11 @@ const ProductAdmin = () => {
   const {product_list, loading} = useSelector((state) => state.product);
   const [pageCount, setPageCount] = useState(product_list.length / perPage);
 
+  //Data
+  useEffect(() => {
+    dispatch(fetchProductAction());
+    dispatch(fetchCategoryAction());
+  }, [dispatch]);
   let category = useSelector((state) => state.product.category);
 
   const data = product_list.filter((val, index) => {
@@ -38,6 +42,7 @@ const ProductAdmin = () => {
     setShowModal(!showModal);
   };
 
+  // dropdown category
   const [openn, setOpenn] = useState(false);
   const [filterCategory, setFilterCategory] = useState("");
   const handleOpenn = () => {
@@ -50,6 +55,7 @@ const ProductAdmin = () => {
     setFilterCategory(e.target.value);
   };
 
+  //dropdown date
   const [openSort, setOpenSort] = useState(false);
   const [sortChosen, setSortChosen] = useState("");
 
@@ -67,73 +73,61 @@ const ProductAdmin = () => {
   const [maxPrice, setMaxPrice] = useState(0);
   const [minPrice, setMinPrice] = useState(0);
 
-  useEffect(() => {
-    dispatch(fetchProductAction());
-    dispatch(fetchCategoryAction());
-  }, [dispatch]);
-
   const searchBtn = () => {
-    dispatch(
-      fetchFilterProductAction({
-        minPrice,
-        maxPrice,
-        searchWord,
-        sortChosen,
-      })
-    );
+    if (
+      minPrice === 0 &&
+      maxPrice === 0 &&
+      searchWord === "" &&
+      (sortChosen === "None" || sortChosen === "") &&
+      filterCategory === ""
+    ) {
+      history.push("/product");
+      dispatch(fetchProductAction());
+    }
+    if (
+      minPrice ||
+      maxPrice > 0 ||
+      searchWord !== "" ||
+      (sortChosen !== "None" && sortChosen !== "") ||
+      filterCategory
+    ) {
+      history.push(
+        `/product?category=${filterCategory}&minPrice=$${minPrice}&maxPrice=${maxPrice}&search=${searchWord}&sortChosen=${sortChosen}`
+      );
+      dispatch(
+        fetchProductAction({
+          minPrice,
+          maxPrice,
+          searchWord,
+          sortChosen,
+          filterCategory,
+        })
+      );
+    }
   };
 
   const renderProduct = () => {
     if (data) {
-      if (filterCategory) {
-        return data
-          .filter((val) => val.product_category_id === filterCategory)
-          .map((val) => {
-            return (
-              <div className="mt-3">
-                <CardProduct
-                  idProd={val.product_id}
-                  name={val.product_name}
-                  price={val.product_price}
-                  stock={val.product_stock}
-                  vol={val.product_vol}
-                  stock_total={val.product_stock_total}
-                  desc={val.product_desc}
-                  catt={val.product_category_id}
-                  image={val.product_image_path}
-                />
-              </div>
-            );
-          });
-      } else {
-        return data.map((val) => {
-          return (
-            <div className="mt-3">
-              <CardProduct
-                idProd={val.product_id}
-                name={val.product_name}
-                price={val.product_price}
-                stock={val.product_stock}
-                vol={val.product_vol}
-                stock_total={val.product_stock_total}
-                desc={val.product_desc}
-                catt={val.product_category_id}
-                image={val.product_image_path}
-              />
-            </div>
-          );
-        });
-      }
+      return data.map((val) => {
+        return (
+          <div className="mt-3">
+            <CardProduct
+              idProd={val.product_id}
+              name={val.product_name}
+              price={val.product_price}
+              stock={val.product_stock}
+              vol={val.product_vol}
+              stock_total={val.product_stock_total}
+              desc={val.product_desc}
+              catt={val.product_category_id}
+              image={val.product_image_path}
+            />
+          </div>
+        );
+      });
     }
   };
 
-  const refreshBtn = () => {
-    setSearch("");
-    setSortChosen("");
-    setMaxPrice(0);
-    setMinPrice(0);
-    dispatch(fetchProductAction());
-  };
   useEffect(() => {
     setPageCount(product_list.length / perPage);
   }, [perPage, product_list]);
@@ -183,8 +177,8 @@ const ProductAdmin = () => {
                   onChange={handleSort}
                 >
                   <MenuItem value="None"></MenuItem>
-                  <MenuItem value="DateOld">Latest</MenuItem>
-                  <MenuItem value="DateNew">Newest</MenuItem>
+                  <MenuItem value="ASC">Latest</MenuItem>
+                  <MenuItem value="DESC">Newest</MenuItem>
                 </Select>
               </FormControl>
               {/* CATEGORY FILTER */}
@@ -201,7 +195,7 @@ const ProductAdmin = () => {
                   onOpen={handleOpenn}
                   onChange={handleFilterCategory}
                 >
-                  <MenuItem value="">All</MenuItem>
+                  <MenuItem value="">None</MenuItem>
                   {category.map((val) => (
                     <MenuItem value={val.product_category_id}>
                       {val.product_category}
@@ -255,16 +249,7 @@ const ProductAdmin = () => {
               >
                 Search
               </Button>
-              <Button
-                onClick={refreshBtn}
-                style={{
-                  backgroundColor: "#759cd8",
-                  marginTop: "10px",
-                  outline: 0,
-                }}
-              >
-                All Products
-              </Button>
+
               <Button
                 style={{
                   backgroundColor: "#0098b3",
@@ -285,7 +270,6 @@ const ProductAdmin = () => {
   return (
     <>
       <div className="flex flex-col mx-2" style={{marginTop: "15px"}}>
-        <div className="flex flex-wrap">{loading ? null : renderAll()}</div>
         <div className="flex-row align-baseline">
           <ReactPaginate
             previousLabel={"Prev"}
@@ -301,6 +285,7 @@ const ProductAdmin = () => {
             activeClassName={"active"}
           />
         </div>
+        <div className="flex flex-wrap">{loading ? null : renderAll()}</div>
       </div>
     </>
   );

@@ -37,7 +37,13 @@ const ImagesModal = ({
     }).then((result) => {
       if (result.isConfirmed) {
         Swal.fire("Order Confirmed!", "", "success");
-        // dispatch(changeOrderStatusAction({id: invoice, order_status_id: 2, reason: `Transaction ${invoice} confirmed by Admin`}))
+        dispatch(
+          changeOrderStatusAction({
+            id: invoice,
+            order_status_id: 2,
+            reason: `Transaction ${invoice} confirmed by Admin`,
+          })
+        );
         toggle();
       }
     });
@@ -45,40 +51,48 @@ const ImagesModal = ({
 
   const cancelBtn = () => {
     if (modalName === "Order Confirmation") {
-      Swal.fire({
-        title: "Cancel this order?",
-        text: "You won't be able to revert this",
-        icon: "warning",
-        showCancelButton: true,
-        confirmButtonColor: "#3085d6",
-        cancelButtonColor: "#d33",
-        confirmButtonText: "Yes, cancel this order",
-      }).then((result) => {
-        if (result.isConfirmed) {
-          Swal.fire({
-            title: "Submit the reason of cancellation",
-            input: "text",
-            inputAttributes: {
-              autocapitalize: "off",
-            },
-            inputValidator: (value) => {
-              return !value && "You need to write something!";
-            },
-            showCancelButton: true,
-            confirmButtonText: "Submit",
-            showLoaderOnConfirm: true,
-          }).then((results) => {
-            if (results.isConfirmed) {
-              Swal.fire({
-                icon: "info",
-                title: "Order Cancelled",
-                text: `${results.value}`,
-              });
-              // dispatch(changeOrderStatusAction({id: invoice, order_status_id: 1, reason: `${results.value}`}));
-            }
-          });
-        }
-      });
+      if (status === "Pending") {
+        Swal.fire({
+          title: "Cancel this order?",
+          text: "You won't be able to revert this",
+          icon: "warning",
+          showCancelButton: true,
+          confirmButtonColor: "#3085d6",
+          cancelButtonColor: "#d33",
+          confirmButtonText: "Yes, cancel this order",
+        }).then((result) => {
+          if (result.isConfirmed) {
+            Swal.fire({
+              title: "Submit the reason of cancellation",
+              input: "text",
+              inputAttributes: {
+                autocapitalize: "off",
+              },
+              inputValidator: (value) => {
+                return !value && "You need to write something!";
+              },
+              showCancelButton: true,
+              confirmButtonText: "Submit",
+              showLoaderOnConfirm: true,
+            }).then((results) => {
+              if (results.isConfirmed) {
+                Swal.fire({
+                  icon: "info",
+                  title: "Order Cancelled",
+                  text: `${results.value}`,
+                });
+                dispatch(
+                  changeOrderStatusAction({
+                    id: invoice,
+                    order_status_id: 4,
+                    reason: `${results.value}`,
+                  })
+                );
+              }
+            });
+          }
+        });
+      }
     }
     toggle();
   };
@@ -100,7 +114,7 @@ const ImagesModal = ({
                     className="p-1 ml-auto bg-transparent border-0 text-black opacity-5 float-right text-3xl leading-none font-semibold outline-none focus:outline-none"
                     onClick={toggle}
                   >
-                    <span className="bg-transparent text-black opacity-5 h-6 w-6 text-2xl block outline-none focus:outline-none">
+                    <span className="text-black opacity-5 h-6 w-6 text-2xl block outline-none focus:outline-none">
                       ×
                     </span>
                   </button>
@@ -123,15 +137,21 @@ const ImagesModal = ({
                     </div>
                     <div style={{paddingLeft: "10px"}}>
                       {invoice ? (
-                        <div style={{paddingBottom: "50px"}}>
+                        <div className="pb-5">
                           Invoice Number:
                           <div style={{fontWeight: "bold"}}>{invoice}</div>
                         </div>
                       ) : null}
-                      <div>
+                      <div className="pb-5">
                         User:
-                        <div style={{fontWeight: "bold"}}>{name}</div>
+                        <div className="font-bold">{name}</div>
                       </div>
+                      {modalName === "Order Confirmation" ? (
+                        <div>
+                          {" "}
+                          Status: <div className="font-bold">{status}</div>
+                        </div>
+                      ) : null}
                     </div>
                   </div>
                 </div>
@@ -143,7 +163,9 @@ const ImagesModal = ({
                     style={{transition: "all .15s ease"}}
                     onClick={cancelBtn}
                   >
-                    {modalName === "Prescription" ? "Cancel" : "Cancel Order"}
+                    {modalName === "Prescription" || status !== "Pending"
+                      ? "Cancel"
+                      : "Cancel Order"}
                   </button>
                   {modalName === "Prescription" ? (
                     <Link
@@ -166,7 +188,7 @@ const ImagesModal = ({
                       type="button"
                       style={{transition: "all .15s ease"}}
                       onClick={confirmBtn}
-                      // disabled={}
+                      disabled={status !== "Pending"}
                     >
                       Confirm Order
                     </button>

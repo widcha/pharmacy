@@ -20,6 +20,8 @@ import CustomAdmin from "./CustomAdmin";
 import { CheckOut } from "./CheckOut";
 import PurchaseHistory from "./PurchaseHistory";
 import { Transaction } from "./Transaction";
+import NotificationAdmin from "./NotificationAdmin";
+import TransactionAdmin from "./TransactionAdmin";
 
 export {
   HomeAdmin,
@@ -44,4 +46,6 @@ export {
   CustomAdmin,
   PurchaseHistory,
   Transaction,
+  NotificationAdmin,
+  TransactionAdmin,
 };
