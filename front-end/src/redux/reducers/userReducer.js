@@ -5,7 +5,6 @@ const INITIAL_STATE = {
   user_role_id: null,
   user_isverified: null,
   user_address: [],
-  user_history: [],
   loading: false,
   error: "",
 };

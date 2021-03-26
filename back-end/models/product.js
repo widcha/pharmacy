@@ -1,5 +1,5 @@
 "use strict";
-const {Model} = require("sequelize");
+const { Model } = require("sequelize");
 module.exports = (sequelize, DataTypes) => {
   class Product extends Model {
     /**
@@ -34,9 +34,9 @@ module.exports = (sequelize, DataTypes) => {
         primaryKey: true,
         type: DataTypes.INTEGER,
       },
-      product_name: {allowNull: false, type: DataTypes.STRING},
-      product_price: {allowNull: false, type: DataTypes.INTEGER},
-      product_stock: {allowNull: false, type: DataTypes.INTEGER},
+      product_name: { allowNull: false, type: DataTypes.STRING },
+      product_price: { allowNull: false, type: DataTypes.INTEGER },
+      product_stock: { allowNull: false, type: DataTypes.INTEGER },
       product_vol: {
         allowNull: false,
         type: DataTypes.INTEGER,
@@ -59,6 +59,14 @@ module.exports = (sequelize, DataTypes) => {
         type: DataTypes.STRING(500),
       },
       product_is_available: {
+        type: DataTypes.INTEGER,
+        allowNull: false,
+      },
+      product_is_available: {
+        type: DataTypes.INTEGER,
+        allowNull: false,
+      },
+      price_per_ml: {
         type: DataTypes.INTEGER,
         allowNull: false,
       },

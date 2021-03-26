@@ -1,10 +1,11 @@
-import {userReducer} from "./userReducer";
-import {cartReducer} from "./cartReducer";
-import {productReducer} from "./productReducer";
-import {transactionReducer} from "./transactionReducer";
-import {combineReducers} from "@reduxjs/toolkit";
-import {adminReducer} from "./adminReducer";
-import {customOrderReducer} from "./customOrderReducer";
+import { userReducer } from "./userReducer";
+import { cartReducer } from "./cartReducer";
+import { productReducer } from "./productReducer";
+import { transactionReducer } from "./transactionReducer";
+import { combineReducers } from "@reduxjs/toolkit";
+import { adminReducer } from "./adminReducer";
+import { customOrderReducer } from "./customOrderReducer";
+import { historyReducer } from "./historyReducer";
 
 export default combineReducers({
   user: userReducer,
@@ -13,4 +14,5 @@ export default combineReducers({
   transaction: transactionReducer,
   admin: adminReducer,
   customOrder: customOrderReducer,
+  history: historyReducer,
 });
