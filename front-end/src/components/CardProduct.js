@@ -40,12 +40,12 @@ const CardProduct = ({
       (val) => val.product_category_id === catt
     )[0].Product_Category.product_category;
     setTheCat(cat);
-  }, [product_list]);
+  }, [catt, product_list]);
 
   const useStyles = makeStyles({
     root: {
       minWidth: 700,
-      backgroundColor: "#D5F5EE",
+      backgroundColor: "#E0E0E0",
     },
     media: {
       height: 250,

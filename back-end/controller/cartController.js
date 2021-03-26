@@ -15,7 +15,6 @@ module.exports = {
 	userAddProductToCart: async (req, res) => {
 		try {
 			const { user_id, product_id, product_qty, product_price } = req.body;
-			console.log(req.body);
 			const cart_check = await Cart.findAll({
 				where: {
 					[Op.and]: {
@@ -49,49 +48,7 @@ module.exports = {
 						}
 					);
 
-					const response = await Cart.findAll({
-						where: {
-							[Op.and]: {
-								user_id: {
-									[Op.eq]: user_id,
-								},
-								custom_product_id: {
-									[Op.eq]: null,
-								},
-							},
-						},
-
-						attributes: { exclude: ["createdAt", "updatedAt"] },
-						include: [
-							{
-								model: Product,
-								attributes: { exclude: ["createdAt", "updatedAt"] },
-							},
-						],
-					});
-
-					const customProducts = await Custom_Product.findAll({
-						where: {
-							[Op.and]: {
-								user_id: user_id,
-								is_checkout: 0,
-							},
-						},
-						attributes: { exclude: ["createdAt", "updatedAt"] },
-						include: [
-							{
-								model: Cart,
-								include: [
-									{
-										model: Product,
-										attributes: { exclude: ["createdAt", "updatedAt"] },
-									},
-								],
-								attributes: { exclude: ["createdAt", "updatedAt"] },
-							},
-						],
-					});
-					return res.send([...response, ...customProducts]);
+					return res.status(201).send({ message: "Product Added" });
 				} else {
 					return res.status(404).send({ message: "Excessive Quantity" });
 				}
@@ -110,49 +67,7 @@ module.exports = {
 						product_qty,
 						product_price,
 					});
-					const response = await Cart.findAll({
-						where: {
-							[Op.and]: {
-								user_id: {
-									[Op.eq]: user_id,
-								},
-								custom_product_id: {
-									[Op.eq]: null,
-								},
-							},
-						},
-
-						attributes: { exclude: ["createdAt", "updatedAt"] },
-						include: [
-							{
-								model: Product,
-								attributes: { exclude: ["createdAt", "updatedAt"] },
-							},
-						],
-					});
-
-					const customProducts = await Custom_Product.findAll({
-						where: {
-							[Op.and]: {
-								user_id: user_id,
-								is_checkout: 0,
-							},
-						},
-						attributes: { exclude: ["createdAt", "updatedAt"] },
-						include: [
-							{
-								model: Cart,
-								include: [
-									{
-										model: Product,
-										attributes: { exclude: ["createdAt", "updatedAt"] },
-									},
-								],
-								attributes: { exclude: ["createdAt", "updatedAt"] },
-							},
-						],
-					});
-					return res.send([...response, ...customProducts]);
+					return res.status(201).send({ message: "Product Added" });
 				} else {
 					return res.status(404).send({ message: "Excessive Quantity" });
 				}
@@ -227,49 +142,7 @@ module.exports = {
 					},
 				}
 			);
-			const response = await Cart.findAll({
-				where: {
-					[Op.and]: {
-						user_id: {
-							[Op.eq]: user_id,
-						},
-						custom_product_id: {
-							[Op.eq]: null,
-						},
-					},
-				},
-
-				attributes: { exclude: ["createdAt", "updatedAt"] },
-				include: [
-					{
-						model: Product,
-						attributes: { exclude: ["createdAt", "updatedAt"] },
-					},
-				],
-			});
-
-			const customProducts = await Custom_Product.findAll({
-				where: {
-					[Op.and]: {
-						user_id: user_id,
-						is_checkout: 0,
-					},
-				},
-				attributes: { exclude: ["createdAt", "updatedAt"] },
-				include: [
-					{
-						model: Cart,
-						include: [
-							{
-								model: Product,
-								attributes: { exclude: ["createdAt", "updatedAt"] },
-							},
-						],
-						attributes: { exclude: ["createdAt", "updatedAt"] },
-					},
-				],
-			});
-			return res.send([...response, ...customProducts]);
+			return res.status(200).send({ message: "Product Subtracted" });
 		} catch (err) {
 			return res.status(500).send({ message: err.message });
 		}
@@ -287,49 +160,7 @@ module.exports = {
 						},
 					},
 				});
-				const response = await Cart.findAll({
-					where: {
-						[Op.and]: {
-							user_id: {
-								[Op.eq]: user_id,
-							},
-							custom_product_id: {
-								[Op.eq]: null,
-							},
-						},
-					},
-
-					attributes: { exclude: ["createdAt", "updatedAt"] },
-					include: [
-						{
-							model: Product,
-							attributes: { exclude: ["createdAt", "updatedAt"] },
-						},
-					],
-				});
-
-				const customProducts = await Custom_Product.findAll({
-					where: {
-						[Op.and]: {
-							user_id: user_id,
-							is_checkout: 0,
-						},
-					},
-					attributes: { exclude: ["createdAt", "updatedAt"] },
-					include: [
-						{
-							model: Cart,
-							include: [
-								{
-									model: Product,
-									attributes: { exclude: ["createdAt", "updatedAt"] },
-								},
-							],
-							attributes: { exclude: ["createdAt", "updatedAt"] },
-						},
-					],
-				});
-				return res.send([...response, ...customProducts]);
+				return res.status(200).send({ message: "Product Removed" });
 			} else if (user_id && custom_product_id) {
 				await Cart.destroy({
 					where: {
@@ -349,49 +180,7 @@ module.exports = {
 						},
 					},
 				});
-				const response = await Cart.findAll({
-					where: {
-						[Op.and]: {
-							user_id: {
-								[Op.eq]: user_id,
-							},
-							custom_product_id: {
-								[Op.eq]: null,
-							},
-						},
-					},
-
-					attributes: { exclude: ["createdAt", "updatedAt"] },
-					include: [
-						{
-							model: Product,
-							attributes: { exclude: ["createdAt", "updatedAt"] },
-						},
-					],
-				});
-
-				const customProducts = await Custom_Product.findAll({
-					where: {
-						[Op.and]: {
-							user_id: user_id,
-							is_checkout: 0,
-						},
-					},
-					attributes: { exclude: ["createdAt", "updatedAt"] },
-					include: [
-						{
-							model: Cart,
-							include: [
-								{
-									model: Product,
-									attributes: { exclude: ["createdAt", "updatedAt"] },
-								},
-							],
-							attributes: { exclude: ["createdAt", "updatedAt"] },
-						},
-					],
-				});
-				return res.send([...response, ...customProducts]);
+				return res.status(200).send({ message: "Custom Products Removed" });
 			}
 		} catch (err) {
 			return res.status(500).send({ message: err.message });
@@ -496,6 +285,22 @@ module.exports = {
 						);
 						val.Carts.forEach(async (subVal) => {
 							try {
+								await Product.update(
+									{
+										product_stock_total:
+											subVal.Product.product_stock_total - subVal.product_qty,
+										product_stock: Math.ceil(
+											(subVal.Product.product_stock_total -
+												subVal.product_qty) /
+												subVal.Product.product_vol
+										),
+									},
+									{
+										where: {
+											product_id: subVal.product_id,
+										},
+									}
+								);
 								await Cart.destroy({
 									where: {
 										[Op.and]: {
@@ -527,6 +332,22 @@ module.exports = {
 					}
 				} else {
 					try {
+						await Product.update(
+							{
+								product_stock_total:
+									val.Product.product_stock_total - val.product_qty,
+								product_stock: Math.ceil(
+									(val.Product.product_stock_total - val.product_qty) /
+										val.Product.product_vol
+								),
+							},
+							{
+								where: {
+									product_id: val.product_id,
+								},
+							}
+						);
+
 						await Cart.destroy({
 							where: {
 								[Op.and]: {

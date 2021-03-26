@@ -27,6 +27,7 @@ import {
 	ProductFlowDetail,
 	CheckOut,
 	CustomAdmin,
+	Transaction,
 } from "./pages";
 import { ToastContainer, Zoom } from "react-toastify";
 
@@ -103,6 +104,7 @@ function App() {
 				<Route exact path="/custom-order" component={CustomOrder} />
 				<Route exact path="/user/cart" component={Cart} />
 				<Route exact path="/user/payment/checkout" component={CheckOut} />
+				<Route exact path="/user/transaction" component={Transaction} />
 			</div>
 		);
 	}

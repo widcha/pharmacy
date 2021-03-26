@@ -18,6 +18,7 @@ import CustomOrder from "./CustomOrder";
 import ProductFlowDetail from "./ProductFlowDetail";
 import CustomAdmin from "./CustomAdmin";
 import { CheckOut } from "./CheckOut";
+import { Transaction } from "./Transaction";
 
 export {
 	HomeAdmin,
@@ -40,4 +41,5 @@ export {
 	CustomOrder,
 	CheckOut,
 	CustomAdmin,
+	Transaction,
 };
