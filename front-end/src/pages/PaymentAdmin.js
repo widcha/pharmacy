@@ -11,6 +11,7 @@ import {
   Select,
   TextField,
 } from "@material-ui/core";
+import {useHistory} from "react-router";
 
 const PaymentAdmin = () => {
   const dispatch = useDispatch();
@@ -65,9 +66,20 @@ const PaymentAdmin = () => {
   const handleCloseStatus = () => {
     setOpenStatus(false);
   };
-
+  const history = useHistory();
   const searchBtn = () => {
-    dispatch(fetchPaymentProofAction({sort, searchWord, sortStatus}));
+    if (sort === "" && sortStatus === "" && searchWord === "") {
+      history.push("/payment-proof");
+      dispatch(fetchPaymentProofAction());
+    }
+    if (sort !== "" || sortStatus !== "" || searchWord !== "") {
+      history.push(
+        `/payment-proof?${sort ? `sort=${sort}` : ""}${
+          searchWord ? `&search=${searchWord}` : ""
+        }${sortStatus ? `&status=${sortStatus}` : ""}`
+      );
+      dispatch(fetchPaymentProofAction({sort, searchWord, sortStatus}));
+    }
   };
   const renderAll = () => {
     return (
@@ -87,6 +99,13 @@ const PaymentAdmin = () => {
                     imageUrl={`${val.payment_images_image_path}`}
                     transaction_invoice_number={`${val.transaction_invoice_number}`}
                     username={`${val.User.user_username}`}
+                    status={`${
+                      val.payment_status === 0
+                        ? "Pending"
+                        : val.payment_status === 1
+                        ? "Confirmed"
+                        : "Canceled"
+                    }`}
                   />
                 );
               })
@@ -115,9 +134,8 @@ const PaymentAdmin = () => {
               onOpen={handleOpen}
               onChange={handleSort}
             >
-              <MenuItem value="">All</MenuItem>
-              <MenuItem value="OLD">Latest</MenuItem>
-              <MenuItem value="NEW">Newest</MenuItem>
+              <MenuItem value="ASC">Latest</MenuItem>
+              <MenuItem value="DESC">Newest</MenuItem>
             </Select>
           </FormControl>
           <FormControl style={{width: "275px"}}>
@@ -133,8 +151,9 @@ const PaymentAdmin = () => {
               onChange={handleSortStatus}
             >
               <MenuItem value="">All</MenuItem>
-              <MenuItem value="Pending">Status: Pending</MenuItem>
-              <MenuItem value="Done">Status: Done</MenuItem>
+              <MenuItem value="Pending">Pending</MenuItem>
+              <MenuItem value="Confirmed">Confirmed</MenuItem>
+              <MenuItem value="Cancelled">Cancelled</MenuItem>
             </Select>
           </FormControl>
           <div>
@@ -158,7 +177,7 @@ const PaymentAdmin = () => {
     );
   };
   return (
-    <div style={{marginTop: "15px"}}>
+    <div style={{marginTop: "15px", maxWidth: "750px", minWidth: "750px"}}>
       <div>
         <div className="flex flex-row justify-between">
           <h3 className="text-xl mt-4 ml-3 font-semibold">

@@ -2,7 +2,7 @@ const {
   adminController: {
     getRecipe,
     editRecipeStatus,
-    getPaymentProof,
+    getPaymentImages,
     changeTransactionStatus,
     getStockFlow,
     getStockFlowById,
@@ -21,7 +21,7 @@ router.get("/get/flow/:id", getStockFlowById);
 router.get("/get/recipe", getRecipe);
 router.patch("/change/recipe/:id", editRecipeStatus);
 
-router.get("/get/payment-proof", getPaymentProof);
+router.get("/get/payment-proof", getPaymentImages);
 router.patch("/change/transaction", changeTransactionStatus);
 
 router.get("/get-all-transaction", adminFetchTransaction);

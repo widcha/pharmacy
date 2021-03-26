@@ -80,7 +80,12 @@ const ImagesCard = ({
           )}
           <div class="flex justify-between mt-1">
             {modName === "Order Confirmation" ? (
-              <span class="block font-semibold text-lg">{status}</span>
+              <div className="flex flex-col">
+                <span class="block font-semibold text-sm">
+                  User: {username}
+                </span>
+                <span class="block font-semibold text-lg">{status}</span>
+              </div>
             ) : (
               <span class="block font-semibold text-lg">{username}</span>
             )}

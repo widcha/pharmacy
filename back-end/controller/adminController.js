@@ -98,6 +98,14 @@ module.exports = {
         where: {transaction_invoice_number: id},
       });
 
+      await Payment_Images.update(
+        {payment_status: order_status_id === 4 ? 2 : 1},
+        {
+          where: {
+            transaction_invoice_number: id,
+          },
+        }
+      );
       await Transaction.update(
         {order_status_id},
         {
@@ -376,9 +384,9 @@ module.exports = {
         .send({message: "Failed to get admin notification"});
     }
   },
-  getPaymentProof: async (req, res) => {
+  getPaymentImages: async (req, res) => {
     try {
-      const {sort, search} = req.query;
+      const {sort, search, sortStatus} = req.query;
 
       let orderSort;
       if (sort === "ASC") {
@@ -386,21 +394,52 @@ module.exports = {
       } else if (sort === "DESC" || sort === "") {
         orderSort = [["createdAt", "DESC"]];
       }
-      let response = await Payment_Images.findAll({
-        attributes: {
-          exclude: ["createdAt", "updatedAt"],
-        },
-        order: orderSort,
-        include: [
-          {
-            model: User,
-            where: {
-              user_username: {[Op.substring]: `${search ? search : ""}`},
-            },
-            attributes: ["user_username"],
+
+      let stat;
+      if (sortStatus === "Pending") {
+        stat = 0;
+      } else if (sortStatus === "Confirmed") {
+        stat = 1;
+      } else if (sortStatus === "Cancelled") {
+        stat = 2;
+      }
+      let response;
+      if (sortStatus) {
+        response = await Payment_Images.findAll({
+          where: {
+            payment_status: stat,
           },
-        ],
-      });
+          attributes: {
+            exclude: ["createdAt", "updatedAt"],
+          },
+          order: orderSort,
+          include: [
+            {
+              model: User,
+              where: {
+                user_username: {[Op.substring]: `${search ? search : ""}`},
+              },
+              attributes: ["user_username"],
+            },
+          ],
+        });
+      } else {
+        response = await Payment_Images.findAll({
+          attributes: {
+            exclude: ["createdAt", "updatedAt"],
+          },
+          order: orderSort,
+          include: [
+            {
+              model: User,
+              where: {
+                user_username: {[Op.substring]: `${search ? search : ""}`},
+              },
+              attributes: ["user_username"],
+            },
+          ],
+        });
+      }
       return res.status(200).send(response);
     } catch (err) {
       return res.send(err.message);

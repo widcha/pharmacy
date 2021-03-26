@@ -71,8 +71,10 @@ export const fetchPaymentProofAction = (data) => {
       dispatch({type: "FETCH_DATA_START"});
       let response;
       if (data) {
-        // const {} = data;
-        // response = await axios.get(`${url}/get/payment-proof?`);
+        const {sort, sortStatus, searchWord} = data;
+        response = await axios.get(
+          `${url}/get/payment-proof?search=${searchWord}&sort=${sort}&sortStatus=${sortStatus}`
+        );
       } else {
         response = await axios.get(`${url}/get/payment-proof`);
       }
