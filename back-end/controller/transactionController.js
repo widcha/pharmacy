@@ -6,7 +6,14 @@ const {
 	Product,
 	sequelize,
 	Order_Status,
+	Payment_Images,
 } = require("../models");
+const pify = require("pify");
+const { uploader } = require("../handlers");
+
+const path = "/payment_slip";
+const upload = pify(uploader(path, "PYMS").fields([{ name: "image" }]));
+
 module.exports = {
 	fetchUserTransactionDetail: async (req, res) => {
 		try {
@@ -195,6 +202,45 @@ module.exports = {
 			// console.log(response5);
 
 			return res.send(arr);
+		} catch (err) {
+			return res.status(500).send(err.message);
+		}
+	},
+	userUploadPaymentSlip: async (req, res) => {
+		try {
+			upload(req, res, async (err) => {
+				const { image } = req.files;
+				const { user_id, transaction_invoice_number } = JSON.parse(
+					req.body.data
+				);
+				const imagepath = image ? `${path}/${image[0].filename}` : null;
+				console.log(imagepath);
+				const response = await Payment_Images.create({
+					user_id,
+					transaction_invoice_number,
+					payment_images_image_path: imagepath,
+				});
+				await Transaction.update(
+					{
+						order_status_id: 2,
+					},
+					{
+						where: {
+							[Op.and]: {
+								transaction_invoice_number,
+								user_id,
+							},
+						},
+					}
+				);
+
+				if (response) {
+					return res.status(201).send(response);
+				} else {
+					fs.unlinkSync(`public${imagepath}`);
+					return res.status(500).send(err.message);
+				}
+			});
 		} catch (err) {
 			return res.status(500).send(err.message);
 		}

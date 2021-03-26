@@ -3,6 +3,7 @@ import ReactPaginate from "react-paginate";
 import { useDispatch, useSelector } from "react-redux";
 import { fetchUserTransactionDetails } from "../redux/actions";
 import { TransactionModal } from "../components/TransactionModal";
+import { ModalPayment } from "../components/ModalPayment";
 import { api_url } from "../helpers";
 import capsules from "../assets/icons/pill2.png";
 
@@ -12,9 +13,11 @@ export const Transaction = () => {
 	const from = page * perPage;
 	const to = (page + 1) * perPage;
 	const [modal, setModal] = useState(false);
+	const [modal2, setModal2] = useState(false);
 
 	const dispatch = useDispatch();
 	const { user_id } = useSelector((state) => state.user);
+	const [invNumber, setInvNumber] = useState("");
 	const [value, setValue] = useState({});
 	const { transaction_list } = useSelector((state) => state.transaction);
 
@@ -34,10 +37,17 @@ export const Transaction = () => {
 		setPage(selectedPage);
 	};
 	const toggle = () => setModal(!modal);
+	const toggle2 = () => setModal2(!modal2);
 	const handleButton = (val) => {
 		setValue(val);
 		toggle();
 	};
+
+	const handleUpload = (val) => {
+		setInvNumber(val);
+		toggle2();
+	};
+	console.log(data);
 	const renderList = () => {
 		return data.map((val, i) => {
 			return (
@@ -166,12 +176,22 @@ export const Transaction = () => {
 							</div>
 						)}
 					</div>
-					<button
-						onClick={() => handleButton(val)}
-						className="font-semibold text-xl text-blue-500 focus:outline-none"
-					>
-						Transaction details
-					</button>
+					<div className="flex justify-between">
+						<button
+							onClick={() => handleButton(val)}
+							className="font-semibold text-xl text-blue-500 focus:outline-none"
+						>
+							Transaction details
+						</button>
+						{val.order_status_id === 1 ? (
+							<button
+								className="flex text-white bg-indigo-500 border-0 py-2 px-8 focus:outline-none hover:bg-indigo-600 rounded text-md"
+								onClick={() => handleUpload(val.transaction_invoice_number)}
+							>
+								Upload your payment slip here
+							</button>
+						) : null}
+					</div>
 				</div>
 			);
 		});
@@ -205,6 +225,11 @@ export const Transaction = () => {
 					/>
 				</div>
 				<TransactionModal showModal={modal} toggle={toggle} data={value} />
+				<ModalPayment
+					showModal={modal2}
+					toggle={toggle2}
+					transaction_invoice_number={invNumber}
+				/>
 			</div>
 		</div>
 	);
