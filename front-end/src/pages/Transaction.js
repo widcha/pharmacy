@@ -56,15 +56,21 @@ export const Transaction = (props) => {
 		return data.map((val, i) => {
 			return (
 				<div className="font-semibold text-gray-700 rounded-xl shadow border p-10  space-y-2">
-					<span>{val.transaction_date.split("T")[0]}</span>{" "}
-					<span className="bg-blue-100 p-1 rounded-sm">
-						{val["Order_Status.order_status_status"]
-							? val["Order_Status.order_status_status"]
-							: null}
-					</span>{" "}
-					<span className="text-gray-500">
-						{val.transaction_invoice_number}
-					</span>
+					<div>
+						<div>
+							<span>{val.transaction_date.split("T")[0]}</span>{" "}
+							<span className="bg-blue-100 p-1 rounded-sm">
+								{val["Order_Status.order_status_status"]
+									? val["Order_Status.order_status_status"]
+									: null}
+							</span>{" "}
+							<span className="text-gray-500">
+								{val.transaction_invoice_number}
+							</span>
+						</div>
+						<div></div>
+					</div>
+
 					<div>
 						{val.data.length > 0 ? (
 							<div className="font-semibold text-gray-700 rounded-xl shadow border p-10 space-y-2 flex justify-between">
@@ -192,7 +198,7 @@ export const Transaction = (props) => {
 								className="flex text-white bg-indigo-500 border-0 py-2 px-8 focus:outline-none hover:bg-indigo-600 rounded text-md"
 								onClick={() => handleUpload(val.transaction_invoice_number)}
 							>
-								Upload your payment slip here
+								Upload Payment Slip
 							</button>
 						) : null}
 					</div>
