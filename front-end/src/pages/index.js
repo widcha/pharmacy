@@ -20,7 +20,7 @@ import CustomAdmin from "./CustomAdmin";
 import {CheckOut} from "./CheckOut";
 import {Transaction} from "./Transaction";
 import NotificationAdmin from "./NotificationAdmin";
-import TransactionAdmin from "./TransactionAdmin";
+import {TransactionAdmin} from "./TransactionAdmin";
 
 export {
   HomeAdmin,

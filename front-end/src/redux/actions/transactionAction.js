@@ -25,13 +25,15 @@ export const fetchUserTransactionDetails = (user_id, query) => {
   };
 };
 
-export const adminFetchTransaction = () => {
+export const adminFetchTransaction = (query) => {
   return async (dispatch) => {
     try {
       dispatch({
         type: "API_TRANSACTION_START",
       });
-      const response = await axios.get(`${api_url}/admin/get-all-transaction`);
+      let response = await axios.get(
+        `${api}/admin-get${query ? `?order_status=${query}` : ""}`
+      );
 
       dispatch({
         type: "USER_FETCH_TRANSACTION",

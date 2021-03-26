@@ -85,7 +85,7 @@ const ImagesModal = ({
                   changeOrderStatusAction({
                     id: invoice,
                     order_status_id: 4,
-                    reason: `${results.value}`,
+                    reason: `Transaction ${invoice} cancelled: ${results.value}`,
                   })
                 );
               }
