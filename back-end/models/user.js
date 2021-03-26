@@ -69,7 +69,7 @@ module.exports = (sequelize, DataTypes) => {
       is_banned: {
         type: DataTypes.INTEGER,
         allowNull: false,
-        defaultValue: "0",
+        defaultValue: 0,
       },
       createdAt: {
         allowNull: false,

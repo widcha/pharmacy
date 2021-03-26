@@ -206,7 +206,23 @@ export const Transaction = () => {
 				</div>
 
 				<div className="border h-full w-full space-y-2 p-2 rounded-lg">
-					...
+					<div className="space-x-2">
+						<button class="inline-flex text-gray-700 bg-transparent border-2 py-2 px-6 focus:bg-indigo-50 focus:outline-none hover:bg-indigo-50 rounded-xl text-md transition duration-200">
+							All
+						</button>
+						<button class="inline-flex text-gray-700 bg-transparent border-2 py-2 px-6 focus:bg-indigo-50 focus:outline-none hover:bg-indigo-50 rounded-xl text-md transition duration-200">
+							Payment Pending
+						</button>
+						<button class="inline-flex text-gray-700 bg-transparent border-2 py-2 px-6 focus:bg-indigo-50 focus:outline-none hover:bg-indigo-50 rounded-xl text-md transition duration-200">
+							Order Confirmed
+						</button>
+						<button class="inline-flex text-gray-700 bg-transparent border-2 py-2 px-6 focus:bg-indigo-50 focus:outline-none hover:bg-indigo-50 rounded-xl text-md transition duration-200">
+							Delivered
+						</button>
+						<button class="inline-flex text-gray-700 bg-transparent border-2 py-2 px-6 focus:bg-indigo-50 focus:outline-none hover:bg-indigo-50 rounded-xl text-md transition duration-200">
+							Payment Slip Uploaded
+						</button>
+					</div>
 					<div className="space-y-2">{renderList()}</div>
 				</div>
 				<div className=" flex justify-center">

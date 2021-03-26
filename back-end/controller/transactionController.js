@@ -22,9 +22,6 @@ module.exports = {
 			const response4 = await Transaction.findAll({
 				where: {
 					user_id,
-					// transaction_invoice_number: {
-					// 	[Op.in]: ["INV/22/1616602160703", "INV/22/1616645035694"],
-					// },
 				},
 				raw: true,
 				group: ["transaction_invoice_number"],
@@ -54,26 +51,11 @@ module.exports = {
 							[Op.ne]: null,
 						},
 					},
-
-					// transaction_invoice_number: {
-					// 	[Op.in]: ["INV/22/1616602160703", "INV/22/1616645035694"],
-					// },
 				},
 				raw: true,
 				group: ["custom_product_id"],
 				attributes: ["custom_product_id", "transaction_invoice_number"],
 			});
-			// let response5 = [];
-
-			// response4.forEach(async (val) => {
-			// 	const data = await Transaction.findAll({
-			// 		where: {
-			// 			transaction_invoice_number: val.transaction_invoice_number,
-			// 		},
-			// 	});
-			// 	return response5.push(data);
-			// });
-			// console.log(response4);
 
 			//* ini buat ambil semua transaction by invoice number
 			let response5 = await Transaction.findAll({
@@ -84,7 +66,6 @@ module.exports = {
 						}),
 					},
 				},
-				// attributes: ["product_name", "product_qty", "product_id"],
 				attributes: {
 					exclude: [
 						"createdAt",
@@ -104,7 +85,6 @@ module.exports = {
 					},
 				],
 			});
-			// let arr = []
 			// * ini buat ambil custom product yg ada di transaction tp dipisahin gitu
 			const customres = await Custom_Product.findAll({
 				where: {
@@ -137,13 +117,11 @@ module.exports = {
 				return {
 					...val,
 					data: response5.filter((subVal) => {
-						// console.log(subVal.product_id);
 						return (
 							subVal.transaction_invoice_number ===
 								val.transaction_invoice_number &&
 							subVal.custom_product_id === null
 						);
-						// return { product: subVal.product_id };
 					}),
 					custom_data: customres.filter((customs, i) => {
 						return (
@@ -153,55 +131,12 @@ module.exports = {
 					}),
 				};
 			});
-			// console.log(arr);
-			// console.log(response5);
 
-			// const response5 = response4.map(async (val) => {
-			// 	const data = await Transaction.findAll({
-			// 		where: {
-			// 			user_id,
-			// 		},
-			// 		raw: true,
-			// 	});
-			// 	// console.log(object);
+			const result = arr.filter((val) => {
+				return val.order_status_id !== 5 && val.order_status_id !== 4;
+			});
 
-			// 	return data;
-			// });
-
-			// response4.forEach(async (val) => {
-			// 	const data = await Transaction.findAll({
-			// 		where: {
-			// 			[Op.and]: {
-			// 				user_id,
-			// 				transaction_invoice_number: val.transaction_invoice_number,
-			// 			},
-			// 		},
-			// 		raw: true,
-			// 		attributes: { exclude: ["createdAt", "updatedAt"] },
-			// 		// having: {
-			// 		// 	transaction_invoice_number: val.transaction_invoice_number,
-			// 		// },
-			// 		include: [
-			// 			{
-			// 				model: Custom_Product,
-			// 				attributes: { exclude: ["createdAt", "updatedAt"] },
-			// 			},
-			// 		],
-			// 	});
-			// 	response5.push({
-			// 		transaction_invoice_number: val.transaction_invoice_number,
-			// 		transaction_payment_details: val.transaction_payment_details,
-			// 		data,
-			// 	});
-			// });
-			// await Transaction.findAll({
-			// 	where: {
-			// 		user_id,
-			// 	},
-			// });
-			// console.log(response5);
-
-			return res.send(arr);
+			return res.send(result);
 		} catch (err) {
 			return res.status(500).send(err.message);
 		}
@@ -222,7 +157,7 @@ module.exports = {
 				});
 				await Transaction.update(
 					{
-						order_status_id: 2,
+						order_status_id: 6,
 					},
 					{
 						where: {

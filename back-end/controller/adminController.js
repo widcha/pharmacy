@@ -198,7 +198,7 @@ module.exports = {
   addOrderStatus: async (req, res) => {
     try {
       const response = await Order_Status.create({
-        order_status_status: "ARRIVED",
+        order_status_status: "Payment Slip Uploaded",
       });
       return res.send(response);
     } catch (err) {
