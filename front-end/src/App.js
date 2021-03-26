@@ -28,6 +28,7 @@ import {
   CheckOut,
   CustomAdmin,
   Transaction,
+  PurchaseHistory,
   NotificationAdmin,
   TransactionAdmin,
 } from "./pages";
@@ -109,6 +110,11 @@ function App() {
         <Route exact path="/custom-order" component={CustomOrder} />
         <Route exact path="/user/cart" component={Cart} />
         <Route exact path="/user/payment/checkout" component={CheckOut} />
+        <Route
+          exact
+          path="/user/purchase-history"
+          component={PurchaseHistory}
+        />
         <Route exact path="/user/transaction" component={Transaction} />
       </div>
     );

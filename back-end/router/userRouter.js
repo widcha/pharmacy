@@ -12,6 +12,7 @@ const {
   editUserAddress,
   deleteUserAddress,
   userAddRecipes,
+  getNotifUser,
 } = require("../controller/UserController");
 const {
   checkRegister,
@@ -35,5 +36,6 @@ router.patch("/address/edit/:id", editUserAddress);
 router.delete("/address/delete/:id", deleteUserAddress);
 
 router.post("/upload", userAddRecipes);
+router.post("/get-notif", getNotifUser);
 
 module.exports = router;

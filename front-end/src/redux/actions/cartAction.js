@@ -194,13 +194,10 @@ export const userDeleteCustomProductInCart = (user_id, custom_product_id) => {
 				type: "API_CART_START",
 			});
 
-			const response = await axios.delete(
+			await axios.delete(
 				`${api}/remove?user_id=${user_id}&custom_product_id=${custom_product_id}`
 			);
-			dispatch({
-				type: "USER_FETCH_CART",
-				payload: response.data,
-			});
+			dispatch(fetchUserCartByIdAction(user_id));
 			const filtered = await axios.get(`${api}/total?user_id=${user_id}`);
 			dispatch({
 				type: "USER_FETCH_SUBTOTAL",

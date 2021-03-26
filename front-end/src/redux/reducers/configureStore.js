@@ -6,13 +6,13 @@ import storage from "redux-persist/lib/storage";
 
 import rootReducer from ".";
 const persistConfig = {
-  key: "root",
-  storage,
-  whitelist: ["user", "cart", "customOrder"],
+	key: "root",
+	storage,
+	whitelist: ["user", "cart", "customOrder", "product"],
 };
 const persistedReducer = persistReducer(persistConfig, rootReducer);
 export const store = configureStore({
-  reducer: persistedReducer,
-  middleware: [thunk, logger],
+	reducer: persistedReducer,
+	middleware: [thunk, logger],
 });
 export const persistor = persistStore(store);

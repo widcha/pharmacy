@@ -5,6 +5,7 @@ const INITIAL_STATE = {
   user_role_id: null,
   user_isverified: null,
   user_address: [],
+  notif: [],
   loading: false,
   error: "",
 };
@@ -45,6 +46,11 @@ export const userReducer = (state = INITIAL_STATE, action) => {
       return {
         ...state,
         error: "",
+      };
+    case "API_GET_NOTIF":
+      return {
+        ...state,
+        notif: action.payload,
       };
     default:
       return state;
