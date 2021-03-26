@@ -185,28 +185,62 @@ module.exports = {
   },
   fetchAdminTransaction: async (req, res) => {
     try {
-      const {order_status} = req.query;
+      const {order_status, page, limit} = req.query;
+      const theLimit = parseInt(limit);
+      const offsetData = (page - 1) * parseInt(theLimit);
       // ini buat ambil transaction invoice dan totalnya
-      const response4 = await Transaction.findAll({
-        raw: true,
-        group: ["transaction_invoice_number"],
-        attributes: [
-          "transaction_invoice_number",
-          "transaction_payment_details",
-          "transaction_date",
-          "order_status_id",
-          "payment_method_id",
-          "user_address",
-        ],
-        include: [
-          {
-            model: Order_Status,
-            attributes: {
-              exclude: ["createdAt", "updatedAt", "order_status_id"],
-            },
+      let response4;
+      if (order_status > 0) {
+        response4 = await Transaction.findAll({
+          where: {
+            order_status_id: order_status,
           },
-        ],
-      });
+          raw: true,
+          offset: offsetData,
+          limit: theLimit,
+          group: ["transaction_invoice_number"],
+          attributes: [
+            "transaction_invoice_number",
+            "transaction_payment_details",
+            "transaction_date",
+            "order_status_id",
+            "payment_method_id",
+            "user_address",
+          ],
+          include: [
+            {
+              model: Order_Status,
+              attributes: {
+                exclude: ["createdAt", "updatedAt", "order_status_id"],
+              },
+            },
+          ],
+        });
+      } else {
+        response4 = await Transaction.findAll({
+          raw: true,
+          offset: offsetData,
+          limit: theLimit,
+          group: ["transaction_invoice_number"],
+          attributes: [
+            "transaction_invoice_number",
+            "transaction_payment_details",
+            "transaction_date",
+            "order_status_id",
+            "payment_method_id",
+            "user_address",
+          ],
+          include: [
+            {
+              model: Order_Status,
+              attributes: {
+                exclude: ["createdAt", "updatedAt", "order_status_id"],
+              },
+            },
+          ],
+        });
+      }
+
       //* inii buat ambil custom prodcut idnya doang
       const responseCustom = await Transaction.findAll({
         where: {
@@ -292,6 +326,7 @@ module.exports = {
           }),
         };
       });
+
       if (parseInt(order_status) > 0) {
         const result = arr.filter((val) => {
           return val.order_status_id === parseInt(order_status);

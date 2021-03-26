@@ -9,6 +9,7 @@ const {
     addPaymentMethods,
     addOrderStatus,
     getNotifAdmin,
+    getAllLength,
   },
 } = require("../controller");
 const express = require("express");
@@ -25,7 +26,7 @@ router.get("/get/payment-proof", getPaymentImages);
 router.patch("/change/transaction", changeTransactionStatus);
 
 router.get("/get-notif", getNotifAdmin);
-
+router.get("/get-all-length", getAllLength);
 // PUNYA ADHI
 router.post("/addPayment", addPaymentMethods);
 router.post("/addOrderStatus", addOrderStatus);

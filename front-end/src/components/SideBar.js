@@ -48,7 +48,7 @@ const SideBar = () => {
             selected={selectedIndex === 1}
             onClick={(e) => handleListItemClick(e, 1)}
           >
-            <Link to="/product">
+            <Link to="/product?page=1&limit=5">
               <ListItem
                 button
                 className={`${classes.nested} ${classes.listWrap}`}
@@ -115,7 +115,7 @@ const SideBar = () => {
             />
           </ListItem>
         </Link>
-        <Link to="/transaction">
+        <Link to="/transaction?page=1&limit=5&order_status=All">
           <ListItem
             button
             className={classes.listWrap}

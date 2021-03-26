@@ -19,23 +19,25 @@ const ProductAdmin = () => {
   const history = useHistory();
 
   //Pagination
-  const [perPage] = useState(10);
+  const [perPage] = useState(5);
   const [page, setPage] = useState(0);
-  const from = page * perPage;
-  const to = (page + 1) * perPage;
+  // const from = page * perPage;
+  // const to = (page + 1) * perPage;
+  const {lengths} = useSelector((state) => state.admin);
   const {product_list, loading} = useSelector((state) => state.product);
-  const [pageCount, setPageCount] = useState(product_list.length / perPage);
+  const [pageCount, setPageCount] = useState(lengths.products / perPage);
 
   //Data
   useEffect(() => {
-    dispatch(fetchProductAction());
+    dispatch(fetchProductAction(window.location.search));
     dispatch(fetchCategoryAction());
   }, [dispatch]);
   let category = useSelector((state) => state.product.category);
 
-  const data = product_list.filter((val, index) => {
-    return index >= from && index < to;
-  });
+  const data = product_list;
+  // .filter((val, index) => {
+  //   return index >= from && index < to;
+  // });
 
   const [showModal, setShowModal] = useState(false);
   const toggle = () => {
@@ -129,12 +131,15 @@ const ProductAdmin = () => {
   };
 
   useEffect(() => {
-    setPageCount(product_list.length / perPage);
-  }, [perPage, product_list]);
+    setPageCount(lengths.products / perPage);
+  }, [perPage]);
 
   const handlePageClick = (e) => {
     const selectedPage = e.selected;
-    setPage(selectedPage);
+    // setPage(selectedPage);
+    const url = `?page=${selectedPage + 1}&limit=5`;
+    history.push(`/product${url}`);
+    dispatch(fetchProductAction(url));
   };
 
   const renderAll = () => {

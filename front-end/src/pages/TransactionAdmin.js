@@ -6,39 +6,45 @@ import {TransactionModal} from "../components/TransactionModal";
 import {ModalPayment} from "../components/ModalPayment";
 import {api_url} from "../helpers";
 import capsules from "../assets/icons/pill2.png";
-import {Link} from "react-router-dom";
+import {Link, useHistory} from "react-router-dom";
 import Swal from "sweetalert2";
 
 export const TransactionAdmin = (props) => {
-  console.log(props.location.search.split("=")[1]);
+  console.log(props.location.search);
+  const history = useHistory();
+
+  //Pagination
   const [perPage] = useState(5);
-  const [page, setPage] = useState(0);
-  const from = page * perPage;
-  const to = (page + 1) * perPage;
   const [modal, setModal] = useState(false);
   const [modal2, setModal2] = useState(false);
 
   const dispatch = useDispatch();
   const [value, setValue] = useState({});
   const {transaction_list} = useSelector((state) => state.transaction);
+  const {lengths} = useSelector((state) => state.admin);
 
   useEffect(() => {
     adminFetchTransaction();
   }, []);
-  const [pageCount, setPageCount] = useState(transaction_list.length / perPage);
 
-  const data = transaction_list.filter((val, index) => {
-    return index >= from && index < to;
-  });
+  const [pageCount, setPageCount] = useState(
+    Math.ceil(lengths.transactions / perPage)
+  );
   useEffect(() => {
-    setPageCount(transaction_list.length / perPage);
-  }, [perPage, transaction_list]);
-  useEffect(() => {
-    dispatch(adminFetchTransaction(props.location.search.split("=")[1]));
+    dispatch(adminFetchTransaction(props.location.search));
   }, [dispatch, props.location.search]);
+
+  const data = transaction_list;
+  useEffect(() => {
+    setPageCount(Math.ceil(lengths.transactions / perPage));
+  }, [perPage, transaction_list]);
+
   const handlePageClick = (e) => {
     const selectedPage = e.selected;
-    setPage(selectedPage);
+    const addLink = props.location.search.split("=")[3];
+    history.push(
+      `/transaction?page=${selectedPage + 1}&limit=5&order_status=${addLink}`
+    );
   };
   const toggle = () => setModal(!modal);
   const toggle2 = () => setModal2(!modal2);
@@ -67,6 +73,7 @@ export const TransactionAdmin = (props) => {
               reason: `Transaction ${invoice} sent by Admin`,
             })
           );
+          dispatch(adminFetchTransaction());
         }
       });
     }
@@ -210,7 +217,7 @@ export const TransactionAdmin = (props) => {
                 className="flex text-white bg-indigo-500 border-0 py-2 px-8 focus:outline-none hover:bg-indigo-600 rounded text-md"
                 onClick={() => handleSentOrder(val.transaction_invoice_number)}
               >
-                Sent
+                Send
               </button>
             ) : null}
           </div>
@@ -229,32 +236,32 @@ export const TransactionAdmin = (props) => {
 
         <div className="border h-full w-full space-y-2 p-2 rounded-lg">
           <div className="space-x-2">
-            <Link to="/transaction?order_status=All">
+            <Link to="/transaction?page=1&limit=5&order_status=All">
               <button class="inline-flex text-gray-700 bg-transparent border-2 py-2 px-6 focus:bg-indigo-50 focus:outline-none hover:bg-indigo-50 rounded-xl text-md transition duration-200">
                 All
               </button>
             </Link>
-            <Link to="/transaction?order_status=1">
+            <Link to="/transaction?page=1&limit=5&order_status=1">
               <button class="inline-flex text-gray-700 bg-transparent border-2 py-2 px-6 focus:bg-indigo-50 focus:outline-none hover:bg-indigo-50 rounded-xl text-md transition duration-200">
                 Payment Pending
               </button>
             </Link>
-            <Link to="/transaction?order_status=2">
+            <Link to="/transaction?page=1&limit=5&order_status=2">
               <button class="inline-flex text-gray-700 bg-transparent border-2 py-2 px-6 focus:bg-indigo-50 focus:outline-none hover:bg-indigo-50 rounded-xl text-md transition duration-200">
                 Order Confirmed
               </button>
             </Link>
-            <Link to="/transaction?order_status=3">
+            <Link to="/transaction?page=1&limit=5&order_status=3">
               <button class="inline-flex text-gray-700 bg-transparent border-2 py-2 px-6 focus:bg-indigo-50 focus:outline-none hover:bg-indigo-50 rounded-xl text-md transition duration-200">
                 Delivered
               </button>
             </Link>
-            <Link to="/transaction?order_status=4">
+            <Link to="/transaction?page=1&limit=5&order_status=4">
               <button class="inline-flex text-gray-700 bg-transparent border-2 py-2 px-6 focus:bg-indigo-50 focus:outline-none hover:bg-indigo-50 rounded-xl text-md transition duration-200">
                 Cancelled
               </button>
             </Link>
-            <Link to="/transaction?order_status=5">
+            <Link to="/transaction?page=1&limit=5&order_status=5">
               <button class="inline-flex text-gray-700 bg-transparent border-2 py-2 px-6 focus:bg-indigo-50 focus:outline-none hover:bg-indigo-50 rounded-xl text-md transition duration-200">
                 Arrived
               </button>
@@ -265,7 +272,7 @@ export const TransactionAdmin = (props) => {
           </div>
         </div>
         {transaction_list.length > 0 ? (
-          <div className=" flex justify-center">
+          <div className=" flex justify-center fixed right-10">
             <ReactPaginate
               previousLabel={"Prev"}
               nextLabel={"Next"}

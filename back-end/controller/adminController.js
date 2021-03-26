@@ -10,6 +10,7 @@ const {
   Order_Status,
   Payment_Method,
   Custom_Product,
+  Product_Category,
 } = require("../models");
 const {Op} = require("sequelize");
 const {createJWTToken} = require("../helpers");
@@ -340,6 +341,24 @@ module.exports = {
         });
       }
       return res.status(200).send(response);
+    } catch (err) {
+      return res.send(err.message);
+    }
+  },
+  getAllLength: async (req, res) => {
+    try {
+      const users = await User.count();
+      const products = await Product.count();
+      const category = await Product_Category.count();
+      const transactions = (
+        await Transaction.findAll({
+          group: ["transaction_invoice_number"],
+          attributes: ["createdAt"],
+        })
+      ).length;
+      const flows = await Material_Flow.count();
+      const total = {users, products, category, transactions, flows};
+      return res.status(200).send(total);
     } catch (err) {
       return res.send(err.message);
     }

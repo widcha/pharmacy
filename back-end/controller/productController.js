@@ -5,11 +5,22 @@ const {uploader} = require("../handlers");
 const {Op} = require("sequelize");
 const sequelize = require("sequelize");
 const e = require("express");
+const {parse} = require("path");
 
 module.exports = {
   getAllProduct: async (req, res) => {
     try {
-      const {minPrice, maxPrice, search, sort, category} = req.query;
+      const {
+        minPrice,
+        maxPrice,
+        search,
+        sort,
+        category,
+        page,
+        limit,
+      } = req.query;
+      const theLimit = parseInt(limit);
+      const offsetData = (page - 1) * parseInt(theLimit);
       let orderSort;
       if (sort) {
         if (sort === "ASC") {
@@ -32,6 +43,8 @@ module.exports = {
                 product_is_available: 1,
               },
             },
+            offset: offsetData,
+            limit: theLimit,
             order: orderSort,
             attributes: {
               exclude: ["createdAt", "updatedAt"],
@@ -54,6 +67,8 @@ module.exports = {
                 product_is_available: 1,
               },
             },
+            offset: offsetData,
+            limit: theLimit,
             order: orderSort,
             attributes: {
               exclude: ["createdAt", "updatedAt"],
@@ -86,6 +101,8 @@ module.exports = {
                   product_is_available: 1,
                 },
               },
+              offset: offsetData,
+              limit: theLimit,
               order: orderSort,
               attributes: {
                 exclude: ["createdAt", "updatedAt"],
@@ -113,6 +130,8 @@ module.exports = {
                   product_is_available: 1,
                 },
               },
+              offset: offsetData,
+              limit: theLimit,
               order: orderSort,
               attributes: {
                 exclude: ["createdAt", "updatedAt"],

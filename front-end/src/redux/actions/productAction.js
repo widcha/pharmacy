@@ -37,34 +37,35 @@ export const fetchProductAction = (data) => {
       dispatch({type: "FETCH_PRODUCT_START"});
       let response;
       if (data) {
-        const {
-          searchWord,
-          minPrice,
-          maxPrice,
-          sortChosen,
-          filterCategory,
-        } = data;
+        response = await axios.get(`${linkk}${data}`);
+        // const {
+        //   searchWord,
+        //   minPrice,
+        //   maxPrice,
+        //   sortChosen,
+        //   filterCategory,
+        // } = data;
 
-        if (
-          (searchWord && minPrice) ||
-          filterCategory ||
-          maxPrice ||
-          sortChosen
-        ) {
-          response = await axios.get(
-            `${linkk}?category=${
-              filterCategory ? filterCategory : null
-            }&search=${searchWord ? searchWord : ""}&minPrice=${
-              minPrice ? minPrice : 0
-            }&maxPrice=${
-              maxPrice === 0 || maxPrice === undefined
-                ? maxPrice === null
-                : maxPrice
-            }&sort=${sortChosen}`
-          );
-        } else if (searchWord) {
-          response = await axios.get(`${linkk}?search=${searchWord}`);
-        }
+        // if (
+        //   (searchWord && minPrice) ||
+        //   filterCategory ||
+        //   maxPrice ||
+        //   sortChosen
+        // ) {
+        //   response = await axios.get(
+        //     `${linkk}?category=${
+        //       filterCategory ? filterCategory : null
+        //     }&search=${searchWord ? searchWord : ""}&minPrice=${
+        //       minPrice ? minPrice : 0
+        //     }&maxPrice=${
+        //       maxPrice === 0 || maxPrice === undefined
+        //         ? maxPrice === null
+        //         : maxPrice
+        //     }&sort=${sortChosen}`
+        //   );
+        // } else if (searchWord) {
+        //   response = await axios.get(`${linkk}?search=${searchWord}`);
+        // }
       } else {
         response = await axios.get(linkk);
       }

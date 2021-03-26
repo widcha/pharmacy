@@ -112,3 +112,15 @@ export const fetchStockFlowByIdAction = (id) => {
     }
   };
 };
+
+export const getItemLength = () => {
+  return async (dispatch) => {
+    try {
+      dispatch({type: "FETCH_DATA_START"});
+      const response = await axios.get(`${url}/get-all-length`);
+      dispatch({type: "FETCH_LENGTH_SUCCESS", payload: response.data});
+    } catch (err) {
+      dispatch({type: "FETCH_DATA_FAILED", payload: err.message});
+    }
+  };
+};

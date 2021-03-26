@@ -2,7 +2,7 @@ import "./App.css";
 import React, {useEffect} from "react";
 import {Route} from "react-router-dom";
 import {useDispatch, useSelector} from "react-redux";
-import {nullifyErrorAction} from "./redux/actions";
+import {getItemLength, nullifyErrorAction} from "./redux/actions";
 import SideBar from "./components/SideBar";
 import {Nav} from "./components/Navbar";
 import {NavAdmin} from "./components/NavbarAdmin";
@@ -39,6 +39,7 @@ function App() {
 
   useEffect(() => {
     dispatch(nullifyErrorAction());
+    dispatch(getItemLength());
   }, [dispatch]);
 
   if (user_role_id === 1) {
