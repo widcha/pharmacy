@@ -121,7 +121,13 @@ export const Transaction = (props) => {
 					<div className="flex justify-between">
 						<div>
 							<span>{val.transaction_date.split("T")[0]}</span>{" "}
-							<span className="bg-blue-100 p-1 rounded-sm">
+							<span
+								className={
+									val.order_status_id === 1
+										? "bg-yellow-100 p-1 rounded-sm"
+										: "bg-blue-100 p-1 rounded-sm"
+								}
+							>
 								{val["Order_Status.order_status_status"]
 									? val["Order_Status.order_status_status"]
 									: null}
@@ -324,7 +330,7 @@ export const Transaction = (props) => {
 								Delivered
 							</button>
 						</Link>
-						<Link to="/user/transaction?order_status=4">
+						<Link to="/user/transaction?order_status=6">
 							<button class="inline-flex text-gray-700 bg-transparent border-2 py-2 px-6 focus:bg-indigo-50 focus:outline-none hover:bg-indigo-50 rounded-xl text-md transition duration-200">
 								Payment Slip Uploaded
 							</button>
