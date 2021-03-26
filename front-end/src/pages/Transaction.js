@@ -302,13 +302,26 @@ export const Transaction = (props) => {
 	return (
 		<div className="flex flex-col  h-full px-56">
 			<div className="m-auto mx-2 h-auto flex flex-col ">
-				<div className="flex items-center w-full">
-					<label className="font-semibold text-gray-800 text-xl flex w-1/2 ">
+				<div className="flex items-center w-full my-5">
+					<svg
+						class="w-6 h-6"
+						fill="currentColor"
+						viewBox="0 0 20 20"
+						xmlns="http://www.w3.org/2000/svg"
+					>
+						<path d="M9 2a1 1 0 000 2h2a1 1 0 100-2H9z"></path>
+						<path
+							fill-rule="evenodd"
+							d="M4 5a2 2 0 012-2 3 3 0 003 3h2a3 3 0 003-3 2 2 0 012 2v11a2 2 0 01-2 2H6a2 2 0 01-2-2V5zm3 4a1 1 0 000 2h.01a1 1 0 100-2H7zm3 0a1 1 0 000 2h3a1 1 0 100-2h-3zm-3 4a1 1 0 100 2h.01a1 1 0 100-2H7zm3 0a1 1 0 100 2h3a1 1 0 100-2h-3z"
+							clip-rule="evenodd"
+						></path>
+					</svg>
+					<label className="font-semibold text-gray-800 text-3xl flex w-1/2 ">
 						TRANSACTION LIST
 					</label>
 				</div>
 
-				<div className="border h-full w-full space-y-2 p-2 rounded-lg">
+				<div className="border h-full w-full space-y-2 p-6 rounded-xl ">
 					<div className="space-x-2">
 						<Link to="/user/transaction?order_status=All">
 							<button class="inline-flex text-gray-700 bg-transparent border-2 py-2 px-6 focus:bg-indigo-50 focus:outline-none hover:bg-indigo-50 rounded-xl text-md transition duration-200">
