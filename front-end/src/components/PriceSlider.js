@@ -48,8 +48,9 @@ export default function PriceSlider(props) {
 	const dispatch = useDispatch();
 
 	const { max_price, category_id } = props;
+	console.log(max_price);
 	// const classes = useStyles();
-	const [value, setValue] = React.useState([0, max_price / 2]);
+	const [value, setValue] = React.useState([0, max_price]);
 	useEffect(() => {
 		const timer = setTimeout(async () => {
 			dispatch(fetchProductsFilteredByPrice(value[0], value[1], category_id));
