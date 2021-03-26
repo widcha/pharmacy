@@ -7,17 +7,15 @@ import {
   fetchUserCartByIdAction,
   redirectToCheckoutAction,
   userAddProductToCartAction,
-  userCheckoutAction,
   userDeleteCustomProductInCart,
   userDeleteProductInCart,
   userGetSubTotal,
   userSubProductFromCartAction,
 } from "../redux/actions";
-import { Redirect } from "react-router";
 import { Link } from "react-router-dom";
 export const Cart = () => {
   const dispatch = useDispatch();
-  const { cart_list, available_products, subTotal, tax, total } = useSelector(
+  const { cart_list, subTotal, tax, total } = useSelector(
     (state) => state.cart
   );
   const { user_id } = useSelector((state) => state.user);
@@ -45,10 +43,6 @@ export const Cart = () => {
       userSubProductFromCartAction({ user_id, product_id: idx, currQty })
     );
   }, 200);
-
-  // setTimeout(() => {
-
-  // }, 500);
 
   const handleDelete = (user_id, product_id) => {
     Swal.fire({
@@ -87,7 +81,6 @@ export const Cart = () => {
   const renderCart = () => {
     return cart_list.map((val, index) => {
       if (val.custom_product_id === null) {
-        // let price = val.product_price / val.Product.product_vol;
         let total = val.product_price * val.product_qty;
         return (
           <CartCard
@@ -106,25 +99,14 @@ export const Cart = () => {
           />
         );
       } else {
-        let total = val.custom_product_qty * val.custom_product_price;
+        // let total = val.custom_product_qty * val.custom_product_price;
         return (
           <CartCard
-            totalCustom={Math.ceil(total)}
+            totalCustom={Math.ceil(val.custom_product_price)}
             data={val.Carts}
             custom_product_id={val.custom_product_id}
             user_id={val.user_id}
             del={handleDeleteCustom}
-            // image={val.Product.product_image_path}
-            // name={val.Product.product_name}
-            // user_id={val.user_id}
-            // product_id={val.product_id}
-            // qty={val.product_qty}
-            // price={Math.ceil(price)}
-            // stock={val.Product.product_stock_total}
-            // vol={val.Product.product_stock_total}
-            // increment={handleIncrement}
-            // decrement={handleDecrement}
-            // del={handleDelete}
           />
         );
       }
