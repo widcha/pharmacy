@@ -42,3 +42,39 @@ export const adminFetchTransaction = () => {
     }
   };
 };
+
+export const userUploadPaymentSlipAction = ({
+	transaction_invoice_number,
+	user_id,
+	pict,
+}) => {
+	return async (dispatch) => {
+		try {
+			console.log(transaction_invoice_number);
+			dispatch({
+				type: "API_TRANSACTION_START",
+			});
+			let formData = new FormData();
+
+			const val = JSON.stringify({
+				transaction_invoice_number,
+				user_id,
+			});
+			formData.append("image", pict);
+			formData.append("data", val);
+			const headers = {
+				headers: {
+					"Content-Type": "multipart/form-data",
+				},
+			};
+
+			await axios.post(`${api}/payment-upload`, formData, headers);
+			dispatch(fetchUserTransactionDetails(user_id));
+		} catch (err) {
+			dispatch({
+				type: "API_TRANSACTION_FAILED",
+				payload: err.message,
+			});
+		}
+	};
+};

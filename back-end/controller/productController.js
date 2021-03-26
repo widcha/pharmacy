@@ -445,7 +445,6 @@ module.exports = {
   getAllProductbyUser: async (req, res) => {
     try {
       const {highest_price, price_from, price_to, category} = req.query;
-      console.log("halo");
       if (highest_price === "true") {
         const response = await Product.findAll({
           where: {
@@ -456,6 +455,20 @@ module.exports = {
           ],
           raw: true,
         });
+
+        const res2 = await Product.findAll({
+          where: {
+            product_is_available: 1,
+          },
+        });
+        let arrMax = [];
+        await res2.forEach((subRes) => {
+          arrMax.push(subRes.product_price / subRes.product_vol);
+        });
+        arrMax = arrMax.sort((a, b) => b - a);
+        // maxPriceNew = [0];
+        // console.log(arrMax.sort((a, b) => b - a));
+
         return res.status(200).send(response);
       } else if (price_from && price_to && category) {
         if (category > 0) {
