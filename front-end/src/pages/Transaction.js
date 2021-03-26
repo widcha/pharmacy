@@ -177,30 +177,33 @@ export const Transaction = () => {
 		});
 	};
 	return (
-		<div
-			className="container flex  p-auto h-full"
-			style={{ display: "flex", flexDirection: "column" }}
-		>
-			<div className="flex-row pt-8 pr-32">
-				<ReactPaginate
-					previousLabel={"Prev"}
-					nextLabel={"Next"}
-					breakLabel={"..."}
-					breakClassName={"break-me"}
-					pageCount={pageCount}
-					marginPagesDisplayed={2}
-					pageRangeDisplayed={5}
-					onPageChange={handlePageClick}
-					containerClassName={"pagination"}
-					subContainerClassName={"pages pagination"}
-					activeClassName={"active"}
-				/>
-			</div>
-			<div className="m-auto w-full mx-2 h-full">
-				<label className="font-semibold text-gray-800 text-xl">
-					TRANSACTION LIST
-				</label>
-				<div className="border h-full w-full space-y-2">{renderList()}</div>
+		<div className="flex flex-col  h-full px-56">
+			<div className="m-auto mx-2 h-auto flex flex-col ">
+				<div className="flex items-center w-full">
+					<label className="font-semibold text-gray-800 text-xl flex w-1/2 ">
+						TRANSACTION LIST
+					</label>
+				</div>
+
+				<div className="border h-full w-full space-y-2 p-2 rounded-lg">
+					...
+					<div className="space-y-2">{renderList()}</div>
+				</div>
+				<div className=" flex justify-center">
+					<ReactPaginate
+						previousLabel={"Prev"}
+						nextLabel={"Next"}
+						breakLabel={"..."}
+						breakClassName={"break-me"}
+						pageCount={pageCount}
+						marginPagesDisplayed={2}
+						pageRangeDisplayed={5}
+						onPageChange={handlePageClick}
+						containerClassName={"pagination"}
+						subContainerClassName={"pages pagination"}
+						activeClassName={"active"}
+					/>
+				</div>
 				<TransactionModal showModal={modal} toggle={toggle} data={value} />
 			</div>
 		</div>

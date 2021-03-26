@@ -19,6 +19,7 @@ export const CartCard = ({
 	custom_product_id,
 }) => {
 	if (data) {
+		let condition = false;
 		const renderItems = () => {
 			return data.map((val) => {
 				// return <div>{val.Product.product_name}</div>;
@@ -47,15 +48,26 @@ export const CartCard = ({
 				);
 			});
 		};
+		data.forEach((items) => {
+			if (items.product_qty > items.Product.product_stock_total) {
+				condition = true;
+			}
+		});
 		return (
 			<div className=" w-full flex flex-grow-0 resize-none container flex-row my-2 justify-between">
-				{/* {qty <= stock ? null : (
-			<label className="absolute ml-96 mt-12 text-7xl text-black">
-				out of stock
-			</label>
-		)} */}
+				{condition ? (
+					<label className="absolute ml-96 mt-8 text-7xl text-black">
+						out of stock
+					</label>
+				) : null}
 
-				<div className="w-11/12 flex flex-grow-0 resize-none">
+				<div
+					className={
+						condition
+							? "w-11/12 flex flex-grow-0 resize-none opacity-40"
+							: "w-11/12 flex flex-grow-0 resize-none"
+					}
+				>
 					<div className="w-full bg-white border-2 border-gray-300 p-5 rounded-md tracking-wide shadow-lg ">
 						<div id="header" className="flex w">
 							<img
