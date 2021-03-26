@@ -74,6 +74,11 @@ module.exports = (sequelize, DataTypes) => {
 				allowNull: false,
 				type: DataTypes.DATE,
 			},
+			is_banned: {
+				allowNull: false,
+				type: DataTypes.INTEGER,
+				defaultValue: 0,
+			},
 		},
 		{
 			sequelize,
