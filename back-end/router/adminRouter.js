@@ -8,11 +8,11 @@ const {
     getStockFlowById,
     addPaymentMethods,
     addOrderStatus,
-    adminFetchTransaction,
     getNotifAdmin,
   },
 } = require("../controller");
 const express = require("express");
+const {checkAdminToken} = require("../helpers/middleware");
 const router = express.Router();
 
 router.get("/get/stock-flow", getStockFlow);
@@ -23,8 +23,6 @@ router.patch("/change/recipe/:id", editRecipeStatus);
 
 router.get("/get/payment-proof", getPaymentImages);
 router.patch("/change/transaction", changeTransactionStatus);
-
-router.get("/get-all-transaction", adminFetchTransaction);
 
 router.get("/get-notif", getNotifAdmin);
 
