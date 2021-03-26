@@ -1,5 +1,6 @@
 const INITIAL_STATE = {
   recipe: [],
+  notif: [],
   material_flow: [],
   payment_img: [],
   loading: false,
@@ -30,6 +31,12 @@ export const adminReducer = (state = INITIAL_STATE, action) => {
         ...state,
         loading: false,
         payment_img: action.payload,
+      };
+    case "FETCH_NOTIF_SUCCESS":
+      return {
+        ...state,
+        loading: false,
+        notif: action.payload,
       };
     case "FETCH_DATA_FAILED":
       return {

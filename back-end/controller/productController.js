@@ -9,52 +9,47 @@ const e = require("express");
 module.exports = {
   getAllProduct: async (req, res) => {
     try {
-      const {minPrice, maxPrice, search, sortChosen} = req.query;
+      const {minPrice, maxPrice, search, sort, category} = req.query;
       let orderSort;
-      if (sortChosen) {
-        if (sortChosen === "DateOld") {
+      if (sort) {
+        if (sort === "ASC") {
           orderSort = [["createdAt", "ASC"]];
-        } else if (sortChosen === "DateNew") {
+        } else {
           orderSort = [["createdAt", "DESC"]];
         }
       }
 
       let response;
-      if (!maxPrice) {
+      if (!maxPrice || maxPrice === "false") {
         //KALAU MAXPRICE TIDAK ADA
-        response = await Product.findAll({
-          where: {
-            [Op.and]: {
-              product_price: {[Op.gte]: minPrice ? minPrice : 0},
-              product_name: {[Op.substring]: `${search ? search : ""}`},
-              product_is_available: 1,
-            },
-          },
-          order: orderSort,
-          attributes: {
-            exclude: ["createdAt", "updatedAt"],
-          },
-          include: [
-            {
-              model: Product_Category,
-              attributes: {
-                exclude: ["createdAt", "updatedAt"],
-              },
-            },
-          ],
-        });
-      } else {
-        //KALAU ADA MAX PRICE
-        if (minPrice || search) {
+        if (category && category !== "null") {
           response = await Product.findAll({
             where: {
               [Op.and]: {
-                product_price: {
-                  [Op.and]: {
-                    [Op.gte]: minPrice ? minPrice : 0,
-                    [Op.lte]: maxPrice,
-                  },
+                product_price: {[Op.gte]: minPrice ? minPrice : 0},
+                product_name: {[Op.substring]: `${search ? search : ""}`},
+                product_category_id: category,
+                product_is_available: 1,
+              },
+            },
+            order: orderSort,
+            attributes: {
+              exclude: ["createdAt", "updatedAt"],
+            },
+            include: [
+              {
+                model: Product_Category,
+                attributes: {
+                  exclude: ["createdAt", "updatedAt"],
                 },
+              },
+            ],
+          });
+        } else {
+          response = await Product.findAll({
+            where: {
+              [Op.and]: {
+                product_price: {[Op.gte]: minPrice ? minPrice : 0},
                 product_name: {[Op.substring]: `${search ? search : ""}`},
                 product_is_available: 1,
               },
@@ -72,6 +67,66 @@ module.exports = {
               },
             ],
           });
+        }
+      } else {
+        //KALAU ADA MAX PRICE
+        if (minPrice || search) {
+          if (category !== "null") {
+            response = await Product.findAll({
+              where: {
+                [Op.and]: {
+                  product_price: {
+                    [Op.and]: {
+                      [Op.gte]: minPrice ? minPrice : 0,
+                      [Op.lte]: maxPrice,
+                    },
+                  },
+                  product_name: {[Op.substring]: `${search ? search : ""}`},
+                  product_category_id: category,
+                  product_is_available: 1,
+                },
+              },
+              order: orderSort,
+              attributes: {
+                exclude: ["createdAt", "updatedAt"],
+              },
+              include: [
+                {
+                  model: Product_Category,
+                  attributes: {
+                    exclude: ["createdAt", "updatedAt"],
+                  },
+                },
+              ],
+            });
+          } else {
+            response = await Product.findAll({
+              where: {
+                [Op.and]: {
+                  product_price: {
+                    [Op.and]: {
+                      [Op.gte]: minPrice ? minPrice : 0,
+                      [Op.lte]: maxPrice,
+                    },
+                  },
+                  product_name: {[Op.substring]: `${search ? search : ""}`},
+                  product_is_available: 1,
+                },
+              },
+              order: orderSort,
+              attributes: {
+                exclude: ["createdAt", "updatedAt"],
+              },
+              include: [
+                {
+                  model: Product_Category,
+                  attributes: {
+                    exclude: ["createdAt", "updatedAt"],
+                  },
+                },
+              ],
+            });
+          }
         }
       }
       return res.status(200).send(response);

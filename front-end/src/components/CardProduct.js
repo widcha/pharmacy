@@ -35,6 +35,7 @@ const CardProduct = ({
   const [changeStock, setChangeStock] = useState(1);
 
   const [theCat, setTheCat] = useState("");
+
   useEffect(() => {
     const cat = product_list.filter(
       (val) => val.product_category_id === catt

@@ -164,7 +164,11 @@ const CategoriesAdmin = () => {
               <TableCell align="center">
                 <Button
                   onClick={() => editButton(row.product_category_id)}
-                  style={{backgroundColor: "#4a91bb", color: "white"}}
+                  style={{
+                    backgroundColor: "#4a91bb",
+                    color: "white",
+                    outline: 0,
+                  }}
                   disabled={addClick}
                 >
                   Edit
@@ -175,6 +179,7 @@ const CategoriesAdmin = () => {
                     backgroundColor: "#E8282C",
                     color: "white",
                     marginLeft: "20px",
+                    outline: 0,
                   }}
                   disabled={addClick}
                 >
@@ -234,7 +239,7 @@ const CategoriesAdmin = () => {
     return (
       <div>
         <div style={{display: "flex", flexDirection: "row"}}>
-          <div style={{display: "flex", marginTop: "23px"}}>
+          <div>
             <TableContainer
               component={Paper}
               style={{backgroundColor: "#D5F5EE"}}
@@ -276,7 +281,7 @@ const CategoriesAdmin = () => {
             </div>
             <Button
               onClick={searchBtn}
-              style={{backgroundColor: "#2460A7FF", color: "white"}}
+              style={{backgroundColor: "#2460A7FF", color: "white", outline: 0}}
             >
               Search
             </Button>
@@ -286,6 +291,7 @@ const CategoriesAdmin = () => {
                 backgroundColor: "#0098b3",
                 color: "white",
                 marginTop: "20px",
+                outline: 0,
               }}
               onClick={() => setAddClick(true)}
             >
@@ -298,8 +304,7 @@ const CategoriesAdmin = () => {
   };
   return (
     <div className="flex flex-col mx-2">
-      <div className="flex flex-wrap">{loading ? null : renderAll()}</div>
-      <div className="flex-row align-baseline">
+      <div className="flex-row align-baseline mt-4">
         <ReactPaginate
           previousLabel={"Prev"}
           nextLabel={"Next"}
@@ -314,6 +319,7 @@ const CategoriesAdmin = () => {
           activeClassName={"active"}
         />
       </div>
+      <div className="flex flex-wrap">{loading ? null : renderAll()}</div>
     </div>
   );
 };
