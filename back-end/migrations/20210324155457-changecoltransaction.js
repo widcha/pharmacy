@@ -15,20 +15,29 @@ module.exports = {
     // await queryInterface.removeColumn("finances", "transaction_invoice_number");
     // await queryInterface.removeColumn("finances", "finance_date");
     // await queryInterface.removeColumn(
-    //   "user_notifs",
+    //   "admin_notifs",
     //   "transaction_invoice_number"
     // );
     // await queryInterface.removeColumn(
-    // 	"transactions",
-    // 	"transaction_invoice_number"
+    //   "payment_images",
+    //   "transaction_invoice_number"
+    // );
+    // await queryInterface.removeColumn(
+    //   "user_notifs",
+    //   "transaction_invoice_number"
+    // );
+    // await queryInterface.removeColumn("finances", "transaction_invoice_number");
+    // await queryInterface.removeColumn(
+    //   "transactions",
+    //   "transaction_invoice_number"
     // );
     // await queryInterface.addColumn(
-    // 	"transactions",
-    // 	"transaction_invoice_number",
-    // 	{
-    // 		type: Sequelize.STRING(500),
-    // 		allowNull: false,
-    // 	}
+    //   "transactions",
+    //   "transaction_invoice_number",
+    //   {
+    //     type: Sequelize.STRING(500),
+    //     allowNull: false,
+    //   }
     // );
   },
 

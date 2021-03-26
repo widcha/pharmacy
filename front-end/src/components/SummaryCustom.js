@@ -8,10 +8,12 @@ import {
 } from "../redux/actions/customOrderAction";
 import { toast, Zoom } from "react-toastify";
 import { changeRecipeStatus } from "../redux/actions/adminAction";
+import { useHistory } from "react-router-dom";
 
-const SummaryCustom = ({ userID, recipeID, toggle }) => {
+const SummaryCustom = ({ userID, recipeID }) => {
   const { capsule } = useSelector((state) => state.customOrder);
   const { user_id } = useSelector((state) => state.user);
+  const history = useHistory();
   const [totalPrice, setTotalPrice] = useState(0);
   const [dose, setDose] = useState(1);
   const [grandTotal, setGrandTotal] = useState(0);
@@ -65,7 +67,7 @@ const SummaryCustom = ({ userID, recipeID, toggle }) => {
                   icon: "info",
                   title: "Order submitted to customer cart",
                   text: `Note: ${results.value}`,
-                }).then((res) => (res ? (window.location = "/recipe") : ""));
+                }).then((res) => (res ? history.push("/recipe") : ""));
                 dispatch(
                   addProductToDatabaseAction({
                     user_id: userID,
