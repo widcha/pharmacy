@@ -17,6 +17,7 @@ const ModalUploadUser = ({ showModal, toggle }) => {
   };
 
   const uploadBtn = async () => {
+    console.log("masuk");
     if (pictName) {
       await dispatch(uploadRecipesAction({ user_id, pict }));
       Swal.fire({

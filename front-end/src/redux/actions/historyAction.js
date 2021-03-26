@@ -1,17 +1,18 @@
 import axios from "axios";
 import { api_url } from "../../helpers";
-import { toast, Zoom } from "react-toastify";
-import Swal from "sweetalert2";
+import { toast } from "react-toastify";
 import { fetchUserCartByIdAction } from "./cartAction";
 
 const apiCart = `${api_url}/carts`;
 const api = `${api_url}/history`;
 
-export const fetchHistoryAction = (user_id) => {
+export const fetchHistoryAction = (user_id, query) => {
   return async (dispatch) => {
     try {
       dispatch({ type: "API_HISTORY_START" });
-      const response = await axios.get(`${api}/get?user_id=${user_id}`);
+      const response = await axios.get(
+        `${api}/get?user_id=${user_id}&order_status=${query}`
+      );
       dispatch({ type: "API_HISTORY_SUCCESS", payload: response.data });
     } catch (err) {
       dispatch({ type: "API_HISTORY_FAILED", payload: err.message });

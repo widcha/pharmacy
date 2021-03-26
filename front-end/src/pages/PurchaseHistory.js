@@ -11,8 +11,9 @@ import { api_url } from "../helpers";
 import capsules from "../assets/icons/pill2.png";
 import Swal from "sweetalert2";
 import { toast, Zoom } from "react-toastify";
+import { Link } from "react-router-dom";
 
-const PurchaseHistory = () => {
+const PurchaseHistory = (props) => {
   const [perPage] = useState(5);
   const [page, setPage] = useState(0);
   const from = page * perPage;
@@ -33,8 +34,8 @@ const PurchaseHistory = () => {
     setPageCount(history_list.length / perPage);
   }, [perPage, history_list]);
   useEffect(() => {
-    dispatch(fetchHistoryAction(user_id));
-  }, [dispatch, user_id]);
+    dispatch(fetchHistoryAction(user_id, props.location.search.split("=")[1]));
+  }, [dispatch, props.location.search, user_id]);
   const handlePageClick = (e) => {
     const selectedPage = e.selected;
     setPage(selectedPage);
@@ -290,23 +291,42 @@ const PurchaseHistory = () => {
             Purchase History
           </label>
         </div>
-        <div className="flex-row">
-          <ReactPaginate
-            previousLabel={"Prev"}
-            nextLabel={"Next"}
-            breakLabel={"..."}
-            breakClassName={"break-me"}
-            pageCount={pageCount}
-            marginPagesDisplayed={2}
-            pageRangeDisplayed={5}
-            onPageChange={handlePageClick}
-            containerClassName={"pagination"}
-            subContainerClassName={"pages pagination"}
-            activeClassName={"active"}
-          />
-        </div>
       </div>
       <div className="m-auto w-full mx-2 h-full">
+        <div className="flex justify-between">
+          <div className="space-x-2 my-2">
+            <Link to="/user/purchase-history?order_status=All">
+              <button class="inline-flex text-gray-700 font-semibold bg-transparent border-2 py-2 px-6 focus:bg-blue-50 focus:outline-none hover:bg-blue-50 rounded-xl text-md transition duration-200">
+                All
+              </button>
+            </Link>
+            <Link to="/user/purchase-history?order_status=5">
+              <button class="inline-flex text-gray-700 font-semibold bg-transparent border-2 py-2 px-6 focus:bg-blue-50 focus:outline-none hover:bg-blue-50 rounded-xl text-md transition duration-200">
+                Arrived
+              </button>
+            </Link>
+            <Link to="/user/purchase-history?order_status=4">
+              <button class="inline-flex text-gray-700 font-semibold bg-transparent border-2 py-2 px-6 focus:bg-blue-50 focus:outline-none hover:bg-blue-50 rounded-xl text-md transition duration-200">
+                Canceled
+              </button>
+            </Link>
+          </div>
+          <div className="flex-row">
+            <ReactPaginate
+              previousLabel={"Prev"}
+              nextLabel={"Next"}
+              breakLabel={"..."}
+              breakClassName={"break-me"}
+              pageCount={pageCount}
+              marginPagesDisplayed={2}
+              pageRangeDisplayed={5}
+              onPageChange={handlePageClick}
+              containerClassName={"pagination"}
+              subContainerClassName={"pages pagination"}
+              activeClassName={"active"}
+            />
+          </div>
+        </div>
         <div className="h-full w-full space-y-2">{renderList()}</div>
         <HistoryModal showModal={modal} toggle={toggle} data={value} />
       </div>
