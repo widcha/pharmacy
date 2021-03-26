@@ -49,7 +49,73 @@ export const userUploadPaymentSlipAction = ({
 				},
 			};
 
-			await axios.post(`${api}/payment-upload`, formData, headers);
+			await axios.post(`${api}/payment_upload`, formData, headers);
+			dispatch(fetchUserTransactionDetails(user_id));
+		} catch (err) {
+			dispatch({
+				type: "API_TRANSACTION_FAILED",
+				payload: err.message,
+			});
+		}
+	};
+};
+
+export const userCancelOrderAction = (transaction_invoice_number, user_id) => {
+	return async (dispatch) => {
+		try {
+			dispatch({
+				type: "API_TRANSACTION_START",
+			});
+			await axios.patch(`${api}/cancel_order`, {
+				transaction_invoice_number,
+				user_id,
+			});
+			dispatch(fetchUserTransactionDetails(user_id));
+		} catch (err) {
+			dispatch({
+				type: "API_TRANSACTION_FAILED",
+				payload: err.message,
+			});
+		}
+	};
+};
+
+export const userConfirmOrderAction = (transaction_invoice_number, user_id) => {
+	return async (dispatch) => {
+		try {
+			dispatch({
+				type: "API_TRANSACTION_START",
+			});
+
+			await axios.patch(`${api}/confirm_order`, {
+				transaction_invoice_number,
+				user_id,
+			});
+			dispatch(fetchUserTransactionDetails(user_id));
+		} catch (err) {
+			dispatch({
+				type: "API_TRANSACTION_FAILED",
+				payload: err.message,
+			});
+		}
+	};
+};
+
+export const userComplainOrderAction = (
+	transaction_invoice_number,
+	user_id,
+	message
+) => {
+	return async (dispatch) => {
+		try {
+			dispatch({
+				type: "API_TRANSACTION_START",
+			});
+			await axios.patch(`${api}/complain_order`, {
+				transaction_invoice_number,
+				user_id,
+				message,
+			});
 			dispatch(fetchUserTransactionDetails(user_id));
 		} catch (err) {
 			dispatch({

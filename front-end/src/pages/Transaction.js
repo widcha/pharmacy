@@ -1,12 +1,18 @@
 import React, { useEffect, useState } from "react";
 import ReactPaginate from "react-paginate";
 import { useDispatch, useSelector } from "react-redux";
-import { fetchUserTransactionDetails } from "../redux/actions";
+import {
+	fetchUserTransactionDetails,
+	userCancelOrderAction,
+	userComplainOrderAction,
+	userConfirmOrderAction,
+} from "../redux/actions";
 import { TransactionModal } from "../components/TransactionModal";
 import { ModalPayment } from "../components/ModalPayment";
 import { api_url } from "../helpers";
 import capsules from "../assets/icons/pill2.png";
 import { Link } from "react-router-dom";
+import Swal from "sweetalert2";
 
 export const Transaction = (props) => {
 	console.log(props.location.search.split("=")[1]);
@@ -51,12 +57,68 @@ export const Transaction = (props) => {
 		setInvNumber(val);
 		toggle2();
 	};
-	console.log(data);
+
+	const handleCancelOrder = (data) => {
+		Swal.fire({
+			title: "Are you sure?",
+			text: "You won't be able to revert this!",
+			icon: "warning",
+			showCancelButton: true,
+			confirmButtonColor: "#3085d6",
+			cancelButtonColor: "#d33",
+			confirmButtonText: "Yes, cancel it!",
+		}).then((result) => {
+			if (result.isConfirmed) {
+				dispatch(userCancelOrderAction(data, user_id));
+				Swal.fire("Canceled!", "Your order has been canceled.", "success");
+			}
+		});
+	};
+	const handleConfirmOrder = (data) => {
+		Swal.fire({
+			title: "Confirm your order?",
+			text: "Please double-check the items prior confirming your order!",
+			icon: "warning",
+			showCancelButton: true,
+			showDenyButton: true,
+			confirmButtonColor: "#3085d6",
+			confirmButtonText: "Yes, confirm it!",
+			denyButtonText: `Complain Order`,
+		}).then((result) => {
+			if (result.isConfirmed) {
+				dispatch(userConfirmOrderAction(data, user_id));
+				Swal.fire("Confirmed!", "Your order has been confirmed.", "success");
+			} else if (result.isDenied) {
+				Swal.fire({
+					title: "Submit ",
+					input: "text",
+					inputAttributes: {
+						autocapitalize: "off",
+					},
+					inputValidator: (value) => {
+						return !value && "You need to write something!";
+					},
+					showCancelButton: true,
+					confirmButtonText: "Submit",
+					showLoaderOnConfirm: true,
+				}).then((results) => {
+					if (results.isConfirmed) {
+						dispatch(userComplainOrderAction(data, user_id, results.value));
+						Swal.fire({
+							icon: "info",
+							title: "Submitted, we'll contact you ASAP",
+							text: `${results.value}`,
+						});
+					}
+				});
+			}
+		});
+	};
 	const renderList = () => {
 		return data.map((val, i) => {
 			return (
 				<div className="font-semibold text-gray-700 rounded-xl shadow border p-10  space-y-2">
-					<div>
+					<div className="flex justify-between">
 						<div>
 							<span>{val.transaction_date.split("T")[0]}</span>{" "}
 							<span className="bg-blue-100 p-1 rounded-sm">
@@ -68,7 +130,28 @@ export const Transaction = (props) => {
 								{val.transaction_invoice_number}
 							</span>
 						</div>
-						<div></div>
+						<div>
+							{val.order_status_id === 1 || val.order_status_id === 6 ? (
+								<button
+									className="bg-red-400 font-semibold text-white px-2 py-1 rounded-md focus:outline-none hover:bg-red-900"
+									onClick={() =>
+										handleCancelOrder(val.transaction_invoice_number)
+									}
+								>
+									Cancel Order
+								</button>
+							) : null}
+							{val.order_status_id === 3 ? (
+								<button
+									className="bg-green-accent-200 font-semibold text-gray-700 px-2 py-1 rounded-md focus:outline-none hover:bg-green-accent-400"
+									onClick={() =>
+										handleConfirmOrder(val.transaction_invoice_number)
+									}
+								>
+									Confirm Order
+								</button>
+							) : null}
+						</div>
 					</div>
 
 					<div>
@@ -96,7 +179,7 @@ export const Transaction = (props) => {
 
 											<span>
 												+{val.data.length + val.custom_data.length - 1} other
-												products
+												product(s)
 											</span>
 										</div>
 									</div>
@@ -118,6 +201,10 @@ export const Transaction = (props) => {
 															val.data[0].Product.product_vol
 													)}
 												</span>
+											</span>
+											<span>
+												+{val.data.length + val.custom_data.length - 1} other
+												product(s)
 											</span>
 										</div>
 									</div>
@@ -155,7 +242,7 @@ export const Transaction = (props) => {
 												</span>
 											</span>
 											<span>
-												+{val.custom_data.length - 1} other custom products
+												+{val.custom_data.length - 1} other custom product(s)
 											</span>
 										</div>
 									</div>
@@ -195,7 +282,7 @@ export const Transaction = (props) => {
 						</button>
 						{val.order_status_id === 1 ? (
 							<button
-								className="flex text-white bg-indigo-500 border-0 py-2 px-8 focus:outline-none hover:bg-indigo-600 rounded text-md"
+								className="flex text-white bg-indigo-300 border-0 py-2 px-8 focus:outline-none hover:bg-indigo-500 rounded text-md"
 								onClick={() => handleUpload(val.transaction_invoice_number)}
 							>
 								Upload Payment Slip
