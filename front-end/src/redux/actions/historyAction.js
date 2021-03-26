@@ -26,11 +26,8 @@ export const repurchaseProductAction = (obj, str) => {
       dispatch({
         type: "API_CART_START",
       });
-      const response = await axios.post(`${apiCart}/add`, obj);
-      dispatch({
-        type: "USER_FETCH_CART",
-        payload: response.data,
-      });
+      await axios.post(`${apiCart}/add`, obj);
+      dispatch(fetchUserCartByIdAction(obj.user_id));
       const filtered = await axios.get(
         `${apiCart}/total?user_id=${obj.user_id}`
       );

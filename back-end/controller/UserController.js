@@ -13,6 +13,7 @@ const {
   Custom_Product,
   Product,
   Admin_Notif,
+  User_Notif,
 } = require("../models");
 const { Op } = require("sequelize");
 const { emailOne, emailTwo } = require("../helpers/emailTemplate");
@@ -354,6 +355,25 @@ const userAddRecipes = async (req, res) => {
   }
 };
 
+const getNotifUser = async (req, res) => {
+  try {
+    const { user_id } = req.body;
+    console.log(user_id);
+    const response = await User_Notif.findAll({
+      where: {
+        user_id,
+      },
+      // order: ["createdAt", "DESC"],
+      attributes: {
+        exclude: ["updatedAt"],
+      },
+    });
+    return res.status(200).send(response);
+  } catch (err) {
+    return res.status(500).send({ message: "Failed to get user notification" });
+  }
+};
+
 module.exports = {
   userRegister,
   userVerification,
@@ -367,4 +387,5 @@ module.exports = {
   editUserAddress,
   deleteUserAddress,
   userAddRecipes,
+  getNotifUser,
 };

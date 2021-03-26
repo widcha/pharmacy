@@ -10,13 +10,14 @@ import { CartIcon } from "./CartIcon";
 
 export const Nav = () => {
   const [profile, setProfile] = useState(false);
-  const [notif, setNotif] = useState(false);
+  const [notifCon, setNotifCon] = useState(false);
   const [name, setName] = useState("");
   const [filterData, setFilterData] = useState([]);
   const [suggestion, setSuggestion] = useState(false);
   const dispatch = useDispatch();
   const user = useSelector((state) => state.user);
   const { cart_list } = useSelector((state) => state.cart);
+  const { notif } = useSelector((state) => state.user);
 
   const history = useHistory();
 
@@ -151,15 +152,28 @@ export const Nav = () => {
 
   const handleClickAway = () => {
     setProfile(false);
-    setNotif(false);
+    setNotifCon(false);
     setSuggestion(false);
+  };
+
+  const renderNotif = () => {
+    return notif.map((val) => {
+      return (
+        <p
+          className="transition duration-200 font-semibold block px-4 py-2 text-sm text-gray-600 hover:bg-gray-100 hover:text-blue-500 cursor-pointer"
+          onClick={() => history.push(`/user/transaction`)}
+        >
+          {val.user_notif_messages}
+        </p>
+      );
+    });
   };
 
   const notificationBtn = () => {
     return (
       <div
         className="mr-5 relative align-middle rounded-md focus:outline-none focus:shadow-outline-purple"
-        onClick={() => setNotif(!notif)}
+        onClick={() => setNotifCon(!notifCon)}
         aria-label="Notifications"
         aria-haspopup="true"
       >
@@ -178,30 +192,26 @@ export const Nav = () => {
               d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"
             />
           </svg>
-          {/* <!-- Notification badge --> */}
           {/* <span
             aria-hidden="true"
             className="absolute top-0 right-0 inline-block w-3 h-3 transform translate-x-1 -translate-y-1 bg-red-600 border-2 border-white rounded-full dark:border-gray-800"
           ></span> */}
+          <span class="absolute inset-0 object-right-top -mt-1.5 -mr-5">
+            <div class="inline-flex items-center px-1.5 py-0.5 border-2 border-white rounded-full text-xs font-semibold leading-4 bg-red-500 text-white">
+              {notif.length}
+            </div>
+          </span>
         </button>
-        {notif ? (
+        {notifCon ? (
           <ClickAwayListener onClickAway={handleClickAway}>
             <div
-              class="z-10 origin-top-right absolute right-0 mt-2 w-56 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 focus:outline-none"
+              class="z-10 origin-top-right absolute right-0 mt-2 w-80 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 focus:outline-none"
               role="menu"
               aria-orientation="vertical"
               aria-labelledby="options-menu"
             >
-              <div class="py-1" role="none">
-                <p className="transition duration-200 font-semibold block px-4 py-2 text-sm text-gray-600 hover:bg-gray-100 hover:text-blue-500 cursor-pointer">
-                  Notif 1
-                </p>
-                <p className="transition duration-200 font-semibold block px-4 py-2 text-sm text-gray-600 hover:bg-gray-100 hover:text-blue-500 cursor-pointer">
-                  Notif 2
-                </p>
-                <p className="transition duration-200 font-semibold block w-full text-left px-4 py-2 text-sm text-gray-600 hover:bg-gray-100 hover:text-blue-500 cursor-pointer">
-                  Notif 3
-                </p>
+              <div class="py-1 overflow-y-auto h-64" role="none">
+                {renderNotif()}
               </div>
             </div>
           </ClickAwayListener>
