@@ -456,7 +456,7 @@ module.exports = {
             product_is_available: 1,
           },
           attributes: [
-            [sequelize.fn("max", sequelize.col("product_price")), "maxPrice"],
+            [sequelize.fn("max", sequelize.col("price_per_ml")), "maxPrice"],
           ],
           raw: true,
         });
@@ -480,7 +480,7 @@ module.exports = {
           const response = await Product.findAll({
             where: {
               [Op.and]: {
-                product_price: {
+                price_per_ml: {
                   [Op.and]: {
                     [Op.gte]: price_from,
                     [Op.lte]: price_to,
@@ -497,7 +497,7 @@ module.exports = {
         } else {
           const response = await Product.findAll({
             where: {
-              product_price: {
+              price_per_ml: {
                 [Op.and]: {
                   [Op.gte]: price_from,
                   [Op.lte]: price_to,

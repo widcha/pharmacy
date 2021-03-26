@@ -6,8 +6,10 @@ import { TransactionModal } from "../components/TransactionModal";
 import { ModalPayment } from "../components/ModalPayment";
 import { api_url } from "../helpers";
 import capsules from "../assets/icons/pill2.png";
+import { Link } from "react-router-dom";
 
-export const Transaction = () => {
+export const Transaction = (props) => {
+	console.log(props.location.search.split("=")[1]);
 	const [perPage] = useState(5);
 	const [page, setPage] = useState(0);
 	const from = page * perPage;
@@ -30,8 +32,10 @@ export const Transaction = () => {
 		setPageCount(transaction_list.length / perPage);
 	}, [perPage, transaction_list]);
 	useEffect(() => {
-		dispatch(fetchUserTransactionDetails(user_id));
-	}, [dispatch, user_id]);
+		dispatch(
+			fetchUserTransactionDetails(user_id, props.location.search.split("=")[1])
+		);
+	}, [dispatch, user_id, props.location.search]);
 	const handlePageClick = (e) => {
 		const selectedPage = e.selected;
 		setPage(selectedPage);
@@ -52,15 +56,21 @@ export const Transaction = () => {
 		return data.map((val, i) => {
 			return (
 				<div className="font-semibold text-gray-700 rounded-xl shadow border p-10  space-y-2">
-					<span>{val.transaction_date.split("T")[0]}</span>{" "}
-					<span className="bg-blue-100 p-1 rounded-sm">
-						{val["Order_Status.order_status_status"]
-							? val["Order_Status.order_status_status"]
-							: null}
-					</span>{" "}
-					<span className="text-gray-500">
-						{val.transaction_invoice_number}
-					</span>
+					<div>
+						<div>
+							<span>{val.transaction_date.split("T")[0]}</span>{" "}
+							<span className="bg-blue-100 p-1 rounded-sm">
+								{val["Order_Status.order_status_status"]
+									? val["Order_Status.order_status_status"]
+									: null}
+							</span>{" "}
+							<span className="text-gray-500">
+								{val.transaction_invoice_number}
+							</span>
+						</div>
+						<div></div>
+					</div>
+
 					<div>
 						{val.data.length > 0 ? (
 							<div className="font-semibold text-gray-700 rounded-xl shadow border p-10 space-y-2 flex justify-between">
@@ -188,7 +198,7 @@ export const Transaction = () => {
 								className="flex text-white bg-indigo-500 border-0 py-2 px-8 focus:outline-none hover:bg-indigo-600 rounded text-md"
 								onClick={() => handleUpload(val.transaction_invoice_number)}
 							>
-								Upload your payment slip here
+								Upload Payment Slip
 							</button>
 						) : null}
 					</div>
@@ -207,39 +217,54 @@ export const Transaction = () => {
 
 				<div className="border h-full w-full space-y-2 p-2 rounded-lg">
 					<div className="space-x-2">
-						<button class="inline-flex text-gray-700 bg-transparent border-2 py-2 px-6 focus:bg-indigo-50 focus:outline-none hover:bg-indigo-50 rounded-xl text-md transition duration-200">
-							All
-						</button>
-						<button class="inline-flex text-gray-700 bg-transparent border-2 py-2 px-6 focus:bg-indigo-50 focus:outline-none hover:bg-indigo-50 rounded-xl text-md transition duration-200">
-							Payment Pending
-						</button>
-						<button class="inline-flex text-gray-700 bg-transparent border-2 py-2 px-6 focus:bg-indigo-50 focus:outline-none hover:bg-indigo-50 rounded-xl text-md transition duration-200">
-							Order Confirmed
-						</button>
-						<button class="inline-flex text-gray-700 bg-transparent border-2 py-2 px-6 focus:bg-indigo-50 focus:outline-none hover:bg-indigo-50 rounded-xl text-md transition duration-200">
-							Delivered
-						</button>
-						<button class="inline-flex text-gray-700 bg-transparent border-2 py-2 px-6 focus:bg-indigo-50 focus:outline-none hover:bg-indigo-50 rounded-xl text-md transition duration-200">
-							Payment Slip Uploaded
-						</button>
+						<Link to="/user/transaction?order_status=All">
+							<button class="inline-flex text-gray-700 bg-transparent border-2 py-2 px-6 focus:bg-indigo-50 focus:outline-none hover:bg-indigo-50 rounded-xl text-md transition duration-200">
+								All
+							</button>
+						</Link>
+						<Link to="/user/transaction?order_status=1">
+							<button class="inline-flex text-gray-700 bg-transparent border-2 py-2 px-6 focus:bg-indigo-50 focus:outline-none hover:bg-indigo-50 rounded-xl text-md transition duration-200">
+								Payment Pending
+							</button>
+						</Link>
+						<Link to="/user/transaction?order_status=2">
+							<button class="inline-flex text-gray-700 bg-transparent border-2 py-2 px-6 focus:bg-indigo-50 focus:outline-none hover:bg-indigo-50 rounded-xl text-md transition duration-200">
+								Order Confirmed
+							</button>
+						</Link>
+						<Link to="/user/transaction?order_status=3">
+							<button class="inline-flex text-gray-700 bg-transparent border-2 py-2 px-6 focus:bg-indigo-50 focus:outline-none hover:bg-indigo-50 rounded-xl text-md transition duration-200">
+								Delivered
+							</button>
+						</Link>
+						<Link to="/user/transaction?order_status=4">
+							<button class="inline-flex text-gray-700 bg-transparent border-2 py-2 px-6 focus:bg-indigo-50 focus:outline-none hover:bg-indigo-50 rounded-xl text-md transition duration-200">
+								Payment Slip Uploaded
+							</button>
+						</Link>
 					</div>
-					<div className="space-y-2">{renderList()}</div>
+					<div className="space-y-2">
+						{transaction_list.length > 0 ? renderList() : null}
+					</div>
 				</div>
-				<div className=" flex justify-center">
-					<ReactPaginate
-						previousLabel={"Prev"}
-						nextLabel={"Next"}
-						breakLabel={"..."}
-						breakClassName={"break-me"}
-						pageCount={pageCount}
-						marginPagesDisplayed={2}
-						pageRangeDisplayed={5}
-						onPageChange={handlePageClick}
-						containerClassName={"pagination"}
-						subContainerClassName={"pages pagination"}
-						activeClassName={"active"}
-					/>
-				</div>
+				{transaction_list.length > 0 ? (
+					<div className=" flex justify-center">
+						<ReactPaginate
+							previousLabel={"Prev"}
+							nextLabel={"Next"}
+							breakLabel={"..."}
+							breakClassName={"break-me"}
+							pageCount={pageCount}
+							marginPagesDisplayed={2}
+							pageRangeDisplayed={5}
+							onPageChange={handlePageClick}
+							containerClassName={"pagination"}
+							subContainerClassName={"pages pagination"}
+							activeClassName={"active"}
+						/>
+					</div>
+				) : null}
+
 				<TransactionModal showModal={modal} toggle={toggle} data={value} />
 				<ModalPayment
 					showModal={modal2}

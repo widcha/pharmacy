@@ -2,13 +2,15 @@ import axios from "axios";
 import {api_url} from "../../helpers";
 const api = `${api_url}/transaction`;
 
-export const fetchUserTransactionDetails = (user_id) => {
+export const fetchUserTransactionDetails = (user_id, query) => {
   return async (dispatch) => {
     try {
       dispatch({
         type: "API_TRANSACTION_START",
       });
-      const response = await axios.get(`${api}/get?user_id=${user_id}`);
+      const response = await axios.get(
+        `${api}/get?user_id=${user_id}&order_status=${query}`
+      );
 
       dispatch({
         type: "USER_FETCH_TRANSACTION",
@@ -22,6 +24,7 @@ export const fetchUserTransactionDetails = (user_id) => {
     }
   };
 };
+
 export const adminFetchTransaction = () => {
   return async (dispatch) => {
     try {
@@ -44,37 +47,37 @@ export const adminFetchTransaction = () => {
 };
 
 export const userUploadPaymentSlipAction = ({
-	transaction_invoice_number,
-	user_id,
-	pict,
+  transaction_invoice_number,
+  user_id,
+  pict,
 }) => {
-	return async (dispatch) => {
-		try {
-			console.log(transaction_invoice_number);
-			dispatch({
-				type: "API_TRANSACTION_START",
-			});
-			let formData = new FormData();
+  return async (dispatch) => {
+    try {
+      console.log(transaction_invoice_number);
+      dispatch({
+        type: "API_TRANSACTION_START",
+      });
+      let formData = new FormData();
 
-			const val = JSON.stringify({
-				transaction_invoice_number,
-				user_id,
-			});
-			formData.append("image", pict);
-			formData.append("data", val);
-			const headers = {
-				headers: {
-					"Content-Type": "multipart/form-data",
-				},
-			};
+      const val = JSON.stringify({
+        transaction_invoice_number,
+        user_id,
+      });
+      formData.append("image", pict);
+      formData.append("data", val);
+      const headers = {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      };
 
-			await axios.post(`${api}/payment-upload`, formData, headers);
-			dispatch(fetchUserTransactionDetails(user_id));
-		} catch (err) {
-			dispatch({
-				type: "API_TRANSACTION_FAILED",
-				payload: err.message,
-			});
-		}
-	};
+      await axios.post(`${api}/payment-upload`, formData, headers);
+      dispatch(fetchUserTransactionDetails(user_id));
+    } catch (err) {
+      dispatch({
+        type: "API_TRANSACTION_FAILED",
+        payload: err.message,
+      });
+    }
+  };
 };
