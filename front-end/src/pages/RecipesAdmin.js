@@ -20,7 +20,7 @@ const RecipesAdmin = () => {
     dispatch(fetchRecipeAction());
   }, [dispatch]);
 
-  const [perPage] = useState(10);
+  const [perPage] = useState(9);
   const [page, setPage] = useState(0);
   const from = page * perPage;
   const to = (page + 1) * perPage;
@@ -164,8 +164,10 @@ const RecipesAdmin = () => {
   return (
     <div style={{marginTop: "15px", maxWidth: "750px", minWidth: "750px"}}>
       <div>
-        <div className="flex flex-col">
-          <div className="flex flex-wrap">{loading ? null : renderAll()}</div>
+        <div className="flex flex-row justify-between">
+          <h3 className="text-xl mt-4 ml-3 font-semibold">
+            Customer's Prescription
+          </h3>
           <div className="flex-row align-baseline">
             <ReactPaginate
               previousLabel={"Prev"}
@@ -181,6 +183,9 @@ const RecipesAdmin = () => {
               activeClassName={"active"}
             />
           </div>
+        </div>
+        <div className="flex flex-col">
+          <div className="flex flex-wrap">{loading ? null : renderAll()}</div>
         </div>
       </div>
     </div>
