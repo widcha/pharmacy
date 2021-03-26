@@ -1,8 +1,11 @@
-import React, {useEffect, useState} from "react";
+import React, { useEffect, useState } from "react";
 import ImagesCard from "../components/ImagesCard";
 import ReactPaginate from "react-paginate";
-import {useDispatch, useSelector} from "react-redux";
-import {adminFetchTransaction, fetchPaymentProofAction} from "../redux/actions";
+import { useDispatch, useSelector } from "react-redux";
+import {
+  adminFetchTransaction,
+  fetchPaymentProofAction,
+} from "../redux/actions";
 import {
   Button,
   FormControl,
@@ -11,11 +14,11 @@ import {
   Select,
   TextField,
 } from "@material-ui/core";
-import {useHistory} from "react-router";
+import { useHistory } from "react-router";
 
 const PaymentAdmin = () => {
   const dispatch = useDispatch();
-  const {payment_img, loading} = useSelector((state) => state.admin);
+  const { payment_img, loading } = useSelector((state) => state.admin);
 
   useEffect(() => {
     dispatch(fetchPaymentProofAction());
@@ -78,12 +81,12 @@ const PaymentAdmin = () => {
           searchWord ? `&search=${searchWord}` : ""
         }${sortStatus ? `&status=${sortStatus}` : ""}`
       );
-      dispatch(fetchPaymentProofAction({sort, searchWord, sortStatus}));
+      dispatch(fetchPaymentProofAction({ sort, searchWord, sortStatus }));
     }
   };
   const renderAll = () => {
     return (
-      <div style={{display: "flex", flexDirection: "row"}}>
+      <div style={{ display: "flex", flexDirection: "row" }}>
         <div
           style={{
             display: "flex",
@@ -122,7 +125,7 @@ const PaymentAdmin = () => {
             left: "78%",
           }}
         >
-          <FormControl style={{width: "275px"}}>
+          <FormControl style={{ width: "275px" }}>
             <InputLabel id="demo-controlled-open-select-label">
               Sort By Date
             </InputLabel>
@@ -138,7 +141,7 @@ const PaymentAdmin = () => {
               <MenuItem value="DESC">Newest</MenuItem>
             </Select>
           </FormControl>
-          <FormControl style={{width: "275px"}}>
+          <FormControl style={{ width: "275px" }}>
             <InputLabel id="demo-controlled-open-select-label">
               Sort By Status
             </InputLabel>
@@ -163,12 +166,12 @@ const PaymentAdmin = () => {
               id="search"
               value={searchWord ? searchWord : ""}
               onChange={(e) => setSearch(e.target.value)}
-              style={{width: "275px", paddingBottom: "10px"}}
+              style={{ width: "275px", paddingBottom: "10px" }}
             />
           </div>
           <Button
             onClick={searchBtn}
-            style={{backgroundColor: "#2460A7FF", color: "white", outline: 0}}
+            style={{ backgroundColor: "#2460A7FF", color: "white", outline: 0 }}
           >
             Search
           </Button>
@@ -177,7 +180,7 @@ const PaymentAdmin = () => {
     );
   };
   return (
-    <div style={{marginTop: "15px", maxWidth: "750px", minWidth: "750px"}}>
+    <div style={{ marginTop: "15px", maxWidth: "750px", minWidth: "750px" }}>
       <div>
         <div className="flex flex-row justify-between">
           <h3 className="text-xl mt-4 ml-3 font-semibold">
