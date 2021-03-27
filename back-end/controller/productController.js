@@ -19,8 +19,8 @@ module.exports = {
         page,
         limit,
       } = req.query;
-      const theLimit = parseInt(limit);
-      const offsetData = (page - 1) * parseInt(theLimit);
+      const theLimit = parseInt(limit ? limit : 5);
+      const offsetData = parseInt((page ? page : 1) - 1) * parseInt(theLimit);
       let orderSort;
       if (sort) {
         if (sort === "ASC") {
@@ -147,6 +147,25 @@ module.exports = {
             });
           }
         }
+      }
+      if (!limit && !page) {
+        response = await Product.findAll({
+          where: {
+            product_is_available: 1,
+          },
+          order: orderSort,
+          attributes: {
+            exclude: ["createdAt", "updatedAt"],
+          },
+          include: [
+            {
+              model: Product_Category,
+              attributes: {
+                exclude: ["createdAt", "updatedAt"],
+              },
+            },
+          ],
+        });
       }
       return res.status(200).send(response);
     } catch (err) {

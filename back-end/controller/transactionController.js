@@ -8,6 +8,7 @@ const {
   Order_Status,
   Payment_Images,
   Admin_Notif,
+  Finance,
 } = require("../models");
 const pify = require("pify");
 const {uploader} = require("../handlers");
@@ -287,6 +288,7 @@ module.exports = {
         order_status_id: 5,
         transaction_invoice_number,
       });
+
       return res.status(200).send({
         message: "Order confirmed",
       });
@@ -318,6 +320,7 @@ module.exports = {
       const {order_status, page, limit} = req.query;
       const theLimit = parseInt(limit);
       const offsetData = (page - 1) * parseInt(theLimit);
+
       // ini buat ambil transaction invoice dan totalnya
       let response4;
       if (order_status > 0) {
@@ -456,15 +459,6 @@ module.exports = {
           }),
         };
       });
-
-      // if (parseInt(order_status) > 0) {
-      //   const result = arr.filter((val) => {
-      //     return val.order_status_id === parseInt(order_status);
-      //   });
-      //   return res.send(result);
-      // } else {
-      //   const result = arr;
-      // }
       return res.status(200).send(arr);
     } catch (err) {
       return res.status(500).send(err.message);

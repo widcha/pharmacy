@@ -8,15 +8,11 @@ module.exports = {
      * Example:
      * await queryInterface.createTable('users', { id: Sequelize.INTEGER });
      */
-    // await queryInterface.addColumn("products", "price_per_ml", {
-    // 	type: Sequelize.INTEGER,
-    // 	allowNull: false,
-    // });
-    // await queryInterface.addColumn("users", "is_banned", {
-    // 	type: Sequelize.INTEGER,
-    // 	allowNull: false,
-    // 	defaultValue: 0,
-    // });
+    await queryInterface.addColumn("material_flows", "material_flow_show", {
+      type: Sequelize.INTEGER,
+      defaultValue: 1,
+      allowNull: false,
+    });
   },
 
   down: async (queryInterface, Sequelize) => {

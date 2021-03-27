@@ -91,6 +91,10 @@ export const userConfirmOrderAction = (transaction_invoice_number, user_id) => {
         transaction_invoice_number,
         user_id,
       });
+
+      await axios.post(`${api_url}/admin/create-report`, {
+        invoice: transaction_invoice_number,
+      });
       dispatch(fetchUserTransactionDetails(user_id));
     } catch (err) {
       dispatch({

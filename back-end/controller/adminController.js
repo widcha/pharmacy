@@ -1,6 +1,7 @@
 const {
   Recipes,
   Admin_Notif,
+  Finance,
   Payment_Images,
   Transaction,
   Product,
@@ -13,6 +14,7 @@ const {
   Product_Category,
 } = require("../models");
 const {Op} = require("sequelize");
+const sequelize = require("sequelize");
 const {createJWTToken} = require("../helpers");
 
 module.exports = {
@@ -347,18 +349,130 @@ module.exports = {
   },
   getAllLength: async (req, res) => {
     try {
-      const users = await User.count();
-      const products = await Product.count();
-      const category = await Product_Category.count();
-      const transactions = (
-        await Transaction.findAll({
-          group: ["transaction_invoice_number"],
-          attributes: ["createdAt"],
-        })
-      ).length;
-      const flows = await Material_Flow.count();
-      const total = {users, products, category, transactions, flows};
+      let success_trans;
+      await Transaction.count({
+        where: {order_status_id: 5},
+        distinct: true,
+        col: "transaction_invoice_number",
+      }).then((count) => (success_trans = count));
+
+      let users;
+      await User.count({
+        where: {[Op.and]: {user_role_id: 2, is_banned: 0}},
+        distinct: true,
+        col: "user_id",
+      }).then((count) => (users = count));
+
+      let products;
+      await Product.count({
+        where: {product_is_available: 1},
+        distinct: true,
+        col: "product_id",
+      }).then((count) => (products = count));
+
+      let categories;
+      await Product_Category.count({
+        distinct: true,
+        col: "product_category_id",
+      }).then((count) => (categories = count));
+
+      let transactions;
+      await Transaction.count({
+        distinct: true,
+        col: "transaction_invoice_number",
+      }).then((count) => (transactions = count));
+
+      let finances;
+      await Finance.count({
+        distinct: true,
+        col: "finance_id",
+      }).then((count) => (transactions = count));
+
+      let flows;
+      await Material_Flow.count({
+        distinct: true,
+        col: "material_flow_id",
+      }).then((count) => (flows = count));
+
+      const total = {
+        users,
+        products,
+        categories,
+        transactions,
+        flows,
+        success_trans,
+        finances,
+      };
       return res.status(200).send(total);
+    } catch (err) {
+      return res.send(err.message);
+    }
+  },
+  createReport: async (req, res) => {
+    try {
+      const {invoice} = req.body;
+      const result = await Transaction.findOne({
+        where: {transaction_invoice_number: invoice},
+      });
+      console.log(result.transaction_payment_details);
+
+      const response = await Finance.create({
+        transaction_invoice_number: invoice,
+        finance_earning: result.transaction_payment_details,
+      });
+
+      return res.status(200).send(response);
+    } catch (err) {
+      return res.send(err.message);
+    }
+  },
+  getFinanceReport: async (req, res) => {
+    try {
+      const response1 = await Finance.findAll();
+      let response2 = await Finance.findAll({
+        attributes: [
+          [
+            sequelize.fn("SUM", sequelize.col("finance_earning")),
+            "totalEarning",
+          ],
+        ],
+      });
+
+      const getUser = await Transaction.findAll({
+        where: {
+          transaction_invoice_number: response1.map(
+            (val) => val.transaction_invoice_number
+          ),
+        },
+        attributes: ["createdAt"],
+        group: ["transaction_invoice_number"],
+        include: [{model: User, attributes: ["user_username", "is_banned"]}],
+      });
+
+      const bestData = await Transaction.findAll({
+        where: {order_status_id: 5},
+        group: ["product_id"],
+        attributes: [
+          "transaction.product_id",
+          [
+            sequelize.fn("COUNT", sequelize.col("transaction.product_id")),
+            "sold",
+          ],
+        ],
+        limit: 3,
+        order: [[sequelize.col("sold"), "DESC"]],
+        include: [
+          {
+            model: Product,
+            attributes: {
+              exclude: ["products.product_id", "createdAt", "updatedAt"],
+            },
+          },
+        ],
+      });
+      return res
+        .status(200)
+        .send([{...response2}, response1, getUser, bestData]);
     } catch (err) {
       return res.send(err.message);
     }

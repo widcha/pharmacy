@@ -124,3 +124,15 @@ export const getItemLength = () => {
     }
   };
 };
+
+export const getFinancialReports = () => {
+  return async (dispatch) => {
+    try {
+      dispatch({type: "FETCH_DATA_START"});
+      const response = await axios.get(`${url}/finance-report`);
+      dispatch({type: "FETCH_FINREP_SUCCESS", payload: response.data});
+    } catch (err) {
+      dispatch({type: "FETCH_DATA_FAILED", payload: err.message});
+    }
+  };
+};

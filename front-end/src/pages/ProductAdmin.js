@@ -20,7 +20,7 @@ const ProductAdmin = () => {
 
   //Pagination
   const [perPage] = useState(5);
-  const [page, setPage] = useState(0);
+  // const [page, setPage] = useState(0);
   // const from = page * perPage;
   // const to = (page + 1) * perPage;
   const {lengths} = useSelector((state) => state.admin);
