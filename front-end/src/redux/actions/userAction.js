@@ -7,7 +7,6 @@ const url = api_url + "/user";
 
 // LOGIN ACTION
 export const loginAction = (data) => {
-  console.log("masuk login");
   return async (dispatch) => {
     dispatch({ type: "API_USER_START" });
     try {
