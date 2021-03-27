@@ -17,6 +17,9 @@ export const CartCard = ({
 	totalCustom,
 	data,
 	custom_product_id,
+	custom_qty,
+	incrementCustom,
+	decrementCustom,
 }) => {
 	if (data) {
 		let condition = false;
@@ -49,15 +52,16 @@ export const CartCard = ({
 			});
 		};
 		data.forEach((items) => {
-			if (items.product_qty > items.Product.product_stock_total) {
+			if (items.product_qty * custom_qty > items.Product.product_stock_total) {
 				condition = true;
 			}
 		});
 		return (
-			<div className=" w-full flex flex-grow-0 resize-none container flex-row my-2 justify-between">
+			<div className=" w-full flex flex-grow-0 resize-none container flex-row my-2 justify-between items-center">
 				{condition ? (
-					<label className="absolute ml-96 mt-8 text-7xl text-black">
-						out of stock
+					<label className="absolute  ml-20 text-2xl text-red-900 font-extrabold">
+						One or more products out of stock, you might want to decrease the
+						quantity
 					</label>
 				) : null}
 
@@ -75,10 +79,66 @@ export const CartCard = ({
 								className="w-36 p-2 rounded-md border-2 border-gray-300 flex-grow-0 resize-none"
 								src={customImg}
 							/>
-							<div id="body" className="flex  ml-5 justify-between w-1/12">
+							<div
+								id="body"
+								className="flex flex-col mx-5 justify-between w-1/12"
+							>
 								<h4 id="name" className="text-xl font-semibold">
 									Custom Product
 								</h4>
+								<div class="w-28 flex justify-center opacity-100 ">
+									<button
+										onClick={() =>
+											decrementCustom(
+												custom_qty,
+												totalCustom,
+												custom_product_id
+											)
+										}
+										disabled={custom_qty === 1}
+									>
+										<svg
+											class="w-6 h-6 fill-current text-gray-600 "
+											fill="currentColor"
+											viewBox="0 0 20 20"
+											xmlns="http://www.w3.org/2000/svg"
+										>
+											<path
+												fill-rule="evenodd"
+												d="M3 10a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1z"
+												clip-rule="evenodd"
+											></path>
+										</svg>
+									</button>
+									<input
+										value={custom_qty}
+										className="w-full font-semibold text-center text-gray-700 bg-gray-200 outline-none focus:outline-none hover:text-black focus:text-black"
+										disabled
+									/>
+									<button
+										onClick={() =>
+											incrementCustom(
+												custom_qty,
+												totalCustom,
+												custom_product_id
+											)
+										}
+										disabled={condition}
+									>
+										<svg
+											class="w-6 h-6"
+											fill="currentColor"
+											viewBox="0 0 20 20"
+											xmlns="http://www.w3.org/2000/svg"
+										>
+											<path
+												fill-rule="evenodd"
+												d="M10 5a1 1 0 011 1v3h3a1 1 0 110 2h-3v3a1 1 0 11-2 0v-3H6a1 1 0 110-2h3V6a1 1 0 011-1z"
+												clip-rule="evenodd"
+											></path>
+										</svg>
+									</button>
+								</div>
 							</div>
 							<div className="flex  w-6/12 flex-wrap">{renderItems()}</div>
 							<div className="flex justify-center content-center items-center p-auto">
