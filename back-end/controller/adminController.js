@@ -21,7 +21,10 @@ module.exports = {
   getRecipe: async (req, res) => {
     try {
       let response;
-      const {sort, search, status} = req.query;
+      const {page, limit, sort, search, status} = req.query;
+
+      const theLimit = limit ? parseInt(limit) : 9;
+      const offsetData = (page ? parseInt(page) - 1 : 0) * theLimit;
 
       let orderSort;
       if (sort === "OLD") {
@@ -34,6 +37,8 @@ module.exports = {
           where: {
             recipes_status: `${status}`,
           },
+          offset: offsetData,
+          limit: theLimit,
           order: orderSort,
           attributes: {
             exclude: ["createdAt", "updatedAt"],
@@ -42,7 +47,7 @@ module.exports = {
             {
               model: User,
               where: {
-                user_username: {[Op.substring]: `${search}`},
+                user_username: {[Op.substring]: `${search ? search : ""}`},
               },
               attributes: {
                 exclude: ["createdAt", "updatedAt"],
@@ -55,6 +60,8 @@ module.exports = {
           attributes: {
             exclude: ["createdAt", "updatedAt"],
           },
+          offset: offsetData,
+          limit: theLimit,
           order: orderSort,
           include: [
             {
@@ -69,20 +76,6 @@ module.exports = {
           ],
         });
       }
-
-      // const data = await User.findOne({
-      //   where: {
-      //     [Op.and]: {
-      //       user_id: jwtid,
-      //       user_role_id: 1,
-      //     },
-      //   },
-      //   attributes: ["user_role_id"],
-      // });
-
-      // const adminData = {...data[0]};
-      // const token = createJWTToken(adminData);
-
       return res.status(200).send(response);
     } catch (err) {
       return res.status(500).send({message: "Failed to get prescription data"});
@@ -288,7 +281,9 @@ module.exports = {
   },
   getPaymentImages: async (req, res) => {
     try {
-      const {sort, search, sortStatus} = req.query;
+      const {page, limit, sort, search, sortStatus} = req.query;
+      const theLimit = limit ? parseInt(limit) : 9;
+      const offsetData = (page ? parseInt(page) - 1 : 0) * theLimit;
 
       let orderSort;
       if (sort === "ASC") {
@@ -314,6 +309,8 @@ module.exports = {
           attributes: {
             exclude: ["createdAt", "updatedAt"],
           },
+          offset: offsetData,
+          limit: theLimit,
           order: orderSort,
           include: [
             {
@@ -330,6 +327,8 @@ module.exports = {
           attributes: {
             exclude: ["createdAt", "updatedAt"],
           },
+          offset: offsetData,
+          limit: theLimit,
           order: orderSort,
           include: [
             {
@@ -394,6 +393,18 @@ module.exports = {
         col: "material_flow_id",
       }).then((count) => (flows = count));
 
+      let recipe;
+      await Recipes.count({
+        distinct: true,
+        col: "recipes_id",
+      }).then((count) => (recipe = count));
+
+      let pay_img;
+      await Payment_Images.count({
+        distinct: true,
+        col: "payment_images_id",
+      }).then((count) => (pay_img = count));
+
       const total = {
         users,
         products,
@@ -402,6 +413,8 @@ module.exports = {
         flows,
         success_trans,
         finances,
+        recipe,
+        pay_img,
       };
       return res.status(200).send(total);
     } catch (err) {
@@ -411,16 +424,79 @@ module.exports = {
   createReport: async (req, res) => {
     try {
       const {invoice} = req.body;
-      const result = await Transaction.findOne({
-        where: {transaction_invoice_number: invoice},
+      const result = await Transaction.findAll({
+        where: {
+          [Op.and]: {
+            transaction_invoice_number: invoice,
+            custom_product_id: null,
+          },
+        },
+        order: [["product_id", "ASC"]],
       });
-      console.log(result.transaction_payment_details);
 
+      //Pencatatan laporan keuangan
       const response = await Finance.create({
         transaction_invoice_number: invoice,
-        finance_earning: result.transaction_payment_details,
+        finance_earning: result[0].transaction_payment_details,
       });
 
+      //Pencatatan pengurangan stock product non-custom
+      const oldData = await Product.findAll({
+        where: {
+          product_id: result.map((val) => val.product_id),
+        },
+      });
+      if (oldData.length > 0) {
+        result.forEach(async (val, i) => {
+          await Material_Flow.create({
+            product_id: val.product_id,
+            material_flow_stock: -val.product_qty,
+            material_flow_info: "User buy this product",
+            stock: oldData[i].product_stock,
+            stock_total: oldData[i].product_stock_total,
+          });
+        });
+      }
+
+      //Pencatatan pengurangan stock product custom
+      //jumlah qty per product_id
+      const customdata = await Transaction.findAll({
+        where: {
+          [Op.and]: {
+            transaction_invoice_number: invoice,
+            custom_product_id: {[Op.ne]: null},
+          },
+        },
+        include: [
+          {
+            model: Custom_Product,
+            attributes: [
+              [
+                sequelize.literal(
+                  "(custom_product.custom_product_qty*transaction.product_qty)"
+                ),
+                "quantity",
+              ],
+            ],
+          },
+          {
+            model: Product,
+            attributes: ["product_stock", "product_stock_total"],
+          },
+        ],
+        attributes: ["product_id", "custom_product_id"],
+      });
+      if (customdata.length > 0) {
+        customdata.forEach(async (val) => {
+          await Material_Flow.create({
+            product_id: val.product_id,
+            material_flow_stock: -val.Custom_Product.dataValues.quantity,
+            material_flow_info: "User buy this product (custom prescription)",
+            stock: val.Product.product_stock,
+            stock_total: val.Product.product_stock_total,
+          });
+        });
+      }
       return res.status(200).send(response);
     } catch (err) {
       return res.send(err.message);

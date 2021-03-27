@@ -66,14 +66,12 @@ const ProductFlowDetail = () => {
             </TableCell>
             <TableCell>{row.Product.product_name}</TableCell>
             <TableCell align="center">
-              {row.stock - row.material_flow_stock}
+              {row.stock_total - row.material_flow_stock}
             </TableCell>
             <TableCell align="center">{row.material_flow_stock}</TableCell>
+            <TableCell align="center">{row.stock_total}</TableCell>
             <TableCell align="center">{row.stock}</TableCell>
             <TableCell align="center">{row.createdAt.split("T")[0]}</TableCell>
-            <TableCell align="center">
-              {row.createdAt.split("T")[1].split(".")[0]}
-            </TableCell>
             <TableCell>{row.material_flow_info}</TableCell>
           </TableRow>
         );
@@ -95,10 +93,10 @@ const ProductFlowDetail = () => {
                   <TableCell>#</TableCell>
                   <TableCell>Product Name</TableCell>
                   <TableCell>Initial Stock</TableCell>
-                  <TableCell>Stock Changes</TableCell>
+                  <TableCell>Changes</TableCell>
                   <TableCell>Final Stock</TableCell>
+                  <TableCell align="center">Bottle(s)</TableCell>
                   <TableCell align="center">Date</TableCell>
-                  <TableCell align="center">Time</TableCell>
                   <TableCell>Stock Info</TableCell>
                 </TableRow>
               </TableHead>
@@ -124,7 +122,6 @@ const ProductFlowDetail = () => {
           </Button>
         </Link>
         <div className="flex flex-col mx-2">
-          <div className="flex flex-wrap">{loading ? null : renderAll()}</div>
           <div className="flex-row align-baseline">
             <ReactPaginate
               previousLabel={"Prev"}
@@ -140,6 +137,7 @@ const ProductFlowDetail = () => {
               activeClassName={"active"}
             />
           </div>
+          <div className="flex flex-wrap">{loading ? null : renderAll()}</div>
         </div>
       </div>
     </div>

@@ -252,7 +252,8 @@ module.exports = {
             product_id: response.dataValues.product_id,
             material_flow_stock: stock_total,
             material_flow_info: "New Product",
-            stock: stock_total,
+            stock: newStock,
+            stock_total: stock_total,
           });
           return res.status(201).send(response);
         } else {
@@ -273,8 +274,8 @@ module.exports = {
           product_id: id,
         },
       });
-      const old_total = parseInt(products.dataValues.product_stock_total);
       const old_stock = parseInt(products.dataValues.product_stock);
+      const old_stock_total = parseInt(products.dataValues.product_stock_total);
       const newStock = old_stock + parseInt(product_stock);
       const stock_total =
         parseInt(products.dataValues.product_vol) * parseInt(newStock);
@@ -295,9 +296,11 @@ module.exports = {
       if (product_stock !== 0) {
         await Material_Flow.create({
           product_id: id,
-          material_flow_stock: parseInt(stock_total) - parseInt(old_total),
+          material_flow_stock:
+            parseInt(stock_total) - parseInt(old_stock_total),
           material_flow_info: "Stock added by admin",
-          stock: stock_total,
+          stock: newStock,
+          stock_total: stock_total,
         });
       }
       return res.status(200).send({
@@ -356,12 +359,12 @@ module.exports = {
         );
 
         //MATERIAL FLOW WHEN ADMIN CAN CHANGE DATA
-        const stockk = prods.dataValues.product_stock_total;
+        const old_stock_total = prods.dataValues.product_stock_total;
         let info = "";
-        let stockChanged = stockk - stock_total;
-        if (stockk > oldStock) {
+        let stockChanged = stock_total - old_stock_total;
+        if (old_stock_total > stock_total) {
           info = "Stock decreased by admin";
-        } else if (stockk < oldStock) {
+        } else if (old_stock_total < stock_total) {
           info = "Stock added by admin";
         }
 
@@ -370,7 +373,8 @@ module.exports = {
             product_id: id,
             material_flow_stock: `${-stockChanged}`,
             material_flow_info: `${info}`,
-            stock: stock_total,
+            stock: oldStock,
+            stock_total: stock_total,
           });
         }
         if (response) {

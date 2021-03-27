@@ -3,14 +3,12 @@ import {api_url} from "../../helpers";
 
 const linkk = `${api_url}/product`;
 
-export const fetchCategoryAction = (a) => {
+export const fetchCategoryAction = (query) => {
   return async (dispatch) => {
     try {
       let response;
-      if (a) {
-        response = await axios.get(`${api_url}/category${a}`);
-      } else {
-        response = await axios.get(`${api_url}/category`);
+      if (query) {
+        response = await axios.get(`${api_url}/category${query ? query : ""}`);
       }
       dispatch({type: "FETCH_CATEGORY", payload: response.data});
     } catch (err) {
@@ -38,36 +36,6 @@ export const fetchProductAction = (data) => {
       let response;
       if (data) {
         response = await axios.get(`${linkk}${data}`);
-        // const {
-        //   searchWord,
-        //   minPrice,
-        //   maxPrice,
-        //   sortChosen,
-        //   filterCategory,
-        // } = data;
-
-        // if (
-        //   (searchWord && minPrice) ||
-        //   filterCategory ||
-        //   maxPrice ||
-        //   sortChosen
-        // ) {
-        //   response = await axios.get(
-        //     `${linkk}?category=${
-        //       filterCategory ? filterCategory : null
-        //     }&search=${searchWord ? searchWord : ""}&minPrice=${
-        //       minPrice ? minPrice : 0
-        //     }&maxPrice=${
-        //       maxPrice === 0 || maxPrice === undefined
-        //         ? maxPrice === null
-        //         : maxPrice
-        //     }&sort=${sortChosen}`
-        //   );
-        // } else if (searchWord) {
-        //   response = await axios.get(`${linkk}?search=${searchWord}`);
-        // }
-      } else {
-        response = await axios.get(linkk);
       }
       dispatch({type: "FETCH_PRODUCT_SUCCESS", payload: response.data});
     } catch (err) {

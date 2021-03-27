@@ -2,7 +2,7 @@ import React, {useEffect, useState} from "react";
 import ImagesCard from "../components/ImagesCard";
 import ReactPaginate from "react-paginate";
 import {useDispatch, useSelector} from "react-redux";
-import {fetchRecipeAction} from "../redux/actions";
+import {fetchRecipeAction, getItemLength} from "../redux/actions";
 import {
   Button,
   FormControl,
@@ -11,29 +11,24 @@ import {
   Select,
   TextField,
 } from "@material-ui/core";
+import {useHistory} from "react-router";
 
 const RecipesAdmin = () => {
   const dispatch = useDispatch();
-  const recipe = useSelector((state) => state.admin.recipe);
+  const {recipe, lengths, loading} = useSelector((state) => state.admin);
 
+  const history = useHistory();
   useEffect(() => {
-    dispatch(fetchRecipeAction());
+    dispatch(getItemLength());
+    dispatch(fetchRecipeAction(window.location.search));
   }, [dispatch]);
 
   const [perPage] = useState(9);
-  const [page, setPage] = useState(0);
-  const from = page * perPage;
-  const to = (page + 1) * perPage;
-  const {loading} = useSelector((state) => state.product);
-  const [pageCount, setPageCount] = useState(recipe.length / perPage);
+  const [pageCount, setPageCount] = useState(lengths.recipe / perPage);
 
   useEffect(() => {
-    setPageCount(recipe.length / perPage);
-  }, [perPage, recipe]);
-
-  const data = recipe.filter((val, index) => {
-    return index >= from && index < to;
-  });
+    setPageCount(lengths.recipe / perPage);
+  }, [perPage]);
 
   const [sort, setSort] = useState("");
   const [open, setOpen] = useState(false);
@@ -63,12 +58,26 @@ const RecipesAdmin = () => {
   };
 
   const searchBtn = () => {
-    dispatch(fetchRecipeAction({sort, searchWord, sortStatus}));
+    let url = "?page=1&limit9";
+    if (searchWord !== "") {
+      url += `&search=${searchWord}`;
+    }
+    if (sortStatus !== "") {
+      url += `&status=${sortStatus}`;
+    }
+    if (sort !== "") {
+      url += `&sort=${sort}`;
+    }
+
+    history.push(`/recipe${url}`);
+    dispatch(fetchRecipeAction(url));
   };
 
   const handlePageClick = (e) => {
     const selectedPage = e.selected;
-    setPage(selectedPage);
+    const url = `?page=${selectedPage + 1}&limit=9`;
+    history.push(`/recipe${url}`);
+    dispatch(fetchRecipeAction(url));
   };
 
   const renderAll = () => {
@@ -81,8 +90,8 @@ const RecipesAdmin = () => {
             flexWrap: "wrap",
           }}
         >
-          {data
-            ? data.map((val) => {
+          {recipe
+            ? recipe.map((val) => {
                 return (
                   <ImagesCard
                     modName="Prescription"

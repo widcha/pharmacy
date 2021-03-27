@@ -21,25 +21,23 @@ import {
 import {useDispatch, useSelector} from "react-redux";
 import ReactPaginate from "react-paginate";
 import Swal from "sweetalert2";
+import {useHistory} from "react-router";
 
 const CategoriesAdmin = () => {
   const dispatch = useDispatch();
   const category = useSelector((state) => state.product.category);
+  const history = useHistory();
 
   useEffect(() => {
-    dispatch(fetchCategoryAction());
+    dispatch(fetchCategoryAction(window.location.search));
   }, [dispatch]);
 
   const [perPage] = useState(10);
   const [page, setPage] = useState(0);
-  const from = page * perPage;
-  const to = (page + 1) * perPage;
-  const {product_list, loading} = useSelector((state) => state.product);
-  const [pageCount, setPageCount] = useState(category.length / perPage);
 
-  const data = category.filter((val, index) => {
-    return index >= from && index < to;
-  });
+  const {product_list, loading} = useSelector((state) => state.product);
+  const {lengths} = useSelector((state) => state.admin);
+  const [pageCount, setPageCount] = useState(lengths.categories / perPage);
 
   useEffect(() => {
     dispatch(fetchProductAction());
@@ -101,7 +99,7 @@ const CategoriesAdmin = () => {
 
   const [searchWord, setSearch] = useState("");
   const searchBtn = () => {
-    const a = `?search=${searchWord}`;
+    const a = `?page=1&limit=10&search=${searchWord}`;
     dispatch(fetchCategoryAction(a));
   };
 
@@ -119,8 +117,8 @@ const CategoriesAdmin = () => {
   };
 
   const renderRow = () => {
-    if (data) {
-      return data.map((row, index) => (
+    if (category) {
+      return category.map((row, index) => (
         <TableRow key={row.product_category_id}>
           <TableCell>
             {page === 0 ? index + 1 : index + 1 + page * 10}
@@ -227,12 +225,15 @@ const CategoriesAdmin = () => {
     ) : null;
   };
   useEffect(() => {
-    setPageCount(category.length / perPage);
-  }, [perPage, category]);
+    setPageCount(lengths.categories / perPage);
+  }, [perPage]);
 
   const handlePageClick = (e) => {
     const selectedPage = e.selected;
     setPage(selectedPage);
+    const url = `?page=${selectedPage + 1}&limit=10`;
+    dispatch(fetchCategoryAction(url));
+    history.push(`/category${url}`);
   };
 
   const renderAll = () => {

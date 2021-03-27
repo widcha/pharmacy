@@ -302,14 +302,6 @@ module.exports = {
                     },
                   }
                 );
-                // ATUR CUSTOM ORDERPUNYA LAGI NANTI
-                // await Material_Flow.create({
-                //   product_id: subVal.product_id,
-                //   material_flow_stock: subVal.product_qty,
-                //   material_flow_info: "User Custom Order",
-                //   stock: subVal.Product.product_stock_total - subVal.product_qty,
-                //   material_flow_show: 0,
-                // });
 
                 await Cart.destroy({
                   where: {
@@ -357,14 +349,6 @@ module.exports = {
                 },
               }
             );
-
-            await Material_Flow.create({
-              product_id: val.product_id,
-              material_flow_stock: val.product_qty,
-              material_flow_info: "User Order",
-              stock: val.Product.product_stock_total - val.product_qty,
-              material_flow_show: 0,
-            });
 
             await Cart.destroy({
               where: {

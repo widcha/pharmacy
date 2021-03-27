@@ -39,12 +39,7 @@ export const fetchRecipeAction = (data) => {
       dispatch({type: "FETCH_DATA_START"});
       let response;
       if (data) {
-        const {sort, searchWord, sortStatus} = data;
-        response = await axios.get(
-          `${url}/get/recipe?sort=${sort}&search=${searchWord}&status=${sortStatus}`
-        );
-      } else {
-        response = await axios.get(`${url}/get/recipe`);
+        response = await axios.get(`${url}/get/recipe${data}`);
       }
       dispatch({type: "FETCH_RECIPE_SUCCESS", payload: response.data});
     } catch (err) {
@@ -71,12 +66,7 @@ export const fetchPaymentProofAction = (data) => {
       dispatch({type: "FETCH_DATA_START"});
       let response;
       if (data) {
-        const {sort, sortStatus, searchWord} = data;
-        response = await axios.get(
-          `${url}/get/payment-proof?search=${searchWord}&sort=${sort}&sortStatus=${sortStatus}`
-        );
-      } else {
-        response = await axios.get(`${url}/get/payment-proof`);
+        response = await axios.get(`${url}/get/payment-proof${data}`);
       }
       dispatch({type: "FETCH_PAY_IMG_SUCCESS", payload: response.data});
     } catch (err) {

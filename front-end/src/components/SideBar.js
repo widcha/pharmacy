@@ -79,7 +79,7 @@ const SideBar = () => {
           </List>
         </Collapse>
 
-        <Link to="/category">
+        <Link to="/category?page=1&limit=10">
           <ListItem
             button
             className={classes.listWrap}
@@ -89,7 +89,7 @@ const SideBar = () => {
             <ListItemText className={classes.nestedFont} primary="Category" />
           </ListItem>
         </Link>
-        <Link to="/recipe">
+        <Link to="/recipe?page=1&limit=9">
           <ListItem
             button
             className={classes.listWrap}
@@ -102,7 +102,7 @@ const SideBar = () => {
             />
           </ListItem>
         </Link>
-        <Link to="/payment-proof">
+        <Link to="/payment-proof?page=1&limit=9">
           <ListItem
             button
             className={classes.listWrap}
