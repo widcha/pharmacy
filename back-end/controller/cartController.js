@@ -404,6 +404,7 @@ module.exports = {
 				total,
 				items: normalData,
 				itemsCustom: customData,
+				isWatermark: true,
 			};
 			const mailOptions = {
 				from: "Pharma <pwd.pharma@gmail.com>",
