@@ -88,7 +88,7 @@ const HomeAdmin = () => {
             </p>
           </div>
         </div>
-        {/* <!-- Card --> */}
+        {/* <!-- DATA PRODUK TERLARIS --> */}
         <div onClick={toggle}>
           <div class="flex items-center p-4 bg-gray-700 rounded-lg shadow-xs dark:bg-gray-800">
             <div class="p-3 mr-4 text-teal-700 bg-teal-300 rounded-full dark:text-teal-100 dark:bg-teal-500">
@@ -102,10 +102,10 @@ const HomeAdmin = () => {
             </div>
             <div>
               <p class="text-sm font-medium text-gray-100 dark:text-gray-400">
-                Products
+                Best Seller Products (Click Me!)
               </p>
               <p class="text-lg font-semibold text-gray-100 dark:text-gray-200">
-                {lengths.products}
+                Products {lengths.products}
               </p>
             </div>
           </div>
