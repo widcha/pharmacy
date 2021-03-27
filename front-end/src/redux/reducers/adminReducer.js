@@ -7,6 +7,7 @@ const INITIAL_STATE = {
   finance_report: [],
   data: [],
   product_sold: [],
+  userInfo: [],
   totalEarning: 0,
   loading: false,
   error: "",
@@ -48,6 +49,12 @@ export const adminReducer = (state = INITIAL_STATE, action) => {
         ...state,
         loading: false,
         lengths: action.payload,
+      };
+    case "FETCH_USER_INFO_SUCCESS":
+      return {
+        ...state,
+        loading: false,
+        userInfo: action.payload,
       };
     case "FETCH_FINREP_SUCCESS":
       return {

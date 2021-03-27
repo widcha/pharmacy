@@ -2,15 +2,16 @@ import React, {useEffect, useState} from "react";
 import {useDispatch, useSelector} from "react-redux";
 import DashboardModal from "../components/DashboardModal";
 import {getFinancialReports, getItemLength} from "../redux/actions";
-import {Link} from "react-router-dom";
+import {Link, useHistory} from "react-router-dom";
+import ReactPaginate from "react-paginate";
 
 const HomeAdmin = () => {
   const dispatch = useDispatch();
+  const history = useHistory();
+  console.log(window.location.search);
+  //Pagination
+  const [perPage] = useState(10);
 
-  useEffect(() => {
-    dispatch(getItemLength());
-    dispatch(getFinancialReports());
-  }, [dispatch]);
   const {
     lengths,
     finance_report,
@@ -19,6 +20,23 @@ const HomeAdmin = () => {
     product_sold,
   } = useSelector((state) => state.admin);
 
+  useEffect(() => {
+    dispatch(getItemLength());
+    dispatch(getFinancialReports(window.location.search));
+  }, [dispatch, window.location.search]);
+
+  const [pageCount, setPageCount] = useState(lengths.success_trans / perPage);
+
+  useEffect(() => {
+    setPageCount(Math.ceil(lengths.success_trans / perPage));
+  }, [perPage]);
+
+  const handlePageClick = (e) => {
+    const selectedPage = e.selected;
+    history.push(`/Dashboard?page=${selectedPage + 1}&limit=10`);
+  };
+
+  //3 best seller products
   const [showModal, setShowModal] = useState(false);
   const toggle = () => {
     setShowModal(!showModal);
@@ -32,7 +50,7 @@ const HomeAdmin = () => {
           data={product_sold ? product_sold : null}
         />
         {/* <!-- Card --> */}
-        <Link to="/">
+        <Link to="/users-data?page=1&limit=10">
           <div class="flex items-center p-4 bg-gray-700 rounded-lg shadow-xs dark:bg-gray-800">
             <div class="p-3 mr-4 text-orange-700 bg-orange-300 rounded-full dark:text-orange-100 dark:bg-orange-500">
               <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
@@ -102,10 +120,7 @@ const HomeAdmin = () => {
             </div>
             <div>
               <p class="text-sm font-medium text-gray-100 dark:text-gray-400">
-                Best Seller Products (Click Me!)
-              </p>
-              <p class="text-lg font-semibold text-gray-100 dark:text-gray-200">
-                Products {lengths.products}
+                Best Seller (Click Me!)
               </p>
             </div>
           </div>
@@ -115,9 +130,9 @@ const HomeAdmin = () => {
   };
   const tableAdmin = () => {
     return (
-      <div>
-        <div class="w-full mb-8 overflow-hidden rounded-lg shadow-xs">
-          <div class="w-full overflow-x-auto">
+      <div style={{width: "750px"}}>
+        <div class="w-auto mb-8 overflow-hidden rounded-lg shadow-xs">
+          <div class="w-auto overflow-x-auto">
             <table class="w-full whitespace-no-wrap">
               <thead>
                 <tr class="text-xs font-semibold tracking-wide text-left text-gray-500 uppercase border-b dark:border-gray-700 bg-gray-50 dark:text-gray-400 dark:bg-gray-800">
@@ -176,8 +191,27 @@ const HomeAdmin = () => {
   };
   return (
     <div className="mt-5">
-      <div className="flex ml-20">{headerDashboard()}</div>
-      <div className="ml-20">{tableAdmin()}</div>
+      <div className="flex ml-5">{headerDashboard()}</div>
+      <div>
+        {finance_report.length > 0 ? (
+          <div className=" flex justify-center fixed right-10">
+            <ReactPaginate
+              previousLabel={"Prev"}
+              nextLabel={"Next"}
+              breakLabel={"..."}
+              breakClassName={"break-me"}
+              pageCount={pageCount}
+              marginPagesDisplayed={2}
+              pageRangeDisplayed={5}
+              onPageChange={handlePageClick}
+              containerClassName={"pagination"}
+              subContainerClassName={"pages pagination"}
+              activeClassName={"active"}
+            />
+          </div>
+        ) : null}
+      </div>
+      <div className="ml-5">{tableAdmin()}</div>
     </div>
   );
 };

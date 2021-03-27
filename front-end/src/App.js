@@ -67,7 +67,7 @@ function App() {
         <div
           style={{overflowY: "auto", marginLeft: "210px", marginTop: "45px"}}
         >
-          <Route path="/" exact component={HomeAdmin} />
+          <Route path="/Dashboard" exact component={HomeAdmin} />
           <Route path="/product" component={ProductAdmin} />
           <Route path="/category" component={CategoriesAdmin} />
           <Route path="/recipe" component={RecipesAdmin} />
@@ -76,7 +76,7 @@ function App() {
           <Route path="/product-flow-detail" component={ProductFlowDetail} />
           <Route exact path="/custom-order" component={CustomAdmin} />
           <Route exact path="/transaction" component={TransactionAdmin} />
-          <Route exact path="/user-data" component={AdminUserData} />
+          <Route exact path="/users-data" component={AdminUserData} />
         </div>
       </div>
     );

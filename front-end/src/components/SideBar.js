@@ -24,7 +24,7 @@ const SideBar = () => {
   return (
     <div className="sidebar">
       <List disablePadding dense>
-        <Link to="/">
+        <Link to="/Dashboard?page=1&limit=10">
           <ListItem
             button
             className={classes.listWrap}
