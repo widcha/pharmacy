@@ -39,7 +39,7 @@ const ExtendedNavbar = () => {
 
   const toggle = () => setModal(!modal);
   return (
-    <div class="px-4 py-2 sm:max-w-xl md:max-w-full md:px-24 lg:px-8 shadow p-4 bg-blue-100">
+    <div class="px-4 py-2 sm:max-w-xl md:max-w-full md:px-24 lg:px-8 p-4 border-2">
       <div class="relative flex items-center justify-around">
         <div className="flex border-r border-blue-300 w-1/2 justify-center">
           <button

@@ -1,8 +1,8 @@
 {
 	"development": {
-		"username": "adhitanjung",
+		"username": "wido",
 		"password": "asd123",
-		"database": "pharmacy",
+		"database": "pharma-2",
 		"host": "127.0.0.1",
 		"dialect": "mysql",
 		"timezone": "+07:00"

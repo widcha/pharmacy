@@ -33,6 +33,7 @@ import {
   TransactionAdmin,
 } from "./pages";
 import { ToastContainer, Zoom } from "react-toastify";
+import { Footer } from "./components/Footer";
 
 function App() {
   const dispatch = useDispatch();
@@ -116,6 +117,7 @@ function App() {
           component={PurchaseHistory}
         />
         <Route exact path="/user/transaction" component={Transaction} />
+        <Footer />
       </div>
     );
   }
