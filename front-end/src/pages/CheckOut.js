@@ -49,6 +49,9 @@ export const CheckOut = () => {
 	if (!checkout_ready) {
 		return <Redirect to="/" />;
 	}
+	if (available_products.length === 0) {
+		return <Redirect to="/user/cart" />;
+	}
 	return (
 		<form
 			className="flex container m-5 w-auto space-x-2"
