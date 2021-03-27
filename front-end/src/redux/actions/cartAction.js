@@ -11,7 +11,14 @@ export const fetchUserCartByIdAction = (idx) => {
 			dispatch({
 				type: "API_CART_START",
 			});
-			const response = await axios.get(`${api}/${idx}`);
+			const token = localStorage.getItem("token");
+			const headers = {
+				headers: {
+					Authorization: `Bearer ${token}`,
+				},
+			};
+
+			const response = await axios.get(`${api}/${idx}`, headers);
 			console.log(response.data);
 			dispatch({
 				type: "USER_FETCH_CART",
@@ -31,11 +38,19 @@ export const userAddProductToCartAction = (obj, str) => {
 			dispatch({
 				type: "API_CART_START",
 			});
-
-			await axios.post(`${api}/add`, obj);
+			const token = localStorage.getItem("token");
+			const headers = {
+				headers: {
+					Authorization: `Bearer ${token}`,
+				},
+			};
+			await axios.post(`${api}/add`, obj, headers);
 			dispatch(fetchUserCartByIdAction(obj.user_id));
 
-			const filtered = await axios.get(`${api}/total?user_id=${obj.user_id}`);
+			const filtered = await axios.get(
+				`${api}/total?user_id=${obj.user_id}`,
+				headers
+			);
 			dispatch({
 				type: "USER_FETCH_SUBTOTAL",
 				payload: filtered.data,
@@ -76,8 +91,13 @@ export const userSubProductFromCartAction = (obj) => {
 			dispatch({
 				type: "API_CART_START",
 			});
-
-			await axios.post(`${api}/sub`, obj);
+			const token = localStorage.getItem("token");
+			const headers = {
+				headers: {
+					Authorization: `Bearer ${token}`,
+				},
+			};
+			await axios.post(`${api}/sub`, obj, headers);
 			dispatch(fetchUserCartByIdAction(obj.user_id));
 			const filtered = await axios.get(`${api}/total?user_id=${obj.user_id}`);
 			dispatch({
@@ -98,9 +118,15 @@ export const userDeleteProductInCart = (user_id, product_id) => {
 			dispatch({
 				type: "API_CART_START",
 			});
-
+			const token = localStorage.getItem("token");
+			const headers = {
+				headers: {
+					Authorization: `Bearer ${token}`,
+				},
+			};
 			await axios.delete(
-				`${api}/remove?user_id=${user_id}&product_id=${product_id}`
+				`${api}/remove?user_id=${user_id}&product_id=${product_id}`,
+				headers
 			);
 			dispatch(fetchUserCartByIdAction(user_id));
 
@@ -124,8 +150,16 @@ export const userGetSubTotal = (user_id) => {
 			dispatch({
 				type: "API_CART_START",
 			});
-
-			const response = await axios.get(`${api}/total?user_id=${user_id}`);
+			const token = localStorage.getItem("token");
+			const headers = {
+				headers: {
+					Authorization: `Bearer ${token}`,
+				},
+			};
+			const response = await axios.get(
+				`${api}/total?user_id=${user_id}`,
+				headers
+			);
 
 			dispatch({
 				type: "USER_FETCH_SUBTOTAL",
@@ -152,12 +186,22 @@ export const userCheckoutAction = (user_id, data, total, address) => {
 				confirmButtonText: "Yes!",
 			}).then(async (result) => {
 				if (result.isConfirmed) {
-					await axios.post(`${api}/check-out`, {
-						user_id,
-						data,
-						total,
-						address,
-					});
+					const token = localStorage.getItem("token");
+					const headers = {
+						headers: {
+							Authorization: `Bearer ${token}`,
+						},
+					};
+					await axios.post(
+						`${api}/check-out`,
+						{
+							user_id,
+							data,
+							total,
+							address,
+						},
+						headers
+					);
 					dispatch(finishCheckoutAction());
 					dispatch(fetchUserCartByIdAction(user_id));
 					Swal.fire(
@@ -193,9 +237,15 @@ export const userDeleteCustomProductInCart = (user_id, custom_product_id) => {
 			dispatch({
 				type: "API_CART_START",
 			});
-
+			const token = localStorage.getItem("token");
+			const headers = {
+				headers: {
+					Authorization: `Bearer ${token}`,
+				},
+			};
 			await axios.delete(
-				`${api}/remove?user_id=${user_id}&custom_product_id=${custom_product_id}`
+				`${api}/remove?user_id=${user_id}&custom_product_id=${custom_product_id}`,
+				headers
 			);
 			dispatch(fetchUserCartByIdAction(user_id));
 			const filtered = await axios.get(`${api}/total?user_id=${user_id}`);
