@@ -261,3 +261,51 @@ export const userDeleteCustomProductInCart = (user_id, custom_product_id) => {
 		}
 	};
 };
+
+export const userAddCustomQtyAction = (obj) => {
+	return async (dispatch) => {
+		try {
+			dispatch({
+				type: "API_CART_START",
+			});
+			const token = localStorage.getItem("token");
+			const headers = {
+				headers: {
+					Authorization: `Bearer ${token}`,
+				},
+			};
+
+			await axios.patch(`${api}/customAdd`, obj, headers);
+			dispatch(fetchUserCartByIdAction(obj.user_id));
+			dispatch(userGetSubTotal(obj.user_id));
+		} catch (err) {
+			dispatch({
+				type: "API_CART_FAILED",
+				payload: err.response.data.message,
+			});
+		}
+	};
+};
+export const userSubCustomQtyAction = (obj) => {
+	return async (dispatch) => {
+		try {
+			dispatch({
+				type: "API_CART_START",
+			});
+			const token = localStorage.getItem("token");
+			const headers = {
+				headers: {
+					Authorization: `Bearer ${token}`,
+				},
+			};
+			await axios.patch(`${api}/customSub`, obj, headers);
+			dispatch(fetchUserCartByIdAction(obj.user_id));
+			dispatch(userGetSubTotal(obj.user_id));
+		} catch (err) {
+			dispatch({
+				type: "API_CART_FAILED",
+				payload: err.response.data.message,
+			});
+		}
+	};
+};

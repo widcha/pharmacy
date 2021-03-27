@@ -256,7 +256,9 @@ module.exports = {
 					custom_product_qty: val.custom_product_qty,
 					user_id: val.user_id,
 					Carts: val.Carts.filter(
-						(subVal) => subVal.product_qty <= subVal.Product.product_stock_total
+						(subVal) =>
+							subVal.product_qty * val.custom_product_qty <=
+							subVal.Product.product_stock_total
 					),
 				};
 			});
@@ -265,6 +267,19 @@ module.exports = {
 				return val.Carts.length === filteredCustom[i].Carts.length;
 			});
 			const newArr = [...filteredProducts, ...newFiltered];
+
+			//       const newArr2 = newArr.filter((subNewArr,i)=>{
+			//         if(i < newArr.length-1){
+			// if(subNewArr.custom_product_id === null && newArr[i+1].custom_product_id === null){
+
+			//   return subNewArr.product_id ===  newArr[i+1].product_id &&subNewArr.product_qty + newArr[i+1].product_qty <= subNewArr.Product.product_stock_total
+			// }else if (subNewArr.custom_product_id !== null && newArr[i+1].custom_product_id !== null ){
+			//   subNewArr.Carts.filter((subSubCustom)=>{
+			//     return newArr[i+1].Carts
+			//   })
+			// }
+			//         }
+			//       })
 			let subTotal = 0;
 			newArr.forEach((val) => {
 				if (val.custom_product_id) {
@@ -275,6 +290,7 @@ module.exports = {
 			});
 
 			return res.send({ data: newArr, subTotal });
+			// return res.send(filteredCustom);
 		} catch (err) {
 			return res.status(500).send({ message: err.message });
 		}
@@ -304,10 +320,11 @@ module.exports = {
 								await Product.update(
 									{
 										product_stock_total:
-											subVal.Product.product_stock_total - subVal.product_qty,
+											subVal.Product.product_stock_total -
+											subVal.product_qty * val.custom_product_qty,
 										product_stock: Math.ceil(
 											(subVal.Product.product_stock_total -
-												subVal.product_qty) /
+												subVal.product_qty * val.custom_product_qty) /
 												subVal.Product.product_vol
 										),
 									},
@@ -425,6 +442,69 @@ module.exports = {
 				}
 			});
 			return res.status(200).send({ message: "Checkout" });
+		} catch (err) {
+			return res.status(500).send({ message: err.message });
+		}
+	},
+	userCustomIncrement: async (req, res) => {
+		try {
+			const {
+				current_custom_product_qty,
+				custom_product_price,
+				custom_product_id,
+				qty,
+				user_id,
+			} = req.body;
+
+			await Custom_Product.update(
+				{
+					custom_product_qty: current_custom_product_qty + qty,
+					custom_product_price:
+						(custom_product_price / current_custom_product_qty) *
+						(current_custom_product_qty + qty),
+				},
+				{
+					where: {
+						[Op.and]: {
+							custom_product_id,
+							is_checkout: 0,
+						},
+					},
+				}
+			);
+
+			return res.status(200).send({ message: "Custom Product Updated" });
+		} catch (err) {
+			return res.status(500).send({ message: err.message });
+		}
+	},
+	userCustomDecrement: async (req, res) => {
+		try {
+			const {
+				current_custom_product_qty,
+				custom_product_price,
+				custom_product_id,
+				qty,
+				user_id,
+			} = req.body;
+
+			await Custom_Product.update(
+				{
+					custom_product_qty: current_custom_product_qty - qty,
+					custom_product_price:
+						(custom_product_price / current_custom_product_qty) *
+						(current_custom_product_qty - qty),
+				},
+				{
+					where: {
+						[Op.and]: {
+							custom_product_id,
+							is_checkout: 0,
+						},
+					},
+				}
+			);
+			return res.status(200).send({ message: "Custom Product Updated" });
 		} catch (err) {
 			return res.status(500).send({ message: err.message });
 		}
