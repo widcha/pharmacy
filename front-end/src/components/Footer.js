@@ -25,13 +25,13 @@ export const Footer = () => {
           </div>
         </div>
         <div className="space-y-2 text-sm">
-          <p className="text-base font-bold tracking-wide text-gray-900">
+          <p className="text-base font-bold tracking-wide text-gray-800">
             Contacts
           </p>
           <div className="flex">
             <p className="mr-1 text-gray-800">Email:</p>
             <a
-              href="mailto:info@lorem.mail"
+              href="mailto:pwd.pharma@gmail.com"
               aria-label="Our email"
               title="Our email"
               className="transition-colors duration-300 text-blue-500 hover:text-blue-700"
@@ -54,7 +54,7 @@ export const Footer = () => {
           </div>
         </div>
         <div>
-          <span className="text-base font-bold tracking-wide text-gray-900">
+          <span className="text-base font-bold tracking-wide text-gray-800">
             Social
           </span>
           <div className="flex items-center mt-1 space-x-3">

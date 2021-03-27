@@ -194,7 +194,7 @@ const PurchaseHistory = (props) => {
                   <div className="ml-5 items-center content-center ">
                     <div className="font-normal">Total Price</div>
                     <div className="font-semibold text-lg">
-                      Rp {val.transaction_payment_details}
+                      Rp {val.transaction_payment_details.toLocaleString()}
                     </div>
                   </div>
                 </div>
@@ -237,7 +237,7 @@ const PurchaseHistory = (props) => {
                   <div className="ml-5 items-center content-center">
                     <div className="font-normal">Total Price</div>
                     <div className="font-semibold text-lg">
-                      Rp {val.transaction_payment_details}
+                      Rp {val.transaction_payment_details.toLocaleString()}
                     </div>
                   </div>
                 </div>
