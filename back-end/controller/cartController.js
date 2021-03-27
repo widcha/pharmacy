@@ -13,6 +13,7 @@ const {
 const { truncate } = require("lodash");
 const { transporter } = require("../helpers");
 const hbs = require("nodemailer-express-handlebars");
+
 const pathh = require("path");
 const options = {
 	viewEngine: {
@@ -388,13 +389,21 @@ module.exports = {
 					}
 				}
 			});
+			const customData = data.filter((subCustom) => {
+				return subCustom.custom_product_id > 0;
+			});
+
+			const normalData = data.filter((subNormal) => {
+				return subNormal.custom_product_id === null;
+			});
 			const template = {
 				invoice,
 				date: t_date,
 				address,
 				email: user_email,
 				total,
-				items: data,
+				items: normalData,
+				itemsCustom: customData,
 			};
 			const mailOptions = {
 				from: "Pharma <pwd.pharma@gmail.com>",
