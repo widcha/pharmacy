@@ -238,6 +238,7 @@ export const deleteAddressAction = ({ id, user_id }) => {
 export const uploadRecipesAction = ({ user_id, pict }) => {
   return async (dispatch) => {
     try {
+      const token = localStorage.getItem("token");
       dispatch({ type: "API_USER_START" });
       let formData = new FormData();
       const val = JSON.stringify({
@@ -250,6 +251,7 @@ export const uploadRecipesAction = ({ user_id, pict }) => {
       const headers = {
         headers: {
           "Content-Type": "multipart/form-data",
+          Authorization: `Bearer ${token}`,
         },
       };
 
@@ -264,13 +266,28 @@ export const uploadRecipesAction = ({ user_id, pict }) => {
 
 export const fetchNotifUser = (user_id) => {
   return async (dispatch) => {
-    console.log("notif", user_id);
     try {
+      console.log(user_id);
       dispatch({ type: "API_USER_START" });
       const response = await axios.post(`${url}/get-notif`, {
         user_id: user_id,
       });
       dispatch({ type: "API_GET_NOTIF", payload: response.data });
+      dispatch({ type: "API_USER_SUCCESS" });
+    } catch (err) {
+      dispatch({ type: "API_USER_FAILED", payload: err.message });
+    }
+  };
+};
+
+export const readNotifUser = (user_notif_id) => {
+  return async (dispatch) => {
+    try {
+      dispatch({ type: "API_USER_START" });
+      await axios.post(`${url}/read-notif`, {
+        user_notif_id: user_notif_id,
+      });
+      dispatch({ type: "API_USER_SUCCESS" });
     } catch (err) {
       dispatch({ type: "API_USER_FAILED", payload: err.message });
     }

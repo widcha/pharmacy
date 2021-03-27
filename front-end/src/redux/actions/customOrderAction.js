@@ -36,16 +36,25 @@ export const addProductToDatabaseAction = ({
   notes,
 }) => {
   return async (dispatch) => {
-    console.log(capsule);
     try {
+      const token = localStorage.getItem("token");
+      const headers = {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      };
       dispatch({ type: "API_CUSTOM_START" });
-      await axios.post(`${url}`, {
-        totalQty,
-        totalPrice,
-        capsule,
-        user_id,
-        notes: notes ? notes : "",
-      });
+      await axios.post(
+        `${url}`,
+        {
+          totalQty,
+          totalPrice,
+          capsule,
+          user_id,
+          notes: notes ? notes : "",
+        },
+        headers
+      );
       dispatch({ type: "API_CUSTOM_SUCCESS" });
       dispatch(fetchUserCartByIdAction(user_id));
     } catch (err) {

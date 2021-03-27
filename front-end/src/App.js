@@ -2,7 +2,7 @@ import "./App.css";
 import React, { useEffect } from "react";
 import { Route } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
-import { nullifyErrorAction } from "./redux/actions";
+import { fetchNotifUser, nullifyErrorAction } from "./redux/actions";
 import SideBar from "./components/SideBar";
 import { Nav } from "./components/Navbar";
 import { NavAdmin } from "./components/NavbarAdmin";
@@ -36,11 +36,12 @@ import { ToastContainer, Zoom } from "react-toastify";
 
 function App() {
   const dispatch = useDispatch();
-  const { user_role_id } = useSelector((state) => state.user);
+  const { user_role_id, user_id } = useSelector((state) => state.user);
 
   useEffect(() => {
     dispatch(nullifyErrorAction());
-  }, [dispatch]);
+    dispatch(fetchNotifUser(user_id));
+  }, [dispatch, user_id]);
 
   if (user_role_id === 1) {
     return (

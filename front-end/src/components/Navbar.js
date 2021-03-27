@@ -5,7 +5,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { Link, useHistory } from "react-router-dom";
 import Logo from "../assets/icons/medicine.svg";
 import { api_url } from "../helpers";
-import { logoutAction } from "../redux/actions";
+import { fetchNotifUser, logoutAction, readNotifUser } from "../redux/actions";
 import { CartIcon } from "./CartIcon";
 
 export const Nav = () => {
@@ -17,7 +17,7 @@ export const Nav = () => {
   const dispatch = useDispatch();
   const user = useSelector((state) => state.user);
   const { cart_list } = useSelector((state) => state.cart);
-  const { notif } = useSelector((state) => state.user);
+  const { notif, user_id } = useSelector((state) => state.user);
 
   const history = useHistory();
 
@@ -156,12 +156,18 @@ export const Nav = () => {
     setSuggestion(false);
   };
 
+  const handleNotifClick = async (value) => {
+    history.push(`/user/transaction`);
+    await dispatch(readNotifUser(value));
+    dispatch(fetchNotifUser(user_id));
+  };
+
   const renderNotif = () => {
     return notif.map((val) => {
       return (
         <p
           className="transition duration-200 font-semibold block px-4 py-2 text-sm text-gray-600 hover:bg-gray-100 hover:text-blue-500 cursor-pointer"
-          onClick={() => history.push(`/user/transaction`)}
+          onClick={() => handleNotifClick(val.user_notif_id)}
         >
           {val.user_notif_messages}
         </p>
@@ -196,11 +202,13 @@ export const Nav = () => {
             aria-hidden="true"
             className="absolute top-0 right-0 inline-block w-3 h-3 transform translate-x-1 -translate-y-1 bg-red-600 border-2 border-white rounded-full dark:border-gray-800"
           ></span> */}
-          <span class="absolute inset-0 object-right-top -mt-1.5 -mr-5">
-            <div class="inline-flex items-center px-1.5 py-0.5 border-2 border-white rounded-full text-xs font-semibold leading-4 bg-red-500 text-white">
-              {notif ? notif.length : null}
-            </div>
-          </span>
+          {notif.length !== 0 ? (
+            <span class="absolute inset-0 object-right-top -mt-1.5 -mr-5">
+              <div class="inline-flex items-center px-1.5 py-0.5 border-2 border-white rounded-full text-xs font-semibold leading-4 bg-red-500 text-white">
+                {notif.length}
+              </div>
+            </span>
+          ) : null}
         </button>
         {notifCon ? (
           <ClickAwayListener onClickAway={handleClickAway}>
@@ -211,7 +219,13 @@ export const Nav = () => {
               aria-labelledby="options-menu"
             >
               <div class="py-1 overflow-y-auto h-64" role="none">
-                {renderNotif()}
+                {notif.length !== 0 ? (
+                  renderNotif()
+                ) : (
+                  <p className="mt-24 text-center text-xl font-semibold block px-4 py-2 text-gray-600 ">
+                    No notifications
+                  </p>
+                )}
               </div>
             </div>
           </ClickAwayListener>

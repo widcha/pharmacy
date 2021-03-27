@@ -359,18 +359,65 @@ const getNotifUser = async (req, res) => {
   try {
     const { user_id } = req.body;
     console.log(user_id);
-    const response = await User_Notif.findAll({
+
+    const findRes = await User_Notif.findAll({
       where: {
         user_id,
-      },
-      // order: ["createdAt", "DESC"],
-      attributes: {
-        exclude: ["updatedAt"],
+        user_notif_status: 0,
       },
     });
-    return res.status(200).send(response);
+    if (findRes.length == 1) {
+      const response = await User_Notif.findAll({
+        where: {
+          [Op.and]: {
+            user_id,
+            user_notif_status: 0,
+          },
+        },
+        attributes: {
+          exclude: ["updatedAt"],
+        },
+      });
+      return res.status(200).send(response);
+    } else {
+      const response = await User_Notif.findAll({
+        where: {
+          [Op.and]: {
+            user_id,
+            user_notif_status: 0,
+          },
+        },
+        // order: ["createdAt", "DESC"],
+        attributes: {
+          exclude: ["updatedAt"],
+        },
+      });
+      return res.status(200).send(response);
+    }
   } catch (err) {
     return res.status(500).send({ message: "Failed to get user notification" });
+  }
+};
+
+const userNotifRead = async (req, res) => {
+  try {
+    const { user_notif_id } = req.body;
+
+    const response = await User_Notif.update(
+      { user_notif_status: 1 },
+      {
+        where: {
+          [Op.and]: {
+            user_notif_id,
+          },
+        },
+      }
+    );
+    return res.send({ message: "Notif mark as read" });
+  } catch (err) {
+    return res
+      .status(500)
+      .send({ message: "Failed to mark user notification" });
   }
 };
 
@@ -388,4 +435,5 @@ module.exports = {
   deleteUserAddress,
   userAddRecipes,
   getNotifUser,
+  userNotifRead,
 };
