@@ -19,6 +19,7 @@ export const loginAction = (data) => {
         user_role_id,
         user_isverified,
         cart,
+        token,
       } = response.data;
       dispatch({
         type: "LOGIN",
@@ -30,6 +31,7 @@ export const loginAction = (data) => {
           user_isverified,
         },
       });
+      localStorage.setItem("token", token);
       dispatch(fetchNotifUser(user_id));
       dispatch({ type: "API_USER_SUCCESS" });
       dispatch({ type: "USER_FETCH_CART", payload: cart });
@@ -148,6 +150,7 @@ export const logoutAction = () => {
   return async (dispatch) => {
     try {
       dispatch({ type: "API_USER_START" });
+      localStorage.clear();
       dispatch({ type: "LOGOUT" });
       dispatch({
         type: "CLEAR_CART",
