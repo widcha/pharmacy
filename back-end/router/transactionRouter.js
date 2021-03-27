@@ -5,6 +5,7 @@ const {
 	userConfirmOrder,
 	userComplainOrder,
 	fetchAdminTransaction,
+	testHandlebars,
 } = require("../controller/transactionController");
 
 const router = require("express").Router();
@@ -17,4 +18,5 @@ router.patch("/cancel_order", checkToken, userCancelOrder);
 router.patch("/confirm_order", checkToken, userConfirmOrder);
 router.patch("/complain_order", checkToken, userComplainOrder);
 router.get("/admin-get", fetchAdminTransaction);
+router.get("/testhandle", testHandlebars);
 module.exports = router;

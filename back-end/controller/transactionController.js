@@ -10,8 +10,30 @@ const {
 	Admin_Notif,
 } = require("../models");
 const pify = require("pify");
+const { transpostPromise, transporter } = require("../helpers");
 const { uploader } = require("../handlers");
+const hbs = require("nodemailer-express-handlebars");
+const pathh = require("path");
+// const options = {
+// 	viewEngine: {
+// 		partialsDir: __dirname + "/views/partials",
+// 		layoutsDir: __dirname + "/views/layouts",
+// 		extname: ".hbs",
+// 	},
+// 	extName: ".hbs",
+// 	viewPath: "views",
+// };
+const options = {
+	viewEngine: {
+		extName: ".hbs",
+		partialsDir: pathh.resolve(__dirname, "../views"),
+		defaultLayout: false,
+	},
+	viewPath: pathh.resolve(__dirname, "../views"),
+	extName: ".hbs",
+};
 
+transporter.use("compile", hbs(options));
 const path = "/payment_slip";
 const upload = pify(uploader(path, "PYMS").fields([{ name: "image" }]));
 
@@ -435,6 +457,36 @@ module.exports = {
 			}
 		} catch (err) {
 			return res.status(500).send(err.message);
+		}
+	},
+	testHandlebars: async (req, res) => {
+		try {
+			const order = {
+				orderId: 948584,
+				name: "Patrik",
+				price: 50,
+			};
+			const mailOptions = {
+				from: "Pharma <pwd.pharma@gmail.com>",
+				to: "adhtanjung@gmail.com",
+				subject: "Your Pharma account: Email address verification",
+				template: "orderConfirmation",
+				context: order,
+			};
+			await transporter.sendMail(mailOptions, (error, info) => {
+				if (error) {
+					console.log(error);
+				} else {
+					res.send({
+						status: "success",
+						data: "Reset Link sent successfully",
+					});
+					console.log("Email sent: " + info.response);
+				}
+			});
+			res.send("email sent");
+		} catch (err) {
+			res.status(500).send(err);
 		}
 	},
 };
