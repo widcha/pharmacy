@@ -20,6 +20,7 @@ import {
   fetchCategoryAction,
   fetchFlowProductAction,
   fetchProductAction,
+  getItemLength,
   getStockFlowAction,
 } from "../redux/actions";
 import ReactPaginate from "react-paginate";
@@ -31,9 +32,10 @@ const ProductFlowAdmin = () => {
   const history = useHistory();
 
   useEffect(() => {
-    dispatch(getStockFlowAction());
-    dispatch(fetchFlowProductAction());
+    dispatch(getStockFlowAction(window.location.search));
+    dispatch(fetchFlowProductAction(window.location.search));
     dispatch(fetchCategoryAction());
+    dispatch(getItemLength());
   }, [dispatch]);
 
   const {product_list, category} = useSelector((state) => state.product);
@@ -47,20 +49,14 @@ const ProductFlowAdmin = () => {
 
   const [perPage] = useState(10);
   const [page, setPage] = useState(0);
-  const from = page * perPage;
-  const to = (page + 1) * perPage;
-  const {material_flow, loading} = useSelector((state) => state.admin);
-  const [pageCount, setPageCount] = useState(material_flow.length / perPage);
+  const {material_flow, loading, lengths} = useSelector((state) => state.admin);
+  const [pageCount, setPageCount] = useState(lengths.flows / perPage);
 
   const [selectProduct, setSelectProduct] = useState(false);
 
-  const data = material_flow.filter((val, index) => {
-    return index >= from && index < to;
-  });
+  const data = material_flow;
 
-  const secondData = product_list.filter((val, index) => {
-    return index >= from && index < to;
-  });
+  const secondData = product_list;
 
   const [open, setOpen] = useState(false);
 
@@ -85,29 +81,32 @@ const ProductFlowAdmin = () => {
     setFilterCategory(e.target.value);
   };
   const searchBtn = () => {
-    if (filterCategory === "" && searchWord === "") {
-      history.push("/product-flow?byproduct");
-      dispatch(fetchProductAction());
+    let url = `?page=1&limit=10`;
+    if (filterCategory !== "") {
+      url += `&category=${filterCategory}`;
     }
-    if (filterCategory || searchWord) {
-      history.push(
-        `/product-flow?byproductCategory=${filterCategory}&search=${searchWord}`
-      );
-      dispatch(fetchProductAction({searchWord, filterCategory}));
+    if (searchWord !== "") {
+      url += `&search=${searchWord}`;
     }
+    history.push(`/product-flow${url}`);
+    dispatch(fetchProductAction(url));
   };
 
   useEffect(() => {
     if (selectProduct) {
-      setPageCount(product_list.length / perPage);
+      setPageCount(lengths.products / perPage);
     } else {
-      setPageCount(material_flow.length / perPage);
+      setPageCount(lengths.flows / perPage);
     }
-  }, [perPage, material_flow, selectProduct]);
+  }, [perPage]);
 
   const handlePageClick = (e) => {
     const selectedPage = e.selected;
     setPage(selectedPage);
+    let url = `?page=${selectedPage + 1}&limit=10`;
+    history.push(`/product-flow${url}`);
+    dispatch(getStockFlowAction(url));
+    dispatch(fetchFlowProductAction(url));
   };
   const renderProduct = () => {
     if (secondData) {
@@ -115,7 +114,7 @@ const ProductFlowAdmin = () => {
         return (
           <TableRow key={row.product_id}>
             <TableCell>
-              {page === 0 ? index + 1 : index + 1 + page * 10}
+              {page > 0 ? index + 1 + page * 10 : index + 1}
             </TableCell>
             <TableCell>{row.product_name}</TableCell>
             <TableCell align="center">
@@ -153,7 +152,7 @@ const ProductFlowAdmin = () => {
         return (
           <TableRow key={row.material_flow_id}>
             <TableCell>
-              {page === 0 ? index + 1 : index + 1 + page * 10}
+              {page > 0 ? index + 1 + page * 10 : index + 1}
             </TableCell>
             <TableCell>{row.Product.product_name}</TableCell>
             <TableCell align="center">
@@ -286,8 +285,9 @@ const ProductFlowAdmin = () => {
 
   const doSort = (dataSort) => {
     if (dataSort) {
-      history.push(`/product-flow?sort=${dataSort}`);
-      dispatch(getStockFlowAction({sort: dataSort}));
+      const url = `?page=1&limit=10&sort=${dataSort}`;
+      history.push(`/product-flow${url}`);
+      dispatch(getStockFlowAction(url));
     }
   };
 
@@ -303,7 +303,7 @@ const ProductFlowAdmin = () => {
       >
         <div>
           <div>
-            <Link to="/product-flow">
+            <Link to="/product-flow?page=1&limit=10">
               <Button
                 onClick={backToAll}
                 style={{
@@ -315,19 +315,17 @@ const ProductFlowAdmin = () => {
                 All
               </Button>
             </Link>
-            <Link to="/product-flow?byproduct">
-              <Button
-                onClick={() => setSelectProduct(true)}
-                style={{
-                  marginLeft: "15px",
-                  backgroundColor: "#0492C2",
-                  color: "white",
-                  outline: 0,
-                }}
-              >
-                Select By Product
-              </Button>
-            </Link>
+            <Button
+              onClick={() => setSelectProduct(true)}
+              style={{
+                marginLeft: "15px",
+                backgroundColor: "#0492C2",
+                color: "white",
+                outline: 0,
+              }}
+            >
+              Select By Product
+            </Button>
             <div className="flex-row align-baseline">
               <ReactPaginate
                 previousLabel={"Prev"}

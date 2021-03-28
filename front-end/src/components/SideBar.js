@@ -61,7 +61,7 @@ const SideBar = () => {
               </ListItem>
             </Link>
             <Link
-              to="product-flow"
+              to="product-flow?page=1&limit=10"
               button
               selected={selectedIndex === 2}
               onClick={(e) => handleListItemClick(e, 2)}
@@ -126,16 +126,6 @@ const SideBar = () => {
               className={classes.nestedFont}
               primary="Transactions"
             />
-          </ListItem>
-        </Link>
-        <Link to="/">
-          <ListItem
-            button
-            className={classes.listWrap}
-            selected={selectedIndex === 7}
-            onClick={(e) => handleListItemClick(e, 7)}
-          >
-            <ListItemText className={classes.nestedFont} primary="Complain" />
           </ListItem>
         </Link>
       </List>

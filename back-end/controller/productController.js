@@ -565,7 +565,10 @@ module.exports = {
   },
   getDeletedProduct: async (req, res) => {
     try {
-      const {search} = req.query;
+      const {page, limit, search} = req.query;
+      const theLimit = parseInt(limit ? limit : 5);
+      const offsetData = parseInt((page ? page : 1) - 1) * parseInt(theLimit);
+
       const response = await Product.findAll({
         where: {
           [Op.and]: {
@@ -573,6 +576,8 @@ module.exports = {
             [Op.or]: [{product_is_available: 0}, {product_is_available: 1}],
           },
         },
+        offset: offsetData,
+        limit: theLimit,
         attributes: {
           exclude: ["createdAt", "updatedAt"],
         },

@@ -2,7 +2,7 @@ import "./App.css";
 import React, {useEffect} from "react";
 import {Route} from "react-router-dom";
 import {useDispatch, useSelector} from "react-redux";
-import {nullifyErrorAction} from "./redux/actions";
+import {fetchNotifAdmin, nullifyErrorAction} from "./redux/actions";
 import SideBar from "./components/SideBar";
 import {Nav} from "./components/Navbar";
 import {NavAdmin} from "./components/NavbarAdmin";
@@ -31,6 +31,8 @@ import {
   PurchaseHistory,
   AdminUserData,
   TransactionAdmin,
+  NotificationAdmin,
+  AllNotifAdmin,
 } from "./pages";
 import {ToastContainer, Zoom} from "react-toastify";
 
@@ -40,6 +42,8 @@ function App() {
 
   useEffect(() => {
     dispatch(nullifyErrorAction());
+
+    dispatch(fetchNotifAdmin("?page=1&limit=10"));
   }, [dispatch]);
 
   if (user_role_id === 1) {
@@ -77,6 +81,8 @@ function App() {
           <Route exact path="/custom-order" component={CustomAdmin} />
           <Route exact path="/transaction" component={TransactionAdmin} />
           <Route exact path="/users-data" component={AdminUserData} />
+          <Route exact path="/notifications" component={NotificationAdmin} />
+          <Route exact path="/all-notifications" component={AllNotifAdmin} />
         </div>
       </div>
     );

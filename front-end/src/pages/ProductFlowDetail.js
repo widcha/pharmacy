@@ -1,7 +1,7 @@
 import React, {useEffect, useState} from "react";
 import queryString from "querystring";
 import {useDispatch, useSelector} from "react-redux";
-import {fetchStockFlowByIdAction} from "../redux/actions";
+import {fetchStockFlowByIdAction, getItemLength} from "../redux/actions";
 import ReactPaginate from "react-paginate";
 import {
   Button,
@@ -33,6 +33,7 @@ const ProductFlowDetail = () => {
   }, []);
 
   useEffect(() => {
+    dispatch(getItemLength());
     dispatch(fetchStockFlowByIdAction(productID));
   }, [dispatch, productID]);
   const {material_flow, loading} = useSelector((state) => state.admin);
@@ -110,7 +111,7 @@ const ProductFlowDetail = () => {
   return (
     <div style={{marginTop: "30px"}}>
       <div style={{marginTop: "15px"}}>
-        <Link to="/product-flow">
+        <Link to="/product-flow?page=1&limit=10">
           <Button
             style={{
               outline: 0,

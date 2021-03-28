@@ -10,7 +10,11 @@ import {
 import {useDispatch, useSelector} from "react-redux";
 import ReactPaginate from "react-paginate";
 import CardProduct from "../components/CardProduct";
-import {fetchProductAction, fetchCategoryAction} from "../redux/actions";
+import {
+  fetchProductAction,
+  fetchCategoryAction,
+  getItemLength,
+} from "../redux/actions";
 import {useHistory} from "react-router-dom";
 import ModalProduct from "../components/ModalProduct";
 import {filter} from "lodash";
@@ -29,6 +33,7 @@ const ProductAdmin = () => {
   useEffect(() => {
     dispatch(fetchProductAction(window.location.search));
     dispatch(fetchCategoryAction());
+    dispatch(getItemLength());
   }, [dispatch]);
   let category = useSelector((state) => state.product.category);
 
@@ -79,7 +84,7 @@ const ProductAdmin = () => {
     if (searchWord !== "") {
       url += `&search=${searchWord}`;
     }
-    if (sortChosen !== "None" || sortChosen !== "") {
+    if (sortChosen !== "None" && sortChosen !== "") {
       url += `&sortChosen=${sortChosen}`;
     }
     if (filterCategory || filterCategory > 0) {

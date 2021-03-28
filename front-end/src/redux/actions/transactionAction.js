@@ -92,9 +92,6 @@ export const userConfirmOrderAction = (transaction_invoice_number, user_id) => {
         user_id,
       });
 
-      await axios.post(`${api_url}/admin/create-report`, {
-        invoice: transaction_invoice_number,
-      });
       dispatch(fetchUserTransactionDetails(user_id));
     } catch (err) {
       dispatch({
@@ -136,7 +133,15 @@ export const adminFetchTransaction = (query) => {
       dispatch({
         type: "API_TRANSACTION_START",
       });
-      const response = await axios.get(`${api}/admin-get${query}`);
+
+      const token = localStorage.getItem("token");
+      const headers = {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      };
+
+      const response = await axios.get(`${api}/admin-get${query}`, headers);
 
       dispatch({
         type: "USER_FETCH_TRANSACTION",

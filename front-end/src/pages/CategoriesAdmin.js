@@ -17,6 +17,7 @@ import {
   editCategoryAction,
   fetchCategoryAction,
   fetchProductAction,
+  getItemLength,
 } from "../redux/actions";
 import {useDispatch, useSelector} from "react-redux";
 import ReactPaginate from "react-paginate";
@@ -30,8 +31,8 @@ const CategoriesAdmin = () => {
 
   useEffect(() => {
     dispatch(fetchCategoryAction(window.location.search));
+    dispatch(getItemLength());
   }, [dispatch]);
-
   const [perPage] = useState(10);
   const [page, setPage] = useState(0);
 

@@ -1,42 +1,40 @@
 import React, {useEffect, useState} from "react";
 import ReactPaginate from "react-paginate";
 import {useDispatch, useSelector} from "react-redux";
-import {adminFetchTransaction, changeOrderStatusAction} from "../redux/actions";
-import {TransactionModal} from "../components/TransactionModal";
-import {ModalPayment} from "../components/ModalPayment";
+import {
+  adminFetchTransaction,
+  changeOrderStatusAction,
+  getItemLength,
+} from "../redux/actions";
+import {Transactions} from "../components/Transactions";
 import {api_url} from "../helpers";
 import capsules from "../assets/icons/pill2.png";
 import {Link, useHistory} from "react-router-dom";
 import Swal from "sweetalert2";
 
 export const TransactionAdmin = (props) => {
-  console.log(props.location.search);
   const history = useHistory();
 
   //Pagination
   const [perPage] = useState(5);
   const [modal, setModal] = useState(false);
-  const [modal2, setModal2] = useState(false);
 
   const dispatch = useDispatch();
   const [value, setValue] = useState({});
   const {transaction_list} = useSelector((state) => state.transaction);
   const {lengths} = useSelector((state) => state.admin);
 
-  useEffect(() => {
-    adminFetchTransaction();
-  }, []);
-
   const [pageCount, setPageCount] = useState(
     Math.ceil(lengths.transactions / perPage)
   );
   useEffect(() => {
+    dispatch(getItemLength());
     dispatch(adminFetchTransaction(props.location.search));
   }, [dispatch, props.location.search]);
 
   const data = transaction_list;
   useEffect(() => {
-    setPageCount(Math.ceil(lengths.transactions / perPage));
+    setPageCount(lengths.transactions / perPage);
   }, [perPage, transaction_list]);
 
   const handlePageClick = (e) => {
@@ -47,7 +45,6 @@ export const TransactionAdmin = (props) => {
     );
   };
   const toggle = () => setModal(!modal);
-  const toggle2 = () => setModal2(!modal2);
   const handleButton = (val) => {
     setValue(val);
     toggle();
@@ -116,7 +113,7 @@ export const TransactionAdmin = (props) => {
                           {Math.ceil(
                             val.data[0].Product.product_price /
                               val.data[0].Product.product_vol
-                          )}
+                          ).toLocaleString()}
                         </span>
                       </span>
 
@@ -142,7 +139,7 @@ export const TransactionAdmin = (props) => {
                           {Math.ceil(
                             val.data[0].Product.product_price /
                               val.data[0].Product.product_vol
-                          )}
+                          ).toLocaleString()}
                         </span>
                       </span>
                     </div>
@@ -153,7 +150,7 @@ export const TransactionAdmin = (props) => {
                   <div className="ml-5 items-center content-center ">
                     <div className="font-normal">Total Price</div>
                     <div className="font-semibold text-lg">
-                      Rp {val.transaction_payment_details}
+                      Rp {val.transaction_payment_details.toLocaleString()}
                     </div>
                   </div>
                 </div>
@@ -162,15 +159,14 @@ export const TransactionAdmin = (props) => {
               <div className="font-semibold text-gray-700 rounded-xl shadow border p-10 space-y-2 flex justify-between">
                 {val.custom_data.length > 1 ? (
                   <div className="flex ">
-                    <img src={capsules} className="w-24 h-16" />
-                    {/* {val.custom_data[0].product_name} */}
+                    <img src={capsules} className="w-24 h-16" alt="" />
                     <div className="flex flex-col">
                       <div>Custom Product</div>
                       <span>
                         {val.custom_data[0].custom_product_qty} item(s){" "}
                         <span>
                           x Rp&nbsp;
-                          {val.custom_data[0].custom_product_price}
+                          {val.custom_data[0].custom_product_price.toLocaleString()}
                         </span>
                       </span>
                       <span>
@@ -180,15 +176,14 @@ export const TransactionAdmin = (props) => {
                   </div>
                 ) : (
                   <div className="flex ">
-                    <img src={capsules} className="w-24 h-16" />
-                    {/* {val.custom_data[0].product_name} */}
+                    <img src={capsules} className="w-24 h-16" alt="" />
                     <div className="flex flex-col">
                       <div>Custom Product</div>
                       <span>
                         {val.custom_data[0].custom_product_qty} item(s){" "}
                         <span>
                           x Rp&nbsp;
-                          {val.custom_data[0].custom_product_price}
+                          {val.custom_data[0].custom_product_price.toLocaleString()}
                         </span>
                       </span>
                     </div>
@@ -198,7 +193,7 @@ export const TransactionAdmin = (props) => {
                   <div className="ml-5 items-center content-center">
                     <div className="font-normal">Total Price</div>
                     <div className="font-semibold text-lg">
-                      Rp {val.transaction_payment_details}
+                      Rp {val.transaction_payment_details.toLocaleString()}
                     </div>
                   </div>
                 </div>
@@ -289,12 +284,7 @@ export const TransactionAdmin = (props) => {
           </div>
         ) : null}
 
-        <TransactionModal showModal={modal} toggle={toggle} data={value} />
-        <ModalPayment
-          showModal={modal2}
-          toggle={toggle2}
-          // transaction_invoice_number={invNumber}
-        />
+        <Transactions showModal={modal} toggle={toggle} data={value} />
       </div>
     </div>
   );

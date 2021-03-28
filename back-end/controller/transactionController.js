@@ -9,6 +9,7 @@ const {
   Payment_Images,
   Admin_Notif,
   Finance,
+  User,
 } = require("../models");
 const pify = require("pify");
 const {uploader} = require("../handlers");
@@ -339,6 +340,7 @@ module.exports = {
             "order_status_id",
             "payment_method_id",
             "user_address",
+            "user_id",
           ],
           include: [
             {
@@ -347,6 +349,7 @@ module.exports = {
                 exclude: ["createdAt", "updatedAt", "order_status_id"],
               },
             },
+            {model: User, attributes: ["user_username", "is_banned"]},
           ],
         });
       } else {
@@ -362,6 +365,7 @@ module.exports = {
             "order_status_id",
             "payment_method_id",
             "user_address",
+            "user_id",
           ],
           include: [
             {
@@ -370,6 +374,7 @@ module.exports = {
                 exclude: ["createdAt", "updatedAt", "order_status_id"],
               },
             },
+            {model: User, attributes: ["user_username", "is_banned"]},
           ],
         });
       }

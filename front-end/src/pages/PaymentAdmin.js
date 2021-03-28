@@ -2,7 +2,11 @@ import React, {useEffect, useState} from "react";
 import ImagesCard from "../components/ImagesCard";
 import ReactPaginate from "react-paginate";
 import {useDispatch, useSelector} from "react-redux";
-import {adminFetchTransaction, fetchPaymentProofAction} from "../redux/actions";
+import {
+  adminFetchTransaction,
+  fetchPaymentProofAction,
+  getItemLength,
+} from "../redux/actions";
 import {
   Button,
   FormControl,
@@ -19,6 +23,7 @@ const PaymentAdmin = () => {
 
   useEffect(() => {
     dispatch(adminFetchTransaction());
+    dispatch(getItemLength());
     dispatch(fetchPaymentProofAction(window.location.search));
   }, [dispatch]);
 

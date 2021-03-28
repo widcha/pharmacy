@@ -52,21 +52,21 @@ const AdminUserData = () => {
       Swal.fire({
         icon: "error",
         title: "Oops...",
-        text: "You can't banned an admin!",
+        text: "You can't suspend admin!",
       });
     } else {
       Swal.fire({
-        title: `Are you sure to ban ${name}?`,
+        title: `Are you sure to suspend ${name}?`,
         icon: "warning",
         showCancelButton: true,
         confirmButtonColor: "#3085d6",
         cancelButtonColor: "#d33",
-        confirmButtonText: "Ban this user!",
+        confirmButtonText: "Suspend this user!",
       }).then((result) => {
         if (result.isConfirmed) {
           dispatch(banUserAction({user_id: id}));
           dispatch(fetchUserData(window.location.search));
-          Swal.fire("Banned!", "This user is now banned.", "success");
+          Swal.fire("Suspended!", "This user is now suspended.", "success");
         }
       });
     }
@@ -78,12 +78,12 @@ const AdminUserData = () => {
           <div class="w-full overflow-x-auto">
             <table class="w-full whitespace-no-wrap">
               <thead>
-                <tr class="text-lg font-semibold tracking-wide text-left text-gray-500 uppercase border-b dark:border-gray-700 bg-gray-50 dark:text-gray-400 dark:bg-gray-800">
-                  <th class="px-10 py-6">Client</th>
-                  <th class="pl-10 px-10 py-6">Verified</th>
-                  <th class="px-8 py-6">Status</th>
-                  <th class="px-10 py-6">Role</th>
-                  <th class="pl-12 px-10 py-6">Ban</th>
+                <tr class="text-sm font-semibold tracking-wide text-left text-gray-500 uppercase border-b dark:border-gray-700 bg-gray-50 dark:text-gray-400 dark:bg-gray-800">
+                  <th class="px-8 py-3">Client</th>
+                  <th class="pl-12 px-8 py-3">Verified</th>
+                  <th class="pl-10 px-6 py-3">Status</th>
+                  <th class="pl-10 px-8 py-3">Role</th>
+                  <th class="px-2 py-3">Account Status</th>
                 </tr>
               </thead>
               <tbody class="bg-white divide-y dark:divide-gray-700 dark:bg-gray-800">
@@ -138,7 +138,7 @@ const AdminUserData = () => {
                               </div>
                             </div>
                           </td>
-                          <td class="px-10 py-5 text-xs">
+                          <td class="px-6 py-5 text-xs">
                             <Button
                               style={{
                                 outline: 0,
@@ -154,7 +154,7 @@ const AdminUserData = () => {
                                 })
                               }
                             >
-                              Ban
+                              Suspend
                             </Button>
                           </td>
                         </tr>
@@ -218,7 +218,7 @@ const AdminUserData = () => {
           <Button style={{outline: 0}}>Back</Button>
         </Link>
       </div>
-      <div className="pl-28 pt-5">{userInfo ? tableUserData() : null}</div>
+      <div className="pl-12 pt-5">{userInfo ? tableUserData() : null}</div>
     </div>
   );
 };

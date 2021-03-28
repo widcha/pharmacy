@@ -137,25 +137,18 @@ const checkEmail = async (req, res, next) => {
 //ADMIN MIDDLEWARE
 const checkAdminToken = async (req, res, next) => {
   try {
-    const {token} = req.body;
-    jwt.verify(token, "pharmaKey", (err, decoded) => {
-      if (err) {
-        return res.status(401).send({
-          message: err.message,
-          status: "Invalid Token",
-        });
-      } else {
-        req.user = decoded;
-        const {user_role_id} = req.user;
-        if (user_role_id === 1) {
-          return next();
-        } else {
+    if (req.method !== "OPTIONS") {
+      jwt.verify(req.token, "adminSpcPharmaKey", (err, decoded) => {
+        if (err) {
           return res.status(401).send({
-            message: "Only Admin Has Access To This Page",
+            message: err.message,
+            status: "Unauthorized",
           });
         }
-      }
-    });
+        req.user = decoded;
+        next();
+      });
+    }
   } catch (err) {
     return res.status(500).send(err.message);
   }
