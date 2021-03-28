@@ -125,12 +125,44 @@ export const getItemLength = () => {
   };
 };
 
-export const getFinancialReports = () => {
+export const getFinancialReports = (query) => {
   return async (dispatch) => {
     try {
       dispatch({type: "FETCH_DATA_START"});
-      const response = await axios.get(`${url}/finance-report`);
+
+      const response = await axios.get(
+        `${url}/finance-report${query ? query : ""}`
+      );
       dispatch({type: "FETCH_FINREP_SUCCESS", payload: response.data});
+    } catch (err) {
+      dispatch({type: "FETCH_DATA_FAILED", payload: err.message});
+    }
+  };
+};
+
+export const fetchUserData = (query) => {
+  return async (dispatch) => {
+    try {
+      dispatch({type: "FETCH_DATA_START"});
+      if (query) {
+        const response = await axios.get(
+          `${url}/users-data${query ? query : ""}`
+        );
+        console.log("MASUK");
+        dispatch({type: "FETCH_USER_INFO_SUCCESS", payload: response.data});
+      }
+    } catch (err) {
+      dispatch({type: "FETCH_DATA_FAILED", payload: err.message});
+    }
+  };
+};
+
+export const banUserAction = ({user_id}) => {
+  return async (dispatch) => {
+    try {
+      dispatch({type: "FETCH_DATA_START"});
+      await axios.patch(`${url}/ban-user`, {user_id});
+      dispatch(fetchUserData());
     } catch (err) {
       dispatch({type: "FETCH_DATA_FAILED", payload: err.message});
     }

@@ -11,6 +11,8 @@ const {
     getNotifAdmin,
     getAllLength,
     getFinanceReport,
+    getAllUserInfo,
+    changeUserBannedStatus,
   },
 } = require("../controller");
 const express = require("express");
@@ -27,11 +29,13 @@ router.patch("/change/recipe/:id", editRecipeStatus);
 router.get("/get/payment-proof", getPaymentImages);
 router.patch("/change/transaction", changeTransactionStatus);
 
+router.get("/users-data", getAllUserInfo);
 router.post("/create-report", createReport);
 router.get("/get-notif", getNotifAdmin);
 router.get("/get-all-length", getAllLength);
 router.get("/finance-report", getFinanceReport);
 
+router.patch("/ban-user", changeUserBannedStatus);
 // PUNYA ADHI
 router.post("/addPayment", addPaymentMethods);
 router.post("/addOrderStatus", addOrderStatus);

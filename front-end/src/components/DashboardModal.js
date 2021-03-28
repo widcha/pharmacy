@@ -11,13 +11,13 @@ const DashboardModal = ({toggle, openmodal, data}) => {
     <>
       {showModal ? (
         <>
-          <div className="mt-10 h-64 justify-center items-center fixed inset-0 z-50 outline-none focus:outline-none">
+          <div className="mt-10 h-24 justify-center items-center fixed inset-0 z-50 outline-none focus:outline-none">
             <div className=" overflow-y-auto relative w-auto my-6 mx-auto max-w-3xl">
               {/*content*/}
               <div className="border-0 rounded-lg shadow-lg relative flex flex-col w-full bg-white outline-none focus:outline-none">
                 {/*header*/}
-                <div className="flex items-start justify-between p-5 border-b border-solid border-blueGray-200 rounded-t">
-                  <h3 className="text-3xl font-bold">
+                <div className="flex items-start justify-between p-3 border-b border-solid border-blueGray-200 rounded-t">
+                  <h3 className="text-2xl font-bold">
                     Top 3 Best Seller Products
                   </h3>
                   <button
@@ -55,7 +55,7 @@ const DashboardModal = ({toggle, openmodal, data}) => {
                                     </div>
                                   </div>
                                 </td>
-                                <td class="px-4 py-3 text-xs">
+                                <td class="py-3 text-xs">
                                   {/* <td class="px-4 py-3"> */}
                                   <div class="flex items-center text-sm">
                                     <div>
@@ -63,23 +63,24 @@ const DashboardModal = ({toggle, openmodal, data}) => {
                                         <img
                                           src={`${api_url}${val.Product.product_image_path}`}
                                           alt=""
-                                          width="70px"
+                                          width="80px"
                                         />
                                       </p>
                                     </div>
                                   </div>
                                   {/* </td> */}
                                 </td>
-                                <td class="px-4 py-3 text-xs">
-                                  <td class="px-4 py-3">
+                                <td class="py-3 text-xs">
+                                  <td class="px-1 py-3">
                                     <div class="flex items-center text-sm">
                                       <div className="font-semibold">
-                                        {val.Product.product_price}
+                                        Rp{" "}
+                                        {val.Product.product_price.toLocaleString()}
                                       </div>
                                     </div>
                                   </td>
                                 </td>
-                                <td class="px-4 py-3 text-xs">
+                                <td class="pl-3 py-3 text-xs">
                                   <td class="px-4 py-3">
                                     <div class="flex items-center text-sm">
                                       <div className="font-semibold">
@@ -88,7 +89,7 @@ const DashboardModal = ({toggle, openmodal, data}) => {
                                     </div>
                                   </td>
                                 </td>
-                                <td class="px-4 py-3 text-xs">
+                                <td class="pl-3 py-3 text-xs">
                                   <td class="px-4 py-3">
                                     <div class="flex items-center text-sm">
                                       <div className="font-semibold">
@@ -105,7 +106,7 @@ const DashboardModal = ({toggle, openmodal, data}) => {
                   </table>
                 </div>
                 {/*footer*/}
-                <div className="flex items-center justify-end p-6 border-t border-solid border-blueGray-200 rounded-b">
+                <div className="flex items-center justify-end border-t border-solid border-blueGray-200 rounded-b">
                   <button
                     className="text-red-500 background-transparent font-bold uppercase px-6 py-2 text-sm outline-none focus:outline-none mr-1 mb-1 ease-linear transition-all duration-150"
                     type="button"

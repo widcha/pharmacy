@@ -428,7 +428,15 @@ module.exports = {
   },
   getFinanceReport: async (req, res) => {
     try {
-      const response1 = await Finance.findAll();
+      const {page, limit} = req.query;
+      //pagination
+      const theLimit = limit ? parseInt(limit) : 10;
+      const offsetData = (page ? parseInt(page) - 1 : 0) * theLimit;
+
+      const response1 = await Finance.findAll({
+        offset: offsetData,
+        limit: theLimit,
+      });
       let response2 = await Finance.findAll({
         attributes: [
           [
@@ -473,6 +481,47 @@ module.exports = {
       return res
         .status(200)
         .send([{...response2}, response1, getUser, bestData]);
+    } catch (err) {
+      return res.send(err.message);
+    }
+  },
+  getAllUserInfo: async (req, res) => {
+    try {
+      const {page, limit, search} = req.query;
+      //pagination
+      const theLimit = limit ? parseInt(limit) : 10;
+      const offsetData = parseInt((page ? page : 1) - 1) * theLimit;
+
+      const response = await User.findAll({
+        where: {user_username: {[Op.substring]: `${search ? search : ""}`}},
+        offset: offsetData,
+        limit: theLimit,
+        attributes: {
+          exclude: [
+            "user_password",
+            "user_security_question",
+            "createdAt",
+            "updatedAt",
+          ],
+        },
+      });
+
+      return res.status(200).send(response);
+    } catch (err) {
+      return res.send(err);
+    }
+  },
+  changeUserBannedStatus: async (req, res) => {
+    try {
+      const {user_id} = req.body;
+      await User.update(
+        {is_banned: 1},
+        {
+          where: {user_id: user_id},
+        }
+      );
+
+      return res.status(200).send({message: "This user successfully banned"});
     } catch (err) {
       return res.send(err.message);
     }

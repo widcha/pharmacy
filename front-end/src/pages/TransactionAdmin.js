@@ -65,7 +65,6 @@ export const TransactionAdmin = (props) => {
         confirmButtonText: "Yes",
       }).then((result) => {
         if (result.isConfirmed) {
-          Swal.fire("Order Sent!", "", "success");
           dispatch(
             changeOrderStatusAction({
               id: invoice,
@@ -73,7 +72,8 @@ export const TransactionAdmin = (props) => {
               reason: `Transaction ${invoice} sent by Admin`,
             })
           );
-          dispatch(adminFetchTransaction());
+          history.push(`/transactions${props.location.search}`);
+          Swal.fire("Order Sent!", "", "success");
         }
       });
     }
