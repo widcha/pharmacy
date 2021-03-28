@@ -5,8 +5,12 @@ import {fetchStockFlowByIdAction, getItemLength} from "../redux/actions";
 import ReactPaginate from "react-paginate";
 import {
   Button,
+  FormControl,
+  InputLabel,
   makeStyles,
+  MenuItem,
   Paper,
+  Select,
   Table,
   TableBody,
   TableCell,
@@ -14,12 +18,12 @@ import {
   TableHead,
   TableRow,
 } from "@material-ui/core";
-import {Link} from "react-router-dom";
+import {Link, useHistory} from "react-router-dom";
 
 const ProductFlowDetail = () => {
   const dispatch = useDispatch();
   const [productID, setProductID] = useState(0);
-
+  const history = useHistory();
   const useStyles = makeStyles({
     table: {
       minWidth: 650,
@@ -27,35 +31,57 @@ const ProductFlowDetail = () => {
   });
   const classes = useStyles();
 
+  const [quer, setQuer] = useState("");
+
   useEffect(() => {
     const que = queryString.parse(window.location.search)["?id"];
+    const theQue = window.location.search.split("=")[1];
     setProductID(que);
+    setQuer(theQue);
   }, []);
+
+  const [open, setOpen] = useState(false);
+
+  const handleOpen = () => {
+    setOpen(true);
+  };
+  const handleClose = () => {
+    setOpen(false);
+  };
 
   useEffect(() => {
     dispatch(getItemLength());
-    dispatch(fetchStockFlowByIdAction(productID));
+    dispatch(fetchStockFlowByIdAction({id: productID, quer}));
   }, [dispatch, productID]);
-  const {material_flow, loading} = useSelector((state) => state.admin);
+  const {material_flow, loading, lengths} = useSelector((state) => state.admin);
 
   const [perPage] = useState(10);
   const [page, setPage] = useState(0);
-  const from = page * perPage;
-  const to = (page + 1) * perPage;
-  const [pageCount, setPageCount] = useState(material_flow.length / perPage);
+  const [pageCount, setPageCount] = useState(lengths.flows / perPage);
 
   useEffect(() => {
-    setPageCount(material_flow.length / perPage);
-  }, [perPage, material_flow]);
+    setPageCount(lengths.flows / perPage);
+  }, [perPage]);
+
+  const doSort = (dataSort) => {
+    if (dataSort) {
+      const url = `?id=${productID}`;
+      const quer = `page=1&limit=10&sort=${dataSort}`;
+      history.push(`/product-flow-detail${url}&${quer}`);
+      dispatch(fetchStockFlowByIdAction({id: productID, quer}));
+    }
+  };
 
   const handlePageClick = (e) => {
     const selectedPage = e.selected;
     setPage(selectedPage);
+    const url = `?id=${productID}`;
+    const quer = `&page=${selectedPage + 1}&limit=10`;
+    history.push(`/product-flow-detail${url}${quer}`);
+    dispatch(fetchStockFlowByIdAction({id: productID, quer}));
   };
 
-  const data = material_flow.filter((val, index) => {
-    return index >= from && index < to;
-  });
+  const data = material_flow;
 
   const renderRow = () => {
     if (data) {
@@ -111,17 +137,40 @@ const ProductFlowDetail = () => {
   return (
     <div style={{marginTop: "30px"}}>
       <div style={{marginTop: "15px"}}>
-        <Link to="/product-flow?page=1&limit=10">
-          <Button
-            style={{
-              outline: 0,
-              backgroundColor: "#0492C2",
-              color: "whitesmoke",
-            }}
-          >
-            Back
-          </Button>
-        </Link>
+        <div className="flex justify-between">
+          <Link to="/product-flow?page=1&limit=10">
+            <Button
+              style={{
+                outline: 0,
+                backgroundColor: "#0492C2",
+                color: "whitesmoke",
+              }}
+            >
+              Back
+            </Button>
+          </Link>
+          <div>
+            <FormControl style={{width: "175px"}}>
+              <InputLabel id="demo-controlled-open-select-label">
+                Sort By Date
+              </InputLabel>
+              <Select
+                labelId="demo-controlled-open-select-label"
+                id="category"
+                open={open}
+                onClose={handleClose}
+                onOpen={handleOpen}
+              >
+                <MenuItem value="OLD" onClick={() => doSort("OLD")}>
+                  Latest
+                </MenuItem>
+                <MenuItem value="NEW" onClick={() => doSort("NEW")}>
+                  Newest
+                </MenuItem>
+              </Select>
+            </FormControl>
+          </div>
+        </div>
         <div className="flex flex-col mx-2">
           <div className="flex-row align-baseline">
             <ReactPaginate

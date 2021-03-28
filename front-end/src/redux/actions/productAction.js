@@ -149,7 +149,7 @@ export const addProductAction = ({
       };
 
       await axios.post(`${linkk}`, formData, headers);
-      dispatch(fetchProductAction());
+      dispatch(fetchProductAction(`?page=1&limit=5`));
     } catch (err) {
       dispatch({type: "FETCH_PRODUCT_FAILED", payload: err});
     }
@@ -173,7 +173,7 @@ export const addStock = ({id, changeStock}) => {
         },
         headers
       );
-      dispatch(fetchProductAction());
+      dispatch(fetchProductAction(`?page=1&limit=5`));
     } catch (err) {
       dispatch({type: "FETCH_PRODUCT_FAILED", payload: err});
     }
@@ -240,7 +240,7 @@ export const editProductAction = ({
         },
       };
       await axios.patch(`${linkk}/${idProd}`, formData, headers);
-      dispatch(fetchProductAction());
+      dispatch(fetchProductAction(`?page=1&limit=5`));
     } catch (err) {
       dispatch({type: "FETCH_PRODUCT_FAILED", payload: err});
     }
@@ -287,7 +287,7 @@ export const deleteProductAction = (id) => {
         },
         headers
       );
-      dispatch(fetchProductAction());
+      dispatch(fetchProductAction(`?page=1&limit=5`));
     } catch (err) {
       dispatch({type: "FETCH_PRODUCT_FAILED", payload: err});
     }

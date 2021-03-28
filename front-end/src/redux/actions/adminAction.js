@@ -148,7 +148,7 @@ export const changeOrderStatusAction = ({id, order_status_id, reason}) => {
   };
 };
 
-export const fetchStockFlowByIdAction = (id) => {
+export const fetchStockFlowByIdAction = (query) => {
   return async (dispatch) => {
     try {
       dispatch({type: "FETCH_DATA_START"});
@@ -159,8 +159,11 @@ export const fetchStockFlowByIdAction = (id) => {
           Authorization: `Bearer ${token}`,
         },
       };
-
-      const response = await axios.get(`${url}/get/flow/${id}`, headers);
+      const {id, quer} = query;
+      const response = await axios.get(
+        `${url}/get/flow/${id}?${quer}`,
+        headers
+      );
       dispatch({type: "FETCH_FLOW_SUCCESS", payload: response.data});
     } catch (err) {
       dispatch({type: "FETCH_DATA_FAILED", payload: err.message});

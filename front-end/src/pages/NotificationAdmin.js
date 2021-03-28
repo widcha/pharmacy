@@ -34,6 +34,7 @@ const AllNotifAdmin = () => {
     if (id) {
       dispatch(changeNotifAdmin({id}));
       history.push(`/notifications${window.location.search}`);
+      dispatch(fetchNotifAdmin(window.location.search));
     }
   };
   const tableNotif = () => {

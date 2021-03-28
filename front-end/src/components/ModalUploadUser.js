@@ -1,13 +1,13 @@
-import React, { useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
+import React, {useState} from "react";
+import {useDispatch, useSelector} from "react-redux";
 import Swal from "sweetalert2";
-import { uploadRecipesAction } from "../redux/actions";
+import {uploadRecipesAction} from "../redux/actions";
 
-const ModalUploadUser = ({ showModal, toggle }) => {
+const ModalUploadUser = ({showModal, toggle}) => {
   const [pictName, setPictName] = useState("");
   const [pict, setPict] = useState();
   const dispatch = useDispatch();
-  const { user_id } = useSelector((state) => state.user);
+  const {user_id} = useSelector((state) => state.user);
 
   const uploadImg = (e) => {
     if (e.target.files[0]) {
@@ -19,13 +19,13 @@ const ModalUploadUser = ({ showModal, toggle }) => {
   const uploadBtn = async () => {
     console.log("masuk");
     if (pictName) {
-      await dispatch(uploadRecipesAction({ user_id, pict }));
       Swal.fire({
         icon: "success",
         title: "Prescription Uploaded",
         text:
           "Please wait until the admin input the prescription into your cart and check the notification periodically.",
       });
+      await dispatch(uploadRecipesAction({user_id, pict}));
     } else {
       Swal.fire({
         icon: "error",

@@ -55,7 +55,6 @@ const ProductFlowAdmin = () => {
   const [selectProduct, setSelectProduct] = useState(false);
 
   const data = material_flow;
-
   const secondData = product_list;
 
   const [open, setOpen] = useState(false);
@@ -129,7 +128,9 @@ const ProductFlowAdmin = () => {
             </TableCell>
             <TableCell align="center">{row.product_stock}</TableCell>
             <TableCell align="center">
-              <Link to={`/product-flow-detail?id=${row.product_id}`}>
+              <Link
+                to={`/product-flow-detail?id=${row.product_id}&page=1&limit=10`}
+              >
                 <Button
                   style={{
                     backgroundColor: "#2832C2",
