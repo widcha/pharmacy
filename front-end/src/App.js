@@ -1,11 +1,11 @@
 import "./App.css";
-import React, {useEffect} from "react";
-import {Route} from "react-router-dom";
-import {useDispatch, useSelector} from "react-redux";
-import {nullifyErrorAction} from "./redux/actions";
+import React, { useEffect } from "react";
+import { Route } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
+import { fetchNotifUser, nullifyErrorAction } from "./redux/actions";
 import SideBar from "./components/SideBar";
-import {Nav} from "./components/Navbar";
-import {NavAdmin} from "./components/NavbarAdmin";
+import { Nav } from "./components/Navbar";
+import { NavAdmin } from "./components/NavbarAdmin";
 import {
   HomeAdmin,
   ProductAdmin,
@@ -32,15 +32,17 @@ import {
   AdminUserData,
   TransactionAdmin,
 } from "./pages";
-import {ToastContainer, Zoom} from "react-toastify";
+import { ToastContainer, Zoom } from "react-toastify";
+import { Footer } from "./components/Footer";
 
 function App() {
   const dispatch = useDispatch();
-  const {user_role_id} = useSelector((state) => state.user);
+  const { user_role_id, user_id } = useSelector((state) => state.user);
 
   useEffect(() => {
     dispatch(nullifyErrorAction());
-  }, [dispatch]);
+    dispatch(fetchNotifUser(user_id));
+  }, [dispatch, user_id]);
 
   if (user_role_id === 1) {
     return (
@@ -61,11 +63,11 @@ function App() {
         <div className="nav">
           <NavAdmin />
         </div>
-        <div className="sidebar" style={{marginTop: "56px"}}>
+        <div className="sidebar" style={{ marginTop: "56px" }}>
           <SideBar />
         </div>
         <div
-          style={{overflowY: "auto", marginLeft: "210px", marginTop: "45px"}}
+          style={{ overflowY: "auto", marginLeft: "210px", marginTop: "45px" }}
         >
           <Route path="/" exact component={HomeAdmin} />
           <Route path="/product" component={ProductAdmin} />
@@ -115,6 +117,7 @@ function App() {
           component={PurchaseHistory}
         />
         <Route exact path="/user/transaction" component={Transaction} />
+        <Footer />
       </div>
     );
   }

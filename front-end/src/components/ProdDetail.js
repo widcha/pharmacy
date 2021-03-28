@@ -3,7 +3,7 @@ import { BreadCrumbs } from "./BreadCrumbs";
 import { useDispatch, useSelector } from "react-redux";
 import { userAddProductToCartAction } from "../redux/actions";
 import Swal from "sweetalert2";
-
+import { debounce } from "lodash";
 export const ProdDetail = ({
 	img,
 	name,
@@ -20,7 +20,7 @@ export const ProdDetail = ({
 	const { user_id } = useSelector((state) => state.user);
 	const [qty, setQty] = useState(1);
 
-	const handleAddToCart = () => {
+	const handleAddToCart = debounce(() => {
 		if (user_id > 0) {
 			dispatch(
 				userAddProductToCartAction({
@@ -36,7 +36,7 @@ export const ProdDetail = ({
 				title: "You need to login first",
 			});
 		}
-	};
+	}, 500);
 
 	return (
 		<section className="text-gray-600 body-font overflow-hidden mt-12 mx-auto">
