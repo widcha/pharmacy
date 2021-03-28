@@ -122,9 +122,12 @@ const ProductAdmin = () => {
 
   const handlePageClick = (e) => {
     const selectedPage = e.selected;
-    const url = `?page=${selectedPage + 1}&limit=5`;
-    history.push(`/product${url}`);
-    dispatch(fetchProductAction(url));
+    let newUrl = window.location.search.split("limit=5")[1];
+    if (newUrl) {
+      const url = `?page=${selectedPage + 1}&limit=5`;
+      history.push(`/product${url}${newUrl}`);
+      dispatch(fetchProductAction(url + (newUrl ? newUrl : "")));
+    }
   };
 
   const renderAll = () => {
