@@ -6,7 +6,7 @@ import { CircularProgress } from "@material-ui/core";
 
 export const ProductDetail = (props) => {
 	const dispatch = useDispatch();
-	const { product } = useSelector((state) => state.product);
+	const { product, loading } = useSelector((state) => state.product);
 	useEffect(() => {
 		const id = props.location.search.split("=")[1];
 		dispatch(fetchProductByIdAction(id));
@@ -19,20 +19,28 @@ export const ProductDetail = (props) => {
 		);
 	}
 	return (
-		<div className="flex flex-auto flex-col items-center">
-			<div>
-				<ProdDetail
-					img={product.product_image_path}
-					name={product.product_name}
-					desc={product.product_desc}
-					price={product.product_price}
-					pricePerGram={product.product_price / product.product_vol}
-					stock={product.product_stock_total}
-					vol={product.product_vol}
-					category={product.Product_Category.product_category}
-					idx={product.product_id}
-				/>
-			</div>
-		</div>
+		<>
+			{loading ? (
+				<div className="flex h-screen m-auto">
+					<CircularProgress />
+				</div>
+			) : (
+				<div className="flex flex-auto flex-col items-center">
+					<div>
+						<ProdDetail
+							img={product.product_image_path}
+							name={product.product_name}
+							desc={product.product_desc}
+							price={product.product_price}
+							pricePerGram={product.product_price / product.product_vol}
+							stock={product.product_stock_total}
+							vol={product.product_vol}
+							category={product.Product_Category.product_category}
+							idx={product.product_id}
+						/>
+					</div>
+				</div>
+			)}
+		</>
 	);
 };

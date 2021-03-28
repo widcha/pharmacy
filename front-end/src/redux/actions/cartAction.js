@@ -178,7 +178,7 @@ export const userCheckoutAction = (user_id, data, total, address) => {
 	return async (dispatch) => {
 		try {
 			Swal.fire({
-				title: "Process your order?",
+				title: "Proceed with your order?",
 				icon: "info",
 				showCancelButton: true,
 				confirmButtonColor: "#3085d6",
@@ -206,8 +206,7 @@ export const userCheckoutAction = (user_id, data, total, address) => {
 					dispatch(fetchUserCartByIdAction(user_id));
 					Swal.fire(
 						"Thank You For Your Purchase!",
-						"We'll notify you an order confirmation with details",
-						"success"
+						"Invoices are sent via email."
 					);
 				}
 			});

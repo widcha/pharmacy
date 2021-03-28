@@ -17,7 +17,7 @@ import {
 import { Link } from "react-router-dom";
 export const Cart = () => {
 	const dispatch = useDispatch();
-	const { cart_list, subTotal, tax, total } = useSelector(
+	const { cart_list, subTotal, tax, total, available_products } = useSelector(
 		(state) => state.cart
 	);
 	const { user_id } = useSelector((state) => state.user);

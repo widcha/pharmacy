@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { Redirect } from "react-router";
+import { Link } from "react-router-dom";
 import bca from "../assets/icons/bca.svg";
 import bni from "../assets/icons/bni.svg";
 import bri from "../assets/icons/bri.svg";
@@ -17,37 +18,74 @@ export const CheckOut = () => {
 	const { subTotal, tax, total, checkout_ready } = useSelector(
 		(state) => state.cart
 	);
+	const [addressAdded, setAddressAdded] = useState(false);
 	const renderAddresses = () => {
-		return user_address.map((x) => {
+		if (user_address.length === 0) {
 			return (
-				<div class="container w-72 flex flex-col space-y-4 justify-center items-center mr-2 focus:outline-black">
-					<div class="bg-white w-full flex items-center p-2 rounded-xl shadow border">
-						<div class="flex items-center space-x-4"></div>
-						<input
-							type="radio"
-							className="form-radio h-5 w-5 text-gray-600"
-							name="address"
-							onClick={() => setSelectedAddress(x.user_address)}
-							required
-						/>
-						<div class="flex-grow p-3">
-							<div class="font-semibold text-gray-700">{x.user_address}</div>
-							<div class="text-sm text-gray-500">To: {user_username}</div>
+				<Link
+					className={
+						addressAdded
+							? "flex text-green-500 animate-bounce mt-5"
+							: "flex text-green-500 mt-5"
+					}
+					to="/user/address"
+					onClick={() => setAddressAdded(true)}
+				>
+					<svg
+						class="w-6 h-6"
+						fill="currentColor"
+						viewBox="0 0 20 20"
+						xmlns="http://www.w3.org/2000/svg"
+					>
+						<path
+							fill-rule="evenodd"
+							d="M10 5a1 1 0 011 1v3h3a1 1 0 110 2h-3v3a1 1 0 11-2 0v-3H6a1 1 0 110-2h3V6a1 1 0 011-1z"
+							clip-rule="evenodd"
+						></path>
+					</svg>
+					<p>Add address</p>s{" "}
+				</Link>
+			);
+		} else {
+			return user_address.map((x) => {
+				return (
+					<div class="container w-72 flex flex-col space-y-4 justify-center items-center mr-2 focus:outline-black">
+						<div class="bg-white w-full flex items-center p-2 rounded-xl shadow border">
+							<div class="flex items-center space-x-4"></div>
+							<input
+								type="radio"
+								className="form-radio h-5 w-5 text-gray-600"
+								name="address"
+								onClick={() => setSelectedAddress(x.user_address)}
+								required
+							/>
+							<div class="flex-grow p-3">
+								<div class="font-semibold text-gray-700">{x.user_address}</div>
+								<div class="text-sm text-gray-500">To: {user_username}</div>
+							</div>
 						</div>
 					</div>
-				</div>
-			);
-		});
+				);
+			});
+		}
 	};
 
 	const handleCheckout = (e) => {
 		e.preventDefault();
-		dispatch(
-			userCheckoutAction(user_id, available_products, total, selectedAddress)
-		);
+
+		if (user_address.length === 0) {
+			return setAddressAdded(true);
+		} else {
+			dispatch(
+				userCheckoutAction(user_id, available_products, total, selectedAddress)
+			);
+		}
 	};
 	if (!checkout_ready) {
 		return <Redirect to="/" />;
+	}
+	if (available_products.length === 0) {
+		return <Redirect to="/user/cart" />;
 	}
 	return (
 		<form
@@ -147,7 +185,7 @@ export const CheckOut = () => {
 							d="M527.9 32H48.1C21.5 32 0 53.5 0 80v352c0 26.5 21.5 48 48.1 48h479.8c26.6 0 48.1-21.5 48.1-48V80c0-26.5-21.5-48-48.1-48zM54.1 80h467.8c3.3 0 6 2.7 6 6v42H48.1V86c0-3.3 2.7-6 6-6zm467.8 352H54.1c-3.3 0-6-2.7-6-6V256h479.8v170c0 3.3-2.7 6-6 6zM192 332v40c0 6.6-5.4 12-12 12h-72c-6.6 0-12-5.4-12-12v-40c0-6.6 5.4-12 12-12h72c6.6 0 12 5.4 12 12zm192 0v40c0 6.6-5.4 12-12 12H236c-6.6 0-12-5.4-12-12v-40c0-6.6 5.4-12 12-12h136c6.6 0 12 5.4 12 12z"
 						/>
 					</svg>
-					<span className="ml-2 mt-5px">CONFIRM</span>
+					<span className="ml-2 mt-5px">CHECKOUT</span>
 				</button>
 			</div>
 		</form>

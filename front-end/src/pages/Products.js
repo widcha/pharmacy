@@ -13,6 +13,7 @@ import {
   sortProductAction,
 } from "../redux/actions/productAction";
 import {
+  CircularProgress,
   FormControl,
   InputLabel,
   makeStyles,
@@ -56,20 +57,28 @@ const Products = (props) => {
   const renderProduct = () => {
     return (
       <>
-        {data
-          ? data.map((val, index) => {
-              let price = val.product_price / val.product_vol;
-              return (
-                <CardProductUser
-                  name={val.product_name}
-                  price={val.product_price}
-                  pricePerGram={Math.ceil(price)}
-                  id={val.product_id}
-                  img={val.product_image_path}
-                />
-              );
-            })
-          : null}
+        {data ? (
+          data.map((val, index) => {
+            let price = val.product_price / val.product_vol;
+            return (
+              <>
+                {loading ? (
+                  <CircularProgress />
+                ) : (
+                  <CardProductUser
+                    name={val.product_name}
+                    price={val.product_price}
+                    pricePerGram={Math.ceil(price)}
+                    id={val.product_id}
+                    img={val.product_image_path}
+                  />
+                )}
+              </>
+            );
+          })
+        ) : (
+          <CircularProgress />
+        )}
       </>
     );
   };
@@ -135,12 +144,10 @@ const Products = (props) => {
             >
               All Products
             </label>
-            {loading ? <img src={speener} /> : renderCategories()}
+            {loading ? <CircularProgress /> : renderCategories()}
           </div>
           <div className="border-t-2 border-gray-300 w-max pt-5">
-            <label className="text-lg font-bold text-gray-800">
-              Filter By:
-            </label>
+            <label className="text-lg font-bold ">Filter By:</label>
 
             <PriceSlider
               max_price={product_price_highest}
@@ -152,7 +159,7 @@ const Products = (props) => {
           <div className="flex flex-row items-center justify-between w-full">
             <div className="ml-7 flex justify-center justify-items-center items-center mt-5">
               <FormControl className={classes.formControl}>
-                <InputLabel className="text-gray-800">SORT BY</InputLabel>
+                <InputLabel style={{ color: "black" }}>SORT BY</InputLabel>
                 <Select value={categorySelected} onChange={handleChange}>
                   <MenuItem value={"DESC"}>Newest</MenuItem>
                   <MenuItem value={"ASC"}>Latest</MenuItem>
@@ -176,7 +183,7 @@ const Products = (props) => {
             </div>
           </div>
           <div className="flex flex-wrap w-auto">
-            {loading ? null : renderProduct()}
+            {loading ? <CircularProgress /> : renderProduct()}
           </div>
         </div>
       </div>
