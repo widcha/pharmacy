@@ -1,11 +1,15 @@
 import "./App.css";
-import React, { useEffect } from "react";
-import { Route } from "react-router-dom";
-import { useDispatch, useSelector } from "react-redux";
-import { fetchNotifUser, nullifyErrorAction } from "./redux/actions";
+import React, {useEffect} from "react";
+import {Route} from "react-router-dom";
+import {useDispatch, useSelector} from "react-redux";
+import {
+  fetchNotifAdmin,
+  fetchNotifUser,
+  nullifyErrorAction,
+} from "./redux/actions";
 import SideBar from "./components/SideBar";
-import { Nav } from "./components/Navbar";
-import { NavAdmin } from "./components/NavbarAdmin";
+import {Nav} from "./components/Navbar";
+import {NavAdmin} from "./components/NavbarAdmin";
 import {
   HomeAdmin,
   ProductAdmin,
@@ -29,19 +33,22 @@ import {
   CustomAdmin,
   Transaction,
   PurchaseHistory,
-  NotificationAdmin,
+  AdminUserData,
   TransactionAdmin,
+  NotificationAdmin,
+  AllNotifAdmin,
 } from "./pages";
-import { ToastContainer, Zoom } from "react-toastify";
-import { Footer } from "./components/Footer";
+import {ToastContainer, Zoom} from "react-toastify";
+import {Footer} from "./components/Footer";
 
 function App() {
   const dispatch = useDispatch();
-  const { user_role_id, user_id } = useSelector((state) => state.user);
+  const {user_role_id, user_id} = useSelector((state) => state.user);
 
   useEffect(() => {
     dispatch(nullifyErrorAction());
     dispatch(fetchNotifUser(user_id));
+    dispatch(fetchNotifAdmin("?page=1&limit=10"));
   }, [dispatch, user_id]);
 
   if (user_role_id === 1) {
@@ -63,13 +70,13 @@ function App() {
         <div className="nav">
           <NavAdmin />
         </div>
-        <div className="sidebar" style={{ marginTop: "56px" }}>
+        <div className="sidebar" style={{marginTop: "56px"}}>
           <SideBar />
         </div>
         <div
-          style={{ overflowY: "auto", marginLeft: "210px", marginTop: "45px" }}
+          style={{overflowY: "auto", marginLeft: "210px", marginTop: "45px"}}
         >
-          <Route path="/" exact component={HomeAdmin} />
+          <Route path="/Dashboard" exact component={HomeAdmin} />
           <Route path="/product" component={ProductAdmin} />
           <Route path="/category" component={CategoriesAdmin} />
           <Route path="/recipe" component={RecipesAdmin} />
@@ -78,7 +85,9 @@ function App() {
           <Route path="/product-flow-detail" component={ProductFlowDetail} />
           <Route exact path="/custom-order" component={CustomAdmin} />
           <Route exact path="/transaction" component={TransactionAdmin} />
-          <Route exact path="/notifs" component={NotificationAdmin} />
+          <Route exact path="/users-data" component={AdminUserData} />
+          <Route exact path="/notifications" component={NotificationAdmin} />
+          <Route exact path="/all-notifications" component={AllNotifAdmin} />
         </div>
       </div>
     );

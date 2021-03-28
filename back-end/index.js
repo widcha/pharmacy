@@ -19,7 +19,7 @@ app.use(cors());
 app.use(bearerToken());
 app.use(express.static("public"));
 app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({ extended: true }));
+app.use(bodyParser.urlencoded({extended: true}));
 
 app.get("/", (req, res) => {
   return res.status(200).send("Commerce API");

@@ -3,14 +3,22 @@ import {api_url} from "../../helpers";
 
 const linkk = `${api_url}/product`;
 
-export const fetchCategoryAction = (a) => {
+export const fetchCategoryAction = (query) => {
   return async (dispatch) => {
     try {
+      dispatch({type: "FETCH_PRODUCT_START"});
+      const token = localStorage.getItem("token");
+      const headers = {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      };
       let response;
-      if (a) {
-        response = await axios.get(`${api_url}/category${a}`);
-      } else {
-        response = await axios.get(`${api_url}/category`);
+      if (query) {
+        response = await axios.get(
+          `${api_url}/category${query ? query : ""}`,
+          headers
+        );
       }
       dispatch({type: "FETCH_CATEGORY", payload: response.data});
     } catch (err) {
@@ -35,38 +43,15 @@ export const fetchProductAction = (data) => {
   return async (dispatch) => {
     try {
       dispatch({type: "FETCH_PRODUCT_START"});
+      const token = localStorage.getItem("token");
+      const headers = {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      };
       let response;
       if (data) {
-        const {
-          searchWord,
-          minPrice,
-          maxPrice,
-          sortChosen,
-          filterCategory,
-        } = data;
-
-        if (
-          (searchWord && minPrice) ||
-          filterCategory ||
-          maxPrice ||
-          sortChosen
-        ) {
-          response = await axios.get(
-            `${linkk}?category=${
-              filterCategory ? filterCategory : null
-            }&search=${searchWord ? searchWord : ""}&minPrice=${
-              minPrice ? minPrice : 0
-            }&maxPrice=${
-              maxPrice === 0 || maxPrice === undefined
-                ? maxPrice === null
-                : maxPrice
-            }&sort=${sortChosen}`
-          );
-        } else if (searchWord) {
-          response = await axios.get(`${linkk}?search=${searchWord}`);
-        }
-      } else {
-        response = await axios.get(linkk);
+        response = await axios.get(`${linkk}${data}`, headers);
       }
       dispatch({type: "FETCH_PRODUCT_SUCCESS", payload: response.data});
     } catch (err) {
@@ -75,12 +60,20 @@ export const fetchProductAction = (data) => {
   };
 };
 
-export const fetchFlowProductAction = () => {
+export const fetchFlowProductAction = (data) => {
   return async (dispatch) => {
     try {
       dispatch({type: "FETCH_PRODUCT_START"});
-      const response = await axios.get(`${linkk}/all-state`);
-      dispatch({type: "FETCH_PRODUCT_SUCCESS", payload: response.data});
+      const token = localStorage.getItem("token");
+      const headers = {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      };
+      if (data) {
+        const response = await axios.get(`${linkk}/all-state${data}`, headers);
+        dispatch({type: "FETCH_PRODUCT_SUCCESS", payload: response.data});
+      }
     } catch (err) {
       dispatch({type: "FETCH_PRODUCT_FAILED", payload: err});
     }
@@ -104,7 +97,13 @@ export const addNewCategoryAction = (product_category) => {
   return async (dispatch) => {
     try {
       dispatch({type: "FETCH_PRODUCT_START"});
-      await axios.post(`${api_url}/category`, {product_category});
+      const token = localStorage.getItem("token");
+      const headers = {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      };
+      await axios.post(`${api_url}/category`, {product_category}, headers);
       dispatch(fetchCategoryAction());
     } catch (err) {
       dispatch({
@@ -128,6 +127,7 @@ export const addProductAction = ({
     try {
       dispatch({type: "FETCH_PRODUCT_START"});
 
+      const token = localStorage.getItem("token");
       let formData = new FormData();
       const val = JSON.stringify({
         newName,
@@ -144,11 +144,12 @@ export const addProductAction = ({
       const headers = {
         headers: {
           "Content-Type": "multipart/form-data",
+          Authorization: `Bearer ${token}`,
         },
       };
 
       await axios.post(`${linkk}`, formData, headers);
-      dispatch(fetchProductAction());
+      dispatch(fetchProductAction(`?page=1&limit=5`));
     } catch (err) {
       dispatch({type: "FETCH_PRODUCT_FAILED", payload: err});
     }
@@ -159,10 +160,20 @@ export const addStock = ({id, changeStock}) => {
   return async (dispatch) => {
     try {
       dispatch({type: "FETCH_PRODUCT_START"});
-      await axios.patch(`${linkk}/stock/${id}`, {
-        product_stock: parseInt(changeStock),
-      });
-      dispatch(fetchProductAction());
+      const token = localStorage.getItem("token");
+      const headers = {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      };
+      await axios.patch(
+        `${linkk}/stock/${id}`,
+        {
+          product_stock: parseInt(changeStock),
+        },
+        headers
+      );
+      dispatch(fetchProductAction(`?page=1&limit=5`));
     } catch (err) {
       dispatch({type: "FETCH_PRODUCT_FAILED", payload: err});
     }
@@ -173,7 +184,17 @@ export const editCategoryAction = ({id, product_category}) => {
   return async (dispatch) => {
     try {
       dispatch({type: "FETCH_PRODUCT_START"});
-      await axios.patch(`${api_url}/category/${id}`, {product_category});
+      const token = localStorage.getItem("token");
+      const headers = {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      };
+      await axios.patch(
+        `${api_url}/category/${id}`,
+        {product_category},
+        headers
+      );
       dispatch(fetchCategoryAction());
     } catch (err) {
       dispatch({
@@ -211,13 +232,15 @@ export const editProductAction = ({
       formData.append("image", pict);
       formData.append("data", val);
 
+      const token = localStorage.getItem("token");
       const headers = {
         headers: {
           "Content-Type": "multipart/form-data",
+          Authorization: `Bearer ${token}`,
         },
       };
       await axios.patch(`${linkk}/${idProd}`, formData, headers);
-      dispatch(fetchProductAction());
+      dispatch(fetchProductAction(`?page=1&limit=5`));
     } catch (err) {
       dispatch({type: "FETCH_PRODUCT_FAILED", payload: err});
     }
@@ -228,7 +251,13 @@ export const deleteCategoryAction = (id) => {
   return async (dispatch) => {
     try {
       dispatch({type: "FETCH_PRODUCT_START"});
-      await axios.delete(`${api_url}/category/${id}`);
+      const token = localStorage.getItem("token");
+      const headers = {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      };
+      await axios.delete(`${api_url}/category/${id}`, headers);
       dispatch(fetchCategoryAction());
     } catch (err) {
       dispatch({
@@ -242,11 +271,23 @@ export const deleteProductAction = (id) => {
   return async (dispatch) => {
     try {
       dispatch({type: "FETCH_PRODUCT_START"});
-      await axios.patch(`${linkk}/delete/${id}`, {
-        isAvail: 0,
-        stock: 0,
-      });
-      dispatch(fetchProductAction());
+
+      const token = localStorage.getItem("token");
+      const headers = {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      };
+
+      await axios.patch(
+        `${linkk}/delete/${id}`,
+        {
+          isAvail: 0,
+          stock: 0,
+        },
+        headers
+      );
+      dispatch(fetchProductAction(`?page=1&limit=5`));
     } catch (err) {
       dispatch({type: "FETCH_PRODUCT_FAILED", payload: err});
     }

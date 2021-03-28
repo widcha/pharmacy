@@ -17,6 +17,7 @@ const {
 } = require("../models");
 const { Op } = require("sequelize");
 const { emailOne, emailTwo } = require("../helpers/emailTemplate");
+const { createAdminToken } = require("../helpers");
 
 // PWP-9-10
 const userRegister = async (req, res) => {
@@ -122,12 +123,23 @@ const userLogin = async (req, res) => {
         },
       ],
     });
-    const responseData = { ...user[0].dataValues };
-    const token = createJWTToken(responseData);
-    responseData.token = token;
-    responseData.cart = [...fetch_cart1, ...fetch_cart2];
 
-    return res.send(responseData);
+    if (user[0].user_role_id === 1) {
+      const responseData = { ...user[0].dataValues };
+      const token = createAdminToken(responseData);
+      responseData.token = token;
+
+      return res.send(responseData);
+    } else {
+      // console.log(user[0].user_id);
+      // console.log([...fetch_cart1]);
+      const responseData = { ...user[0].dataValues };
+      const token = createJWTToken(responseData);
+      responseData.token = token;
+      responseData.cart = [...fetch_cart1, ...fetch_cart2];
+
+      return res.send(responseData);
+    }
   } catch (err) {
     console.log(err);
     return res.status(500).send({ message: "Login Error" });

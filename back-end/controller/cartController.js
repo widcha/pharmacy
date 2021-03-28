@@ -1,4 +1,4 @@
-const { Op } = require("sequelize");
+const {Op} = require("sequelize");
 const _ = require("lodash");
 const moment = require("moment");
 

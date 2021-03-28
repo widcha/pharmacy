@@ -1,10 +1,11 @@
-import React, { useEffect, useState } from "react";
+import React, {useEffect, useState} from "react";
 import ImagesCard from "../components/ImagesCard";
 import ReactPaginate from "react-paginate";
-import { useDispatch, useSelector } from "react-redux";
+import {useDispatch, useSelector} from "react-redux";
 import {
   adminFetchTransaction,
   fetchPaymentProofAction,
+  getItemLength,
 } from "../redux/actions";
 import {
   Button,
@@ -14,33 +15,30 @@ import {
   Select,
   TextField,
 } from "@material-ui/core";
-import { useHistory } from "react-router";
+import {useHistory} from "react-router";
 
 const PaymentAdmin = () => {
   const dispatch = useDispatch();
-  const { payment_img, loading } = useSelector((state) => state.admin);
+  const {lengths, payment_img, loading} = useSelector((state) => state.admin);
 
   useEffect(() => {
-    dispatch(fetchPaymentProofAction());
     dispatch(adminFetchTransaction());
+    dispatch(getItemLength());
+    dispatch(fetchPaymentProofAction(window.location.search));
   }, [dispatch]);
 
-  const [perPage] = useState(10);
-  const [page, setPage] = useState(0);
-  const from = page * perPage;
-  const to = (page + 1) * perPage;
-  const [pageCount, setPageCount] = useState(payment_img.length / perPage);
+  const [perPage] = useState(9);
+  const [pageCount, setPageCount] = useState(lengths.pay_img / perPage);
 
-  const data = payment_img.filter((val, index) => {
-    return index >= from && index < to;
-  });
   useEffect(() => {
-    setPageCount(payment_img.length / perPage);
-  }, [perPage, payment_img]);
+    setPageCount(lengths.pay_img / perPage);
+  }, [perPage]);
 
   const handlePageClick = (e) => {
     const selectedPage = e.selected;
-    setPage(selectedPage);
+    const url = `?page=${selectedPage + 1}&limit=9`;
+    history.push(`/payment-proof${url}`);
+    dispatch(fetchPaymentProofAction(url));
   };
 
   const [sort, setSort] = useState("");
@@ -71,22 +69,22 @@ const PaymentAdmin = () => {
   };
   const history = useHistory();
   const searchBtn = () => {
-    if (sort === "" && sortStatus === "" && searchWord === "") {
-      history.push("/payment-proof");
-      dispatch(fetchPaymentProofAction());
+    let url = `/payment-proof?page=1&limit=9`;
+    if (sort !== "") {
+      url += `&sort=${sort}`;
     }
-    if (sort !== "" || sortStatus !== "" || searchWord !== "") {
-      history.push(
-        `/payment-proof?${sort ? `sort=${sort}` : ""}${
-          searchWord ? `&search=${searchWord}` : ""
-        }${sortStatus ? `&status=${sortStatus}` : ""}`
-      );
-      dispatch(fetchPaymentProofAction({ sort, searchWord, sortStatus }));
+    if (sortStatus !== "") {
+      url += `&status=${sortStatus}`;
     }
+    if (searchWord !== "") {
+      url += `&search=${searchWord}`;
+    }
+    history.push(url);
+    dispatch(fetchPaymentProofAction(url));
   };
   const renderAll = () => {
     return (
-      <div style={{ display: "flex", flexDirection: "row" }}>
+      <div style={{display: "flex", flexDirection: "row"}}>
         <div
           style={{
             display: "flex",
@@ -94,8 +92,8 @@ const PaymentAdmin = () => {
             flexWrap: "wrap",
           }}
         >
-          {data
-            ? data.map((val) => {
+          {payment_img
+            ? payment_img.map((val) => {
                 return (
                   <ImagesCard
                     modName="Order Confirmation"
@@ -125,7 +123,7 @@ const PaymentAdmin = () => {
             left: "78%",
           }}
         >
-          <FormControl style={{ width: "275px" }}>
+          <FormControl style={{width: "275px"}}>
             <InputLabel id="demo-controlled-open-select-label">
               Sort By Date
             </InputLabel>
@@ -141,7 +139,7 @@ const PaymentAdmin = () => {
               <MenuItem value="DESC">Newest</MenuItem>
             </Select>
           </FormControl>
-          <FormControl style={{ width: "275px" }}>
+          <FormControl style={{width: "275px"}}>
             <InputLabel id="demo-controlled-open-select-label">
               Sort By Status
             </InputLabel>
@@ -166,12 +164,12 @@ const PaymentAdmin = () => {
               id="search"
               value={searchWord ? searchWord : ""}
               onChange={(e) => setSearch(e.target.value)}
-              style={{ width: "275px", paddingBottom: "10px" }}
+              style={{width: "275px", paddingBottom: "10px"}}
             />
           </div>
           <Button
             onClick={searchBtn}
-            style={{ backgroundColor: "#2460A7FF", color: "white", outline: 0 }}
+            style={{backgroundColor: "#2460A7FF", color: "white", outline: 0}}
           >
             Search
           </Button>
@@ -180,7 +178,7 @@ const PaymentAdmin = () => {
     );
   };
   return (
-    <div style={{ marginTop: "15px", maxWidth: "750px", minWidth: "750px" }}>
+    <div style={{marginTop: "15px", maxWidth: "750px", minWidth: "750px"}}>
       <div>
         <div className="flex flex-row justify-between">
           <h3 className="text-xl mt-4 ml-3 font-semibold">

@@ -5,7 +5,10 @@ module.exports = {
   getCategory: async (req, res) => {
     try {
       let response;
-      const {search} = req.query;
+      const {page, limit, search} = req.query;
+      const theLimit = limit ? parseInt(limit) : 10;
+      const offsetData = (page ? parseInt(page) - 1 : 0) * theLimit;
+
       if (search) {
         response = await Product_Category.findAll({
           where: {
@@ -13,6 +16,8 @@ module.exports = {
               [Op.substring]: `${search}`,
             },
           },
+          offset: offsetData,
+          limit: theLimit,
           attributes: {
             exclude: ["createdAt", "updatedAt"],
           },
