@@ -1,9 +1,10 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { makeStyles, createMuiTheme } from "@material-ui/core/styles";
 import Typography from "@material-ui/core/Typography";
 import Slider from "@material-ui/core/Slider";
 import { ThemeProvider } from "@material-ui/styles";
 import { useDispatch } from "react-redux";
+import { debounce } from "lodash";
 import { fetchProductsFilteredByPrice } from "../redux/actions/productAction";
 
 // const useStyles = makeStyles({
@@ -45,17 +46,25 @@ const muiTheme = createMuiTheme({
 
 export default function PriceSlider(props) {
 	const dispatch = useDispatch();
-	const { max_price, category_id } = props;
-	// const classes = useStyles();
-	const [value, setValue] = React.useState([0, max_price / 2]);
 
+	const { max_price, category_id } = props;
+	console.log(max_price);
+	// const classes = useStyles();
+	const [value, setValue] = React.useState([0, max_price]);
+	useEffect(() => {
+		const timer = setTimeout(async () => {
+			dispatch(fetchProductsFilteredByPrice(value[0], value[1], category_id));
+		}, 500);
+		return () => clearTimeout(timer);
+	}, [value]);
 	const rangeSelector = (event, newValue) => {
 		setValue(newValue);
-		setTimeout(() => {
-			dispatch(
-				fetchProductsFilteredByPrice(newValue[0], newValue[1], category_id)
-			);
-		}, 1000);
+
+		// setTimeout(() => {
+		// 	dispatch(
+		// 		fetchProductsFilteredByPrice(newValue[0], newValue[1], category_id)
+		// 	);
+		// }, 1000);
 	};
 
 	return (

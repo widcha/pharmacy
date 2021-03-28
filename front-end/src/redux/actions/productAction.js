@@ -31,11 +31,44 @@ export const fetchProductByIdAction = (id) => {
   };
 };
 
-export const fetchProductAction = () => {
+export const fetchProductAction = (data) => {
   return async (dispatch) => {
     try {
       dispatch({type: "FETCH_PRODUCT_START"});
-      const response = await axios.get(linkk);
+      let response;
+      if (data) {
+        response = await axios.get(`${linkk}${data}`);
+        // const {
+        //   searchWord,
+        //   minPrice,
+        //   maxPrice,
+        //   sortChosen,
+        //   filterCategory,
+        // } = data;
+
+        // if (
+        //   (searchWord && minPrice) ||
+        //   filterCategory ||
+        //   maxPrice ||
+        //   sortChosen
+        // ) {
+        //   response = await axios.get(
+        //     `${linkk}?category=${
+        //       filterCategory ? filterCategory : null
+        //     }&search=${searchWord ? searchWord : ""}&minPrice=${
+        //       minPrice ? minPrice : 0
+        //     }&maxPrice=${
+        //       maxPrice === 0 || maxPrice === undefined
+        //         ? maxPrice === null
+        //         : maxPrice
+        //     }&sort=${sortChosen}`
+        //   );
+        // } else if (searchWord) {
+        //   response = await axios.get(`${linkk}?search=${searchWord}`);
+        // }
+      } else {
+        response = await axios.get(linkk);
+      }
       dispatch({type: "FETCH_PRODUCT_SUCCESS", payload: response.data});
     } catch (err) {
       dispatch({type: "FETCH_PRODUCT_FAILED", payload: err});
@@ -55,32 +88,6 @@ export const fetchFlowProductAction = () => {
   };
 };
 
-export const fetchFilterProductAction = ({
-  minPrice,
-  maxPrice,
-  searchWord,
-  sortChosen,
-}) => {
-  return async (dispatch) => {
-    try {
-      dispatch({type: "FETCH_PRODUCT_START"});
-      let response;
-      if ((searchWord && minPrice) || maxPrice || sortChosen) {
-        const newLink = `${linkk}?search=${searchWord}&minPrice=${minPrice}&maxPrice=${
-          maxPrice === 0 || maxPrice === undefined
-            ? maxPrice === null
-            : maxPrice
-        }&sortChosen=${sortChosen}`;
-        response = await axios.get(`${newLink}`);
-      } else if (searchWord) {
-        response = await axios.get(`${linkk}?search=${searchWord}`);
-      }
-      dispatch({type: "FETCH_PRODUCT_SUCCESS", payload: response.data});
-    } catch (err) {
-      dispatch({type: "FETCH_PRODUCT_FAILED", payload: err});
-    }
-  };
-};
 export const fetchProductByUserAction = () => {
   return async (dispatch) => {
     try {

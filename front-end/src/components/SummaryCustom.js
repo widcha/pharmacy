@@ -1,18 +1,18 @@
-import React, {useEffect, useState} from "react";
-import {useDispatch, useSelector} from "react-redux";
+import React, { useEffect, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
 import Swal from "sweetalert2";
 import pill from "../assets/icons/pill2.png";
 import {
   addProductToDatabaseAction,
   nullifyCustomAction,
 } from "../redux/actions/customOrderAction";
-import {toast, Zoom} from "react-toastify";
-import {changeRecipeStatus} from "../redux/actions/adminAction";
-import {useHistory} from "react-router-dom";
+import { toast, Zoom } from "react-toastify";
+import { changeRecipeStatus } from "../redux/actions/adminAction";
+import { useHistory } from "react-router-dom";
 
-const SummaryCustom = ({userID, recipeID}) => {
-  const {capsule} = useSelector((state) => state.customOrder);
-  const {user_id} = useSelector((state) => state.user);
+const SummaryCustom = ({ userID, recipeID }) => {
+  const { capsule } = useSelector((state) => state.customOrder);
+  const { user_id } = useSelector((state) => state.user);
   const history = useHistory();
   const [totalPrice, setTotalPrice] = useState(0);
   const [dose, setDose] = useState(1);
@@ -78,7 +78,7 @@ const SummaryCustom = ({userID, recipeID}) => {
                   })
                 );
                 dispatch(
-                  changeRecipeStatus({id: recipeID, recipes_status: "Done"})
+                  changeRecipeStatus({ id: recipeID, recipes_status: "Done" })
                 );
                 dispatch(nullifyCustomAction());
                 toast.info("Product Added To Customer's Cart!", {
@@ -106,7 +106,7 @@ const SummaryCustom = ({userID, recipeID}) => {
         );
         dispatch(nullifyCustomAction());
         toast.info("Product Added!", {
-          position: "top-right",
+          position: "bottom-right",
           autoClose: 4000,
           hideProgressBar: true,
           closeOnClick: true,

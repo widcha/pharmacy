@@ -15,6 +15,7 @@ const {
 } = require("../controller");
 const express = require("express");
 const {searchProduct} = require("../controller/productController");
+const {checkAdminToken} = require("../helpers/middleware");
 const router = express.Router();
 
 //Admin

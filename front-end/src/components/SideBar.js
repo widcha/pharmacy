@@ -12,7 +12,7 @@ import {ExpandLess, ExpandMore} from "@material-ui/icons";
 const SideBar = () => {
   const classes = useStyles();
   const [open, setOpen] = useState(false);
-  const [selectedIndex, setSelectedIndex] = useState(0);
+  const [selectedIndex, setSelectedIndex] = useState("");
 
   const handleListItemClick = (event, index) => {
     setSelectedIndex(index);
@@ -48,7 +48,7 @@ const SideBar = () => {
             selected={selectedIndex === 1}
             onClick={(e) => handleListItemClick(e, 1)}
           >
-            <Link to="/product">
+            <Link to="/product?page=1&limit=5">
               <ListItem
                 button
                 className={`${classes.nested} ${classes.listWrap}`}
@@ -115,7 +115,7 @@ const SideBar = () => {
             />
           </ListItem>
         </Link>
-        <Link to="/">
+        <Link to="/transaction?page=1&limit=5&order_status=All">
           <ListItem
             button
             className={classes.listWrap}

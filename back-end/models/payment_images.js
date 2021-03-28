@@ -33,7 +33,12 @@ module.exports = (sequelize, DataTypes) => {
         type: DataTypes.STRING,
       },
       transaction_invoice_number: {
-        type: DataTypes.INTEGER(500),
+        type: DataTypes.STRING(500),
+      },
+      payment_status: {
+        type: DataTypes.INTEGER,
+        allowNull: false,
+        defaultValue: 0,
       },
     },
     {

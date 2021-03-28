@@ -6,4 +6,5 @@ module.exports = {
   adminRouter: require("./adminRouter"),
   transactionRouter: require("./transactionRouter"),
   customProductRouter: require("./customProductRouter"),
+  historyRouter: require("./historyRouter"),
 };

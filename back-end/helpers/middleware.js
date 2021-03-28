@@ -1,11 +1,11 @@
 const jwt = require("jsonwebtoken");
-const { hashPassword } = require(".");
+const {hashPassword} = require(".");
 const models = require("../models");
 
 const checkRegister = (req, res, next) => {
   const emailRegex = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
   const passwordRegex = /^(?=.*[0-9])(?=.*[!@#$%^&*])[a-zA-Z0-9!@#$%^&*]{6,}$/;
-  const { email, security_question, password } = req.body;
+  const {email, security_question, password} = req.body;
 
   // VALIDATION EMAIL, PASSWORD
   if (email.match(emailRegex)) {
@@ -35,7 +35,7 @@ const checkRegister = (req, res, next) => {
 
 // CHECK VERIFICATION TOKEN FROM QUERY
 const checkVerificationToken = async (req, res, next) => {
-  const { token } = req.body;
+  const {token} = req.body;
 
   jwt.verify(token, "pharmaKey", (err, decoded) => {
     if (err) {
@@ -51,7 +51,7 @@ const checkVerificationToken = async (req, res, next) => {
 
 // PWP-9-17 CHECK IF USERNAME/EMAIL ALREADY REGISTERED
 const checkInputData = async (req, res, next) => {
-  const { username, email } = req.body;
+  const {username, email} = req.body;
 
   const usernameResult = await models.User.findAll({
     where: {
@@ -83,7 +83,7 @@ const checkInputData = async (req, res, next) => {
 // PWP-8-16 CHECK EMAIL & PASSWORD (Pesan Error Spesifik)
 const checkUser = async (req, res, next) => {
   const emailRegex = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
-  const { email, password } = req.body;
+  const {email, password} = req.body;
   const encryptedPassword = hashPassword(password);
 
   if (email.match(emailRegex)) {
@@ -115,7 +115,7 @@ const checkUser = async (req, res, next) => {
 
 // PWP-14-CHECK EMAIL
 const checkEmail = async (req, res, next) => {
-  const { email } = req.body;
+  const {email} = req.body;
 
   const emailResult = await models.User.findAll({
     where: {
@@ -134,10 +134,37 @@ const checkEmail = async (req, res, next) => {
   }
 };
 
+//ADMIN MIDDLEWARE
+const checkAdminToken = async (req, res, next) => {
+  try {
+    const {token} = req.body;
+    jwt.verify(token, "pharmaKey", (err, decoded) => {
+      if (err) {
+        return res.status(401).send({
+          message: err.message,
+          status: "Invalid Token",
+        });
+      } else {
+        req.user = decoded;
+        const {user_role_id} = req.user;
+        if (user_role_id === 1) {
+          return next();
+        } else {
+          return res.status(401).send({
+            message: "Only Admin Has Access To This Page",
+          });
+        }
+      }
+    });
+  } catch (err) {
+    return res.status(500).send(err.message);
+  }
+};
 module.exports = {
   checkRegister,
   checkVerificationToken,
   checkInputData,
   checkUser,
   checkEmail,
+  checkAdminToken,
 };
