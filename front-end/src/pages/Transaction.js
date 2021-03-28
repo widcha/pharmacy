@@ -13,6 +13,7 @@ import {api_url} from "../helpers";
 import capsules from "../assets/icons/pill2.png";
 import {Link} from "react-router-dom";
 import Swal from "sweetalert2";
+import {CircularProgress} from "@material-ui/core";
 
 export const Transaction = (props) => {
   console.log(props.location.search.split("=")[1]);
@@ -27,7 +28,7 @@ export const Transaction = (props) => {
   const {user_id} = useSelector((state) => state.user);
   const [invNumber, setInvNumber] = useState("");
   const [value, setValue] = useState({});
-  const {transaction_list} = useSelector((state) => state.transaction);
+  const {transaction_list, loading} = useSelector((state) => state.transaction);
 
   const [pageCount, setPageCount] = useState(transaction_list.length / perPage);
 
@@ -115,107 +116,124 @@ export const Transaction = (props) => {
     });
   };
   const renderList = () => {
+    // if (loading) {
+    // 	return (
+
+    // 	);
+    // }
     return data.map((val, i) => {
       return (
-        <div className="font-semibold text-gray-700 rounded-xl shadow border p-10  space-y-2">
-          <div className="flex justify-between">
-            <div>
-              <span>{val.transaction_date.split("T")[0]}</span>{" "}
-              <span
-                className={
-                  val.order_status_id === 1
-                    ? "bg-yellow-100 p-1 rounded-sm"
-                    : "bg-blue-100 p-1 rounded-sm"
-                }
-              >
-                {val["Order_Status.order_status_status"]
-                  ? val["Order_Status.order_status_status"]
-                  : null}
-              </span>{" "}
-              <span className="text-gray-500">
-                {val.transaction_invoice_number}
-              </span>
+        <div
+          className={
+            loading
+              ? "flex m-auto justify-center font-semibold text-gray-700 rounded-xl shadow border p-10  space-y-2"
+              : "font-semibold text-gray-700 rounded-xl shadow border p-10  space-y-2 "
+          }
+        >
+          {loading ? (
+            <div className="flex flex-col m-auto justify-center">
+              <CircularProgress />
             </div>
-            <div>
-              {val.order_status_id === 1 || val.order_status_id === 6 ? (
-                <button
-                  className="bg-red-400 font-semibold text-white px-2 py-1 rounded-md focus:outline-none hover:bg-red-900"
-                  onClick={() =>
-                    handleCancelOrder(val.transaction_invoice_number)
-                  }
-                >
-                  Cancel Order
-                </button>
-              ) : null}
-              {val.order_status_id === 3 ? (
-                <button
-                  className="bg-green-accent-200 font-semibold text-gray-700 px-2 py-1 rounded-md focus:outline-none hover:bg-green-accent-400"
-                  onClick={() =>
-                    handleConfirmOrder(val.transaction_invoice_number)
-                  }
-                >
-                  Confirm Order
-                </button>
-              ) : null}
-            </div>
-          </div>
+          ) : (
+            <>
+              <div className="flex justify-between">
+                <div>
+                  <span>{val.transaction_date.split("T")[0]}</span>{" "}
+                  <span
+                    className={
+                      val.order_status_id === 1
+                        ? "bg-yellow-100 p-1 rounded-sm"
+                        : "bg-blue-100 p-1 rounded-sm"
+                    }
+                  >
+                    {val["Order_Status.order_status_status"]
+                      ? val["Order_Status.order_status_status"]
+                      : null}
+                  </span>{" "}
+                  <span className="text-gray-500">
+                    {val.transaction_invoice_number}
+                  </span>
+                </div>
+                <div>
+                  {val.order_status_id === 1 || val.order_status_id === 6 ? (
+                    <button
+                      className="bg-red-400 font-semibold text-white px-2 py-1 rounded-md focus:outline-none hover:bg-red-900"
+                      onClick={() =>
+                        handleCancelOrder(val.transaction_invoice_number)
+                      }
+                    >
+                      Cancel Order
+                    </button>
+                  ) : null}
+                  {val.order_status_id === 3 ? (
+                    <button
+                      className="bg-green-accent-200 font-semibold text-gray-700 px-2 py-1 rounded-md focus:outline-none hover:bg-green-accent-400"
+                      onClick={() =>
+                        handleConfirmOrder(val.transaction_invoice_number)
+                      }
+                    >
+                      Confirm Order
+                    </button>
+                  ) : null}
+                </div>
+              </div>
 
-          <div>
-            {val.data.length > 0 ? (
-              <div className="font-semibold text-gray-700 rounded-xl shadow border p-10 space-y-2 flex justify-between">
-                {val.data.length !== 0 && val.custom_data.length !== 0 ? (
-                  <div className="flex ">
-                    <img
-                      src={`${api_url}${val.data[0].Product.product_image_path}`}
-                      alt="not found"
-                      className="w-24"
-                    />
-                    <div className="flex flex-col">
-                      <label>{val.data[0].product_name}</label>
-                      <span>
-                        {val.data[0].product_qty} item(s){" "}
-                        <span>
-                          x Rp&nbsp;
-                          {Math.ceil(
-                            val.data[0].Product.product_price /
-                              val.data[0].Product.product_vol
-                          )}
-                        </span>
-                      </span>
+              <div>
+                {val.data.length > 0 ? (
+                  <div className="font-semibold text-gray-700 rounded-xl shadow border p-10 space-y-2 flex justify-between">
+                    {val.data.length !== 0 && val.custom_data.length !== 0 ? (
+                      <div className="flex ">
+                        <img
+                          src={`${api_url}${val.data[0].Product.product_image_path}`}
+                          alt="not found"
+                          className="w-24"
+                        />
+                        <div className="flex flex-col">
+                          <label>{val.data[0].product_name}</label>
+                          <span>
+                            {val.data[0].product_qty} item(s){" "}
+                            <span>
+                              x Rp&nbsp;
+                              {Math.ceil(
+                                val.data[0].Product.product_price /
+                                  val.data[0].Product.product_vol
+                              )}
+                            </span>
+                          </span>
 
-                      <span>
-                        +{val.data.length + val.custom_data.length - 1} other
-                        product(s)
-                      </span>
-                    </div>
-                  </div>
-                ) : (
-                  <div className="flex ">
-                    <img
-                      src={`${api_url}${val.data[0].Product.product_image_path}`}
-                      alt="not found"
-                      className="w-24"
-                    />
-                    <div className="flex flex-col">
-                      {val.data[0].product_name}
-                      <span>
-                        {val.data[0].product_qty} item(s){" "}
-                        <span>
-                          x Rp&nbsp;
-                          {Math.ceil(
-                            val.data[0].Product.product_price /
-                              val.data[0].Product.product_vol
-                          )}
-                        </span>
-                      </span>
-                      <span>
-                        +{val.data.length + val.custom_data.length - 1} other
-                        product(s)
-                      </span>
-                    </div>
-                  </div>
-                )}
-                {/* {val.data.map((normal) => {
+                          <span>
+                            +{val.data.length + val.custom_data.length - 1}{" "}
+                            other product(s)
+                          </span>
+                        </div>
+                      </div>
+                    ) : (
+                      <div className="flex ">
+                        <img
+                          src={`${api_url}${val.data[0].Product.product_image_path}`}
+                          alt="not found"
+                          className="w-24"
+                        />
+                        <div className="flex flex-col">
+                          {val.data[0].product_name}
+                          <span>
+                            {val.data[0].product_qty} item(s){" "}
+                            <span>
+                              x Rp&nbsp;
+                              {Math.ceil(
+                                val.data[0].Product.product_price /
+                                  val.data[0].Product.product_vol
+                              )}
+                            </span>
+                          </span>
+                          <span>
+                            +{val.data.length + val.custom_data.length - 1}{" "}
+                            other product(s)
+                          </span>
+                        </div>
+                      </div>
+                    )}
+                    {/* {val.data.map((normal) => {
 								return (
 									<div className="font-semibold text-gray-700 rounded-xl shadow border p-10 ">
 										{" "}
@@ -223,78 +241,81 @@ export const Transaction = (props) => {
 									</div>
 								);
 							})} */}
-                <div className="flex border-l-2 items-center">
-                  <div className="ml-5 items-center content-center ">
-                    <div className="font-normal">Total Price</div>
-                    <div className="font-semibold text-lg">
-                      Rp {val.transaction_payment_details}
-                    </div>
-                  </div>
-                </div>
-              </div>
-            ) : (
-              <div className="font-semibold text-gray-700 rounded-xl shadow border p-10 space-y-2 flex justify-between">
-                {val.custom_data.length > 1 ? (
-                  <div className="flex ">
-                    <img src={capsules} className="w-24 h-16" />
-                    {/* {val.custom_data[0].product_name} */}
-                    <div className="flex flex-col">
-                      <div>Custom Product</div>
-                      <span>
-                        {val.custom_data[0].custom_product_qty} item(s){" "}
-                        <span>
-                          x Rp&nbsp;
-                          {val.custom_data[0].custom_product_price}
-                        </span>
-                      </span>
-                      <span>
-                        +{val.custom_data.length - 1} other custom product(s)
-                      </span>
+                    <div className="flex border-l-2 items-center">
+                      <div className="ml-5 items-center content-center ">
+                        <div className="font-normal">Total Price</div>
+                        <div className="font-semibold text-lg">
+                          Rp {val.transaction_payment_details}
+                        </div>
+                      </div>
                     </div>
                   </div>
                 ) : (
-                  <div className="flex ">
-                    <img src={capsules} className="w-24 h-16" />
-                    {/* {val.custom_data[0].product_name} */}
-                    <div className="flex flex-col">
-                      <div>Custom Product</div>
-                      <span>
-                        {val.custom_data[0].custom_product_qty} item(s){" "}
-                        <span>
-                          x Rp&nbsp;
-                          {val.custom_data[0].custom_product_price}
-                        </span>
-                      </span>
+                  <div className="font-semibold text-gray-700 rounded-xl shadow border p-10 space-y-2 flex justify-between">
+                    {val.custom_data.length > 1 ? (
+                      <div className="flex ">
+                        <img src={capsules} className="w-24 h-16" />
+                        {/* {val.custom_data[0].product_name} */}
+                        <div className="flex flex-col">
+                          <div>Custom Product</div>
+                          <span>
+                            {val.custom_data[0].custom_product_qty} item(s){" "}
+                            <span>
+                              x Rp&nbsp;
+                              {val.custom_data[0].custom_product_price}
+                            </span>
+                          </span>
+                          <span>
+                            +{val.custom_data.length - 1} other custom
+                            product(s)
+                          </span>
+                        </div>
+                      </div>
+                    ) : (
+                      <div className="flex ">
+                        <img src={capsules} className="w-24 h-16" />
+                        {/* {val.custom_data[0].product_name} */}
+                        <div className="flex flex-col">
+                          <div>Custom Product</div>
+                          <span>
+                            {val.custom_data[0].custom_product_qty} item(s){" "}
+                            <span>
+                              x Rp&nbsp;
+                              {val.custom_data[0].custom_product_price}
+                            </span>
+                          </span>
+                        </div>
+                      </div>
+                    )}
+                    <div className="flex border-l-2 items-center">
+                      <div className="ml-5 items-center content-center">
+                        <div className="font-normal">Total Price</div>
+                        <div className="font-semibold text-lg">
+                          Rp {val.transaction_payment_details}
+                        </div>
+                      </div>
                     </div>
                   </div>
                 )}
-                <div className="flex border-l-2 items-center">
-                  <div className="ml-5 items-center content-center">
-                    <div className="font-normal">Total Price</div>
-                    <div className="font-semibold text-lg">
-                      Rp {val.transaction_payment_details}
-                    </div>
-                  </div>
-                </div>
               </div>
-            )}
-          </div>
-          <div className="flex justify-between">
-            <button
-              onClick={() => handleButton(val)}
-              className="font-semibold text-xl text-blue-500 focus:outline-none"
-            >
-              Transaction details
-            </button>
-            {val.order_status_id === 1 ? (
-              <button
-                className="flex text-white bg-indigo-300 border-0 py-2 px-8 focus:outline-none hover:bg-indigo-500 rounded text-md"
-                onClick={() => handleUpload(val.transaction_invoice_number)}
-              >
-                Upload Payment Slip
-              </button>
-            ) : null}
-          </div>
+              <div className="flex justify-between">
+                <button
+                  onClick={() => handleButton(val)}
+                  className="font-semibold text-xl text-blue-500 focus:outline-none"
+                >
+                  Transaction details
+                </button>
+                {val.order_status_id === 1 ? (
+                  <button
+                    className="flex text-white bg-indigo-300 border-0 py-2 px-8 focus:outline-none hover:bg-indigo-500 rounded text-md"
+                    onClick={() => handleUpload(val.transaction_invoice_number)}
+                  >
+                    Upload Payment Slip
+                  </button>
+                ) : null}
+              </div>
+            </>
+          )}
         </div>
       );
     });

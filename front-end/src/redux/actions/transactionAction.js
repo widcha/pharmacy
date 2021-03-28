@@ -7,8 +7,15 @@ export const fetchUserTransactionDetails = (user_id, query) => {
       dispatch({
         type: "API_TRANSACTION_START",
       });
+      const token = localStorage.getItem("token");
+      const headers = {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      };
       const response = await axios.get(
-        `${api}/get?user_id=${user_id}&order_status=${query}`
+        `${api}/get?user_id=${user_id}&order_status=${query}`,
+        headers
       );
 
       dispatch({
@@ -43,9 +50,11 @@ export const userUploadPaymentSlipAction = ({
       });
       formData.append("image", pict);
       formData.append("data", val);
+      const token = localStorage.getItem("token");
       const headers = {
         headers: {
           "Content-Type": "multipart/form-data",
+          Authorization: `Bearer ${token}`,
         },
       };
 
@@ -66,10 +75,20 @@ export const userCancelOrderAction = (transaction_invoice_number, user_id) => {
       dispatch({
         type: "API_TRANSACTION_START",
       });
-      await axios.patch(`${api}/cancel_order`, {
-        transaction_invoice_number,
-        user_id,
-      });
+      const token = localStorage.getItem("token");
+      const headers = {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      };
+      await axios.patch(
+        `${api}/cancel_order`,
+        {
+          transaction_invoice_number,
+          user_id,
+        },
+        headers
+      );
       dispatch(fetchUserTransactionDetails(user_id));
     } catch (err) {
       dispatch({
@@ -86,12 +105,20 @@ export const userConfirmOrderAction = (transaction_invoice_number, user_id) => {
       dispatch({
         type: "API_TRANSACTION_START",
       });
-
-      await axios.patch(`${api}/confirm_order`, {
-        transaction_invoice_number,
-        user_id,
-      });
-
+      const token = localStorage.getItem("token");
+      const headers = {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      };
+      await axios.patch(
+        `${api}/confirm_order`,
+        {
+          transaction_invoice_number,
+          user_id,
+        },
+        headers
+      );
       dispatch(fetchUserTransactionDetails(user_id));
     } catch (err) {
       dispatch({
@@ -112,11 +139,21 @@ export const userComplainOrderAction = (
       dispatch({
         type: "API_TRANSACTION_START",
       });
-      await axios.patch(`${api}/complain_order`, {
-        transaction_invoice_number,
-        user_id,
-        message,
-      });
+      const token = localStorage.getItem("token");
+      const headers = {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      };
+      await axios.patch(
+        `${api}/complain_order`,
+        {
+          transaction_invoice_number,
+          user_id,
+          message,
+        },
+        headers
+      );
       dispatch(fetchUserTransactionDetails(user_id));
     } catch (err) {
       dispatch({

@@ -13,6 +13,7 @@ import {
 	sortProductAction,
 } from "../redux/actions/productAction";
 import {
+	CircularProgress,
 	FormControl,
 	InputLabel,
 	makeStyles,
@@ -56,20 +57,28 @@ const Products = (props) => {
 	const renderProduct = () => {
 		return (
 			<>
-				{data
-					? data.map((val, index) => {
-							let price = val.product_price / val.product_vol;
-							return (
-								<CardProductUser
-									name={val.product_name}
-									price={val.product_price}
-									pricePerGram={Math.ceil(price)}
-									id={val.product_id}
-									img={val.product_image_path}
-								/>
-							);
-					  })
-					: null}
+				{data ? (
+					data.map((val, index) => {
+						let price = val.product_price / val.product_vol;
+						return (
+							<>
+								{loading ? (
+									<CircularProgress />
+								) : (
+									<CardProductUser
+										name={val.product_name}
+										price={val.product_price}
+										pricePerGram={Math.ceil(price)}
+										id={val.product_id}
+										img={val.product_image_path}
+									/>
+								)}
+							</>
+						);
+					})
+				) : (
+					<CircularProgress />
+				)}
 			</>
 		);
 	};
@@ -133,7 +142,7 @@ const Products = (props) => {
 						>
 							All Products
 						</label>
-						{loading ? <img src={speener} /> : renderCategories()}
+						{loading ? <CircularProgress /> : renderCategories()}
 					</div>
 					<div className="border-t-2 border-gray-300 w-max pt-5">
 						<label className="text-lg font-bold ">Filter By:</label>
@@ -172,7 +181,7 @@ const Products = (props) => {
 						</div>
 					</div>
 					<div className="flex flex-wrap w-auto">
-						{loading ? null : renderProduct()}
+						{loading ? <CircularProgress /> : renderProduct()}
 					</div>
 				</div>
 			</div>

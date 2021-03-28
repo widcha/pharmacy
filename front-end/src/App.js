@@ -2,7 +2,11 @@ import "./App.css";
 import React, {useEffect} from "react";
 import {Route} from "react-router-dom";
 import {useDispatch, useSelector} from "react-redux";
-import {fetchNotifAdmin, nullifyErrorAction} from "./redux/actions";
+import {
+  fetchNotifAdmin,
+  fetchNotifUser,
+  nullifyErrorAction,
+} from "./redux/actions";
 import SideBar from "./components/SideBar";
 import {Nav} from "./components/Navbar";
 import {NavAdmin} from "./components/NavbarAdmin";
@@ -35,16 +39,17 @@ import {
   AllNotifAdmin,
 } from "./pages";
 import {ToastContainer, Zoom} from "react-toastify";
+import {Footer} from "./components/Footer";
 
 function App() {
   const dispatch = useDispatch();
-  const {user_role_id} = useSelector((state) => state.user);
+  const {user_role_id, user_id} = useSelector((state) => state.user);
 
   useEffect(() => {
     dispatch(nullifyErrorAction());
-
+    dispatch(fetchNotifUser(user_id));
     dispatch(fetchNotifAdmin("?page=1&limit=10"));
-  }, [dispatch]);
+  }, [dispatch, user_id]);
 
   if (user_role_id === 1) {
     return (
@@ -121,6 +126,7 @@ function App() {
           component={PurchaseHistory}
         />
         <Route exact path="/user/transaction" component={Transaction} />
+        <Footer />
       </div>
     );
   }
