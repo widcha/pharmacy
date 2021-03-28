@@ -22,7 +22,6 @@ const { emailOne, emailTwo } = require("../helpers/emailTemplate");
 const userRegister = async (req, res) => {
   try {
     const { username, email, password, security_question } = req.body;
-    console.log(security_question);
     const encryptedPassword = hashPassword(password);
     const user = await models.User.create({
       user_username: username,
@@ -72,35 +71,12 @@ const userVerification = async (req, res) => {
 const userLogin = async (req, res) => {
   try {
     const { email, password } = req.body;
-    // console.log(req.body);
     const encryptedPassword = hashPassword(password);
     const user = await models.User.findAll({
       where: {
         user_email: email,
         user_password: encryptedPassword,
       },
-
-      // include: [
-      // 	{
-      // 		model: models.Cart,
-      // 		attributes: { exclude: ["createdAt", "updatedAt"] },
-      // 		include: [
-      // 			{
-      // 				model: models.Product,
-      // 				attributes: {
-      // 					exclude: [
-      // 						"createdAt",
-      // 						"updatedAt",
-      // 						"product_desc",
-      // 						"product_id",
-      // 						"product_price",
-      // 						"product_category_id",
-      // 					],
-      // 				},
-      // 			},
-      // 		],
-      // 	},
-      // ],
       attributes: { exclude: ["createdAt", "updatedAt", "user_password"] },
     });
 
@@ -146,8 +122,6 @@ const userLogin = async (req, res) => {
         },
       ],
     });
-    // console.log(user[0].user_id);
-    // console.log([...fetch_cart1]);
     const responseData = { ...user[0].dataValues };
     const token = createJWTToken(responseData);
     responseData.token = token;
@@ -263,7 +237,6 @@ const addNewUserAddress = async (req, res) => {
   try {
     const { id } = req.params;
     const { user_address } = req.body;
-    console.log(user_address);
     await User_Address.create({
       user_address,
       user_id: id,
@@ -358,7 +331,6 @@ const userAddRecipes = async (req, res) => {
 const getNotifUser = async (req, res) => {
   try {
     const { user_id } = req.body;
-    console.log(user_id);
 
     const findRes = await User_Notif.findAll({
       where: {
