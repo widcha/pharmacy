@@ -17,15 +17,14 @@ const ModalUploadUser = ({ showModal, toggle }) => {
   };
 
   const uploadBtn = async () => {
-    console.log("masuk");
     if (pictName) {
-      await dispatch(uploadRecipesAction({ user_id, pict }));
       Swal.fire({
         icon: "success",
         title: "Prescription Uploaded",
         text:
           "Please wait until the admin input the prescription into your cart and check the notification periodically.",
       });
+      await dispatch(uploadRecipesAction({ user_id, pict }));
     } else {
       Swal.fire({
         icon: "error",
