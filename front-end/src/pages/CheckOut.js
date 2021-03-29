@@ -166,7 +166,7 @@ export const CheckOut = () => {
 						</div>
 						<div className="w-1/2 flex flex-col items-end text-gray-700 font-mono">
 							<div>Rp. {subTotal}</div>
-							<div>Rp. {tax}</div>
+							<div>Rp. {Math.ceil(tax)}</div>
 							<div class="font-bold text-lg">Rp. {total}</div>
 						</div>
 					</div>

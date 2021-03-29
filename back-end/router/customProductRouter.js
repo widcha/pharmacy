@@ -3,6 +3,6 @@ const { checkToken } = require("../helpers");
 
 const router = require("express").Router();
 
-router.post("/", checkToken, addCustomProduct);
+router.post("/", addCustomProduct);
 
 module.exports = router;
