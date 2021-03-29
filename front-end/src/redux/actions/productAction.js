@@ -104,7 +104,7 @@ export const addNewCategoryAction = (product_category) => {
         },
       };
       await axios.post(`${api_url}/category`, {product_category}, headers);
-      dispatch(fetchCategoryAction());
+      dispatch(fetchCategoryAction("?page=1&limit=10"));
     } catch (err) {
       dispatch({
         type: "FETCH_PRODUCT_FAILED",
@@ -195,7 +195,7 @@ export const editCategoryAction = ({id, product_category}) => {
         {product_category},
         headers
       );
-      dispatch(fetchCategoryAction());
+      dispatch(fetchCategoryAction("?page=1&limit=10"));
     } catch (err) {
       dispatch({
         type: "FETCH_PRODUCT_FAILED",
@@ -258,7 +258,7 @@ export const deleteCategoryAction = (id) => {
         },
       };
       await axios.delete(`${api_url}/category/${id}`, headers);
-      dispatch(fetchCategoryAction());
+      dispatch(fetchCategoryAction("?page=1&limit=10"));
     } catch (err) {
       dispatch({
         type: "FETCH_PRODUCT_FAILED",

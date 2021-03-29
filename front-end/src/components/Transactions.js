@@ -3,7 +3,7 @@ import {api_url} from "../helpers";
 import capsules from "../assets/icons/pill2.png";
 
 export const Transactions = ({showModal, toggle, data}) => {
-  console.log(data);
+  // console.log(data);
   const renderItems = () => {
     if (data) {
       return (
