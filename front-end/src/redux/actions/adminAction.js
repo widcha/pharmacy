@@ -81,7 +81,7 @@ export const changeRecipeStatus = ({id, recipes_status}) => {
         {recipes_status},
         headers
       );
-      dispatch(fetchRecipeAction());
+      dispatch(fetchRecipeAction("?page=1&limit=10"));
     } catch (err) {
       dispatch({type: "FETCH_DATA_FAILED", payload: err.message});
     }
@@ -124,7 +124,7 @@ export const changeOrderStatusAction = ({id, order_status_id, reason}) => {
       };
 
       console.log(id);
-      await axios.patch(
+      axios.patch(
         `${url}/change/transaction?id=${id}`,
         {
           order_status_id,
@@ -133,7 +133,8 @@ export const changeOrderStatusAction = ({id, order_status_id, reason}) => {
         headers
       );
       if (order_status_id === 3) {
-        await axios.post(
+        console.log("tiga");
+        axios.post(
           `${api_url}/admin/create-report`,
           {
             invoice: id,
@@ -141,7 +142,7 @@ export const changeOrderStatusAction = ({id, order_status_id, reason}) => {
           headers
         );
       }
-      dispatch(fetchPaymentProofAction());
+      dispatch(fetchPaymentProofAction("?page=1&limit=10"));
     } catch (err) {
       dispatch({type: "FETCH_DATA_FAILED", payload: err.message});
     }
@@ -253,7 +254,7 @@ export const banUserAction = ({user_id}) => {
       };
 
       await axios.patch(`${url}/ban-user`, {user_id}, headers);
-      dispatch(fetchUserData());
+      dispatch(fetchUserData("?page=1&limit=10"));
     } catch (err) {
       dispatch({type: "FETCH_DATA_FAILED", payload: err.message});
     }

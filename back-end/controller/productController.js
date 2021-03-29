@@ -278,7 +278,8 @@ module.exports = {
       const old_stock_total = parseInt(products.dataValues.product_stock_total);
       const newStock = old_stock + parseInt(product_stock);
       const stock_total =
-        parseInt(products.dataValues.product_vol) * parseInt(newStock);
+        parseInt(products.dataValues.product_vol) * parseInt(product_stock) +
+        old_stock_total;
 
       await Product.update(
         {
@@ -334,7 +335,10 @@ module.exports = {
           newDesc,
           selectedCategory,
         } = JSON.parse(req.body.data);
-        const stock_total = parseInt(oldStock) * parseInt(newVol);
+        const old_stock_total = prods.dataValues.product_stock_total;
+        const stockDifference = oldStock - prods.dataValues.product_stock;
+        const stock_total =
+          parseInt(stockDifference) * parseInt(newVol) + old_stock_total;
 
         const imagePath = image ? `${path}/${image[0].filename}` : oldImagepath;
 
@@ -359,7 +363,6 @@ module.exports = {
         );
 
         //MATERIAL FLOW WHEN ADMIN CAN CHANGE DATA
-        const old_stock_total = prods.dataValues.product_stock_total;
         let info = "";
         let stockChanged = stock_total - old_stock_total;
         if (old_stock_total > stock_total) {
@@ -371,7 +374,7 @@ module.exports = {
         if (stockChanged !== 0) {
           await Material_Flow.create({
             product_id: id,
-            material_flow_stock: `${-stockChanged}`,
+            material_flow_stock: `${stockChanged}`,
             material_flow_info: `${info}`,
             stock: oldStock,
             stock_total: stock_total,

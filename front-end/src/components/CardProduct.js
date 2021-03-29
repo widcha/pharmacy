@@ -40,7 +40,7 @@ const CardProduct = ({
     if (product_list && catt) {
       const cat = product_list.filter(
         (val) => val.product_category_id === catt
-      )[0].Product_Category.product_category;
+      )["Product_Category.product_category"];
       setTheCat(cat);
     }
   }, [catt, product_list]);

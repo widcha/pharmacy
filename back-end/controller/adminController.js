@@ -236,7 +236,7 @@ module.exports = {
   },
   getPaymentImages: async (req, res) => {
     try {
-      const {page, limit, sort, search, sortStatus} = req.query;
+      const {page, limit, sort, search, status} = req.query;
       const theLimit = limit ? parseInt(limit) : 9;
       const offsetData = (page ? parseInt(page) - 1 : 0) * theLimit;
 
@@ -248,15 +248,15 @@ module.exports = {
       }
 
       let stat;
-      if (sortStatus === "Pending") {
+      if (status === "Pending") {
         stat = 0;
-      } else if (sortStatus === "Confirmed") {
+      } else if (status === "Confirmed") {
         stat = 1;
-      } else if (sortStatus === "Cancelled") {
+      } else if (status === "Cancelled") {
         stat = 2;
       }
       let response;
-      if (sortStatus) {
+      if (status) {
         response = await Payment_Images.findAll({
           where: {
             payment_status: stat,
@@ -401,10 +401,17 @@ module.exports = {
         order: [["product_id", "ASC"]],
       });
 
+      const result2 = await Transaction.findAll({
+        where: {
+          transaction_invoice_number: invoice,
+        },
+        order: [["product_id", "ASC"]],
+      });
+
       //Pencatatan laporan keuangan
       const response = await Finance.create({
         transaction_invoice_number: invoice,
-        finance_earning: result[0].transaction_payment_details,
+        finance_earning: result2[0].transaction_payment_details,
       });
 
       //Pencatatan pengurangan stock product non-custom

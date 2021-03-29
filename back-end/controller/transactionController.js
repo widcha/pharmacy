@@ -354,6 +354,7 @@ module.exports = {
           raw: true,
           offset: offsetData,
           limit: theLimit,
+          order: [["createdAt", "DESC"]],
           group: ["transaction_invoice_number"],
           attributes: [
             "transaction_invoice_number",
@@ -379,6 +380,7 @@ module.exports = {
           raw: true,
           offset: offsetData,
           limit: theLimit,
+          order: [["createdAt", "DESC"]],
           group: ["transaction_invoice_number"],
           attributes: [
             "transaction_invoice_number",

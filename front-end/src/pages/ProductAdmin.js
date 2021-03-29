@@ -127,6 +127,10 @@ const ProductAdmin = () => {
       const url = `?page=${selectedPage + 1}&limit=5`;
       history.push(`/product${url}${newUrl}`);
       dispatch(fetchProductAction(url + (newUrl ? newUrl : "")));
+    } else {
+      const url = `?page=${selectedPage + 1}&limit=5`;
+      history.push(`/product${url}`);
+      dispatch(fetchProductAction(url));
     }
   };
 

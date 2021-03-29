@@ -69,18 +69,19 @@ const PaymentAdmin = () => {
   };
   const history = useHistory();
   const searchBtn = () => {
-    let url = `/payment-proof?page=1&limit=9`;
+    const url = "/payment-proof";
+    let addurl = `?page=1&limit=9`;
     if (sort !== "") {
-      url += `&sort=${sort}`;
+      addurl += `&sort=${sort}`;
     }
     if (sortStatus !== "") {
-      url += `&status=${sortStatus}`;
+      addurl += `&status=${sortStatus}`;
     }
     if (searchWord !== "") {
-      url += `&search=${searchWord}`;
+      addurl += `&search=${searchWord}`;
     }
-    history.push(url);
-    dispatch(fetchPaymentProofAction(url));
+    dispatch(fetchPaymentProofAction(addurl));
+    history.push(`${url}${addurl}`);
   };
   const renderAll = () => {
     return (
