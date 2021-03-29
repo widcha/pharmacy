@@ -42,9 +42,8 @@ module.exports = (sequelize, DataTypes) => {
         type: DataTypes.INTEGER,
         allowNull: false,
       },
-      material_flow_show: {
+      stock_total: {
         type: DataTypes.INTEGER,
-        defaultValue: 1,
         allowNull: false,
       },
     },

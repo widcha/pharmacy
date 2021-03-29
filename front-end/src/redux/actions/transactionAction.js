@@ -170,9 +170,15 @@ export const adminFetchTransaction = (query) => {
       dispatch({
         type: "API_TRANSACTION_START",
       });
-      let response = await axios.get(
-        `${api}/admin-get${query ? `?order_status=${query}` : ""}`
-      );
+
+      const token = localStorage.getItem("token");
+      const headers = {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      };
+
+      const response = await axios.get(`${api}/admin-get${query}`, headers);
 
       dispatch({
         type: "USER_FETCH_TRANSACTION",

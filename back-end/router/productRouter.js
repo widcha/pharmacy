@@ -19,12 +19,12 @@ const {checkAdminToken} = require("../helpers/middleware");
 const router = express.Router();
 
 //Admin
-router.get("/all-state", getDeletedProduct);
-router.get("/", getAllProduct);
-router.post("/", addNewProduct);
-router.patch("/delete/:id", deleteProduct);
-router.patch("/:id", editProduct);
-router.patch("/stock/:id", addProductStock);
+router.get("/all-state", checkAdminToken, getDeletedProduct);
+router.get("/", checkAdminToken, getAllProduct);
+router.post("/", checkAdminToken, addNewProduct);
+router.patch("/delete/:id", checkAdminToken, deleteProduct);
+router.patch("/:id", checkAdminToken, editProduct);
+router.patch("/stock/:id", checkAdminToken, addProductStock);
 
 //User
 router.get("/by-user", getAllProductbyUser);

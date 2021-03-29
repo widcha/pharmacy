@@ -10,9 +10,14 @@ import {
 import {useDispatch, useSelector} from "react-redux";
 import ReactPaginate from "react-paginate";
 import CardProduct from "../components/CardProduct";
-import {fetchProductAction, fetchCategoryAction} from "../redux/actions";
+import {
+  fetchProductAction,
+  fetchCategoryAction,
+  getItemLength,
+} from "../redux/actions";
 import {useHistory} from "react-router-dom";
 import ModalProduct from "../components/ModalProduct";
+import {filter} from "lodash";
 
 const ProductAdmin = () => {
   const dispatch = useDispatch();
@@ -20,9 +25,6 @@ const ProductAdmin = () => {
 
   //Pagination
   const [perPage] = useState(5);
-  // const [page, setPage] = useState(0);
-  // const from = page * perPage;
-  // const to = (page + 1) * perPage;
   const {lengths} = useSelector((state) => state.admin);
   const {product_list, loading} = useSelector((state) => state.product);
   const [pageCount, setPageCount] = useState(lengths.products / perPage);
@@ -31,13 +33,9 @@ const ProductAdmin = () => {
   useEffect(() => {
     dispatch(fetchProductAction(window.location.search));
     dispatch(fetchCategoryAction());
+    dispatch(getItemLength());
   }, [dispatch]);
   let category = useSelector((state) => state.product.category);
-
-  const data = product_list;
-  // .filter((val, index) => {
-  //   return index >= from && index < to;
-  // });
 
   const [showModal, setShowModal] = useState(false);
   const toggle = () => {
@@ -76,41 +74,29 @@ const ProductAdmin = () => {
   const [minPrice, setMinPrice] = useState(0);
 
   const searchBtn = () => {
-    if (
-      minPrice === 0 &&
-      maxPrice === 0 &&
-      searchWord === "" &&
-      (sortChosen === "None" || sortChosen === "") &&
-      filterCategory === ""
-    ) {
-      history.push("/product");
-      dispatch(fetchProductAction());
+    let url = `?page=1&limit=5`;
+    if (minPrice || minPrice > 0) {
+      url += `&minPrice=${minPrice}`;
     }
-    if (
-      minPrice ||
-      maxPrice > 0 ||
-      searchWord !== "" ||
-      (sortChosen !== "None" && sortChosen !== "") ||
-      filterCategory
-    ) {
-      history.push(
-        `/product?category=${filterCategory}&minPrice=$${minPrice}&maxPrice=${maxPrice}&search=${searchWord}&sortChosen=${sortChosen}`
-      );
-      dispatch(
-        fetchProductAction({
-          minPrice,
-          maxPrice,
-          searchWord,
-          sortChosen,
-          filterCategory,
-        })
-      );
+    if (maxPrice > 0) {
+      url += `&maxPrice=${maxPrice}`;
     }
+    if (searchWord !== "") {
+      url += `&search=${searchWord}`;
+    }
+    if (sortChosen !== "None" && sortChosen !== "") {
+      url += `&sortChosen=${sortChosen}`;
+    }
+    if (filterCategory || filterCategory > 0) {
+      url += `&category=${filterCategory}`;
+    }
+    history.push(`/product${url}`);
+    dispatch(fetchProductAction(url));
   };
 
   const renderProduct = () => {
-    if (data) {
-      return data.map((val) => {
+    if (product_list) {
+      return product_list.map((val) => {
         return (
           <div className="mt-3">
             <CardProduct
@@ -136,10 +122,12 @@ const ProductAdmin = () => {
 
   const handlePageClick = (e) => {
     const selectedPage = e.selected;
-    // setPage(selectedPage);
-    const url = `?page=${selectedPage + 1}&limit=5`;
-    history.push(`/product${url}`);
-    dispatch(fetchProductAction(url));
+    let newUrl = window.location.search.split("limit=5")[1];
+    if (newUrl) {
+      const url = `?page=${selectedPage + 1}&limit=5`;
+      history.push(`/product${url}${newUrl}`);
+      dispatch(fetchProductAction(url + (newUrl ? newUrl : "")));
+    }
   };
 
   const renderAll = () => {

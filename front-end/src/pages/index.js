@@ -22,6 +22,8 @@ import PurchaseHistory from "./PurchaseHistory";
 import {Transaction} from "./Transaction";
 import AdminUserData from "./AdminUserData";
 import {TransactionAdmin} from "./TransactionAdmin";
+import NotificationAdmin from "./NotificationAdmin";
+import AllNotifAdmin from "./AllNotifAdmin";
 
 export {
   HomeAdmin,
@@ -48,4 +50,6 @@ export {
   Transaction,
   AdminUserData,
   TransactionAdmin,
+  NotificationAdmin,
+  AllNotifAdmin,
 };

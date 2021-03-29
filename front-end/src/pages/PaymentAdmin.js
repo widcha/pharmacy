@@ -2,7 +2,11 @@ import React, {useEffect, useState} from "react";
 import ImagesCard from "../components/ImagesCard";
 import ReactPaginate from "react-paginate";
 import {useDispatch, useSelector} from "react-redux";
-import {adminFetchTransaction, fetchPaymentProofAction} from "../redux/actions";
+import {
+  adminFetchTransaction,
+  fetchPaymentProofAction,
+  getItemLength,
+} from "../redux/actions";
 import {
   Button,
   FormControl,
@@ -15,29 +19,26 @@ import {useHistory} from "react-router";
 
 const PaymentAdmin = () => {
   const dispatch = useDispatch();
-  const {payment_img, loading} = useSelector((state) => state.admin);
+  const {lengths, payment_img, loading} = useSelector((state) => state.admin);
 
   useEffect(() => {
-    dispatch(fetchPaymentProofAction());
     dispatch(adminFetchTransaction());
+    dispatch(getItemLength());
+    dispatch(fetchPaymentProofAction(window.location.search));
   }, [dispatch]);
 
   const [perPage] = useState(9);
-  const [page, setPage] = useState(0);
-  const from = page * perPage;
-  const to = (page + 1) * perPage;
-  const [pageCount, setPageCount] = useState(payment_img.length / perPage);
+  const [pageCount, setPageCount] = useState(lengths.pay_img / perPage);
 
-  const data = payment_img.filter((val, index) => {
-    return index >= from && index < to;
-  });
   useEffect(() => {
-    setPageCount(payment_img.length / perPage);
-  }, [perPage, payment_img]);
+    setPageCount(lengths.pay_img / perPage);
+  }, [perPage]);
 
   const handlePageClick = (e) => {
     const selectedPage = e.selected;
-    setPage(selectedPage);
+    const url = `?page=${selectedPage + 1}&limit=9`;
+    history.push(`/payment-proof${url}`);
+    dispatch(fetchPaymentProofAction(url));
   };
 
   const [sort, setSort] = useState("");
@@ -68,18 +69,18 @@ const PaymentAdmin = () => {
   };
   const history = useHistory();
   const searchBtn = () => {
-    if (sort === "" && sortStatus === "" && searchWord === "") {
-      history.push("/payment-proof");
-      dispatch(fetchPaymentProofAction());
+    let url = `/payment-proof?page=1&limit=9`;
+    if (sort !== "") {
+      url += `&sort=${sort}`;
     }
-    if (sort !== "" || sortStatus !== "" || searchWord !== "") {
-      history.push(
-        `/payment-proof?${sort ? `sort=${sort}` : ""}${
-          searchWord ? `&search=${searchWord}` : ""
-        }${sortStatus ? `&status=${sortStatus}` : ""}`
-      );
-      dispatch(fetchPaymentProofAction({sort, searchWord, sortStatus}));
+    if (sortStatus !== "") {
+      url += `&status=${sortStatus}`;
     }
+    if (searchWord !== "") {
+      url += `&search=${searchWord}`;
+    }
+    history.push(url);
+    dispatch(fetchPaymentProofAction(url));
   };
   const renderAll = () => {
     return (
@@ -91,8 +92,8 @@ const PaymentAdmin = () => {
             flexWrap: "wrap",
           }}
         >
-          {data
-            ? data.map((val) => {
+          {payment_img
+            ? payment_img.map((val) => {
                 return (
                   <ImagesCard
                     modName="Order Confirmation"

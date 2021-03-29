@@ -473,138 +473,38 @@ module.exports = {
         }
       );
 
-      return res.send({ data: newArr, subTotal });
+      return res.status(200).send({ message: "Custom Product Updated" });
     } catch (err) {
       return res.status(500).send({ message: err.message });
     }
   },
-  userCheckout: async (req, res) => {
+  userCustomDecrement: async (req, res) => {
     try {
-      const { user_id, data, total, address } = req.body;
-      const t_date = moment().format("YYYY-MM-DD HH:mm:ss");
-      const invoice = `INV/${user_id}/${Date.now()}`;
-      data.forEach(async (val) => {
-        if (val.custom_product_id) {
-          try {
-            await Custom_Product.update(
-              { is_checkout: 1 },
-              {
-                where: {
-                  [Op.and]: {
-                    user_id: val.user_id,
-                    is_checkout: 0,
-                  },
-                },
-              }
-            );
-            val.Carts.forEach(async (subVal) => {
-              try {
-                await Product.update(
-                  {
-                    product_stock_total:
-                      subVal.Product.product_stock_total - subVal.product_qty,
-                    product_stock: Math.ceil(
-                      (subVal.Product.product_stock_total -
-                        subVal.product_qty) /
-                        subVal.Product.product_vol
-                    ),
-                  },
-                  {
-                    where: {
-                      product_id: subVal.product_id,
-                    },
-                  }
-                );
-                // ATUR CUSTOM ORDERPUNYA LAGI NANTI
-                // await Material_Flow.create({
-                //   product_id: subVal.product_id,
-                //   material_flow_stock: subVal.product_qty,
-                //   material_flow_info: "User Custom Order",
-                //   stock: subVal.Product.product_stock_total - subVal.product_qty,
-                //   material_flow_show: 0,
-                // });
+      const {
+        current_custom_product_qty,
+        custom_product_price,
+        custom_product_id,
+        qty,
+        user_id,
+      } = req.body;
 
-                await Cart.destroy({
-                  where: {
-                    [Op.and]: {
-                      custom_product_id: subVal.custom_product_id,
-                      product_id: subVal.product_id,
-                      user_id: subVal.user_id,
-                    },
-                  },
-                });
-                await Transaction.create({
-                  user_id,
-                  custom_product_id: subVal.custom_product_id,
-                  transaction_date: t_date,
-                  transaction_invoice_number: invoice,
-                  order_status_id: 1,
-                  product_id: subVal.product_id,
-                  product_name: subVal.Product.product_name,
-                  transaction_payment_details: total,
-                  user_address: address,
-                  payment_method_id: 1,
-                  product_qty: subVal.product_qty,
-                });
-              } catch (err) {
-                console.log(err);
-              }
-            });
-          } catch (err) {
-            console.log(err);
-          }
-        } else {
-          try {
-            await Product.update(
-              {
-                product_stock_total:
-                  val.Product.product_stock_total - val.product_qty,
-                product_stock: Math.ceil(
-                  (val.Product.product_stock_total - val.product_qty) /
-                    val.Product.product_vol
-                ),
-              },
-              {
-                where: {
-                  product_id: val.product_id,
-                },
-              }
-            );
-
-            await Material_Flow.create({
-              product_id: val.product_id,
-              material_flow_stock: val.product_qty,
-              material_flow_info: "User Order",
-              stock: val.Product.product_stock_total - val.product_qty,
-              material_flow_show: 0,
-            });
-
-            await Cart.destroy({
-              where: {
-                [Op.and]: {
-                  product_id: val.product_id,
-                  user_id: val.user_id,
-                },
-              },
-            });
-            await Transaction.create({
-              user_id,
-              transaction_date: t_date,
-              transaction_invoice_number: invoice,
-              order_status_id: 1,
-              product_id: val.product_id,
-              product_name: val.Product.product_name,
-              transaction_payment_details: total,
-              user_address: address,
-              payment_method_id: 1,
-              product_qty: val.product_qty,
-            });
-          } catch (err) {
-            console.log(err);
-          }
+      await Custom_Product.update(
+        {
+          custom_product_qty: current_custom_product_qty - qty,
+          custom_product_price:
+            (custom_product_price / current_custom_product_qty) *
+            (current_custom_product_qty - qty),
+        },
+        {
+          where: {
+            [Op.and]: {
+              custom_product_id,
+              is_checkout: 0,
+            },
+          },
         }
-      });
-      return res.status(200).send({ message: "Checkout" });
+      );
+      return res.status(200).send({ message: "Custom Product Updated" });
     } catch (err) {
       return res.status(500).send({ message: err.message });
     }

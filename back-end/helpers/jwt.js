@@ -21,7 +21,15 @@ const checkToken = (req, res, next) => {
   }
 };
 
+//ADMIN CREATE TOKEN
+const createAdminToken = (payload) => {
+  return jwt.sign(payload, "adminSpcPharmaKey", {
+    expiresIn: "24h",
+  });
+};
+
 module.exports = {
   createJWTToken,
   checkToken,
+  createAdminToken,
 };

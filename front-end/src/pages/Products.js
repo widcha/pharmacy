@@ -1,7 +1,7 @@
-import React, { useEffect, useState } from "react";
+import React, {useEffect, useState} from "react";
 import CardProductUser from "../components/CardProductUser";
 import ReactPaginate from "react-paginate";
-import { useDispatch, useSelector } from "react-redux";
+import {useDispatch, useSelector} from "react-redux";
 import speener from "../assets/spinner/oval.svg";
 import {
   fetchHighestProductPriceAction,

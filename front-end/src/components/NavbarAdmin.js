@@ -1,18 +1,18 @@
 import {ClickAwayListener} from "@material-ui/core";
-import axios from "axios";
 import {useEffect, useState} from "react";
 import {useDispatch, useSelector} from "react-redux";
-import {Link, useHistory} from "react-router-dom";
+import {Link} from "react-router-dom";
 import Logo from "../assets/icons/medicine.svg";
-import {api_url} from "../helpers";
-import {logoutAction} from "../redux/actions";
+import {getItemLength, logoutAction} from "../redux/actions";
 
 export const NavAdmin = () => {
   const [profile, setProfile] = useState(false);
-  const [notif, setNotif] = useState(false);
   const dispatch = useDispatch();
   const user = useSelector((state) => state.user);
-  const history = useHistory();
+  const {notif} = useSelector((state) => state.admin);
+  useEffect(() => {
+    dispatch(getItemLength());
+  }, [dispatch]);
 
   const logoutBtn = () => {
     setProfile(false);
@@ -109,14 +109,12 @@ export const NavAdmin = () => {
 
   const handleClickAway = () => {
     setProfile(false);
-    setNotif(false);
   };
 
   const notificationBtn = () => {
     return (
       <div
         className="mr-5 relative align-middle rounded-md focus:outline-none focus:shadow-outline-purple"
-        onClick={() => setNotif(!notif)}
         aria-label="Notifications"
         aria-haspopup="true"
       >
@@ -135,32 +133,12 @@ export const NavAdmin = () => {
           />
         </svg>
         {/* <!-- Notification badge --> */}
-        <span
-          aria-hidden="true"
-          className="absolute top-0 right-0 inline-block w-3 h-3 transform translate-x-1 -translate-y-1 bg-red-600 border-2 border-white rounded-full dark:border-gray-800"
-        ></span>
-        {/* {notif ? (
-          <ClickAwayListener onClickAway={handleClickAway}>
-          <div
-          class="z-10 origin-top-right absolute right-0 mt-2 w-56 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 focus:outline-none"
-          role="menu"
-          aria-orientation="vertical"
-          aria-labelledby="options-menu"
-          >
-          <div class="py-1" role="none">
-          <p className="transition duration-200 font-semibold block px-4 py-2 text-sm text-gray-600 hover:bg-gray-100 hover:text-blue-500 cursor-pointer">
-          Notif 1
-          </p>
-          <p className="transition duration-200 font-semibold block px-4 py-2 text-sm text-gray-600 hover:bg-gray-100 hover:text-blue-500 cursor-pointer">
-          Notif 2
-          </p>
-          <p className="transition duration-200 font-semibold block w-full text-left px-4 py-2 text-sm text-gray-600 hover:bg-gray-100 hover:text-blue-500 cursor-pointer">
-          Notif 3
-          </p>
-          </div>
-          </div>
-          </ClickAwayListener>
-        ) : null} */}
+        {notif.length > 0 ? (
+          <span
+            aria-hidden="true"
+            className="absolute top-0 right-0 inline-block w-3 h-3 transform translate-x-1 -translate-y-1 bg-red-600 border-2 border-white rounded-full dark:border-gray-800"
+          ></span>
+        ) : null}
       </div>
     );
   };
@@ -168,86 +146,12 @@ export const NavAdmin = () => {
   const rightComponent = () => {
     return (
       <div className="flex flex-row items-center">
-        {notificationBtn()}
+        <Link to="/notifications?page=1&limit=10">{notificationBtn()}</Link>
         <div style={{fontSize: "13px", marginRight: "17px", color: "gray"}}>
           Admin
         </div>
         {profileBtn()}
       </div>
-    );
-  };
-  const [name, setName] = useState("");
-  const [filterData, setFilterData] = useState([]);
-  const [suggestion, setSuggestion] = useState(false);
-  useEffect(() => {
-    const timer = setTimeout(async () => {
-      const response = await axios.get(
-        `${api_url}/product/search?search=${name}`
-      );
-      const filterData = response.data.filter((val, index) => {
-        return (
-          val.product_name
-            .toLocaleLowerCase()
-            .includes(name.toLocaleLowerCase()) && index <= 4
-        );
-      });
-      setFilterData(filterData);
-      setSuggestion(true);
-    }, 500);
-    return () => clearTimeout(timer);
-  }, [name]);
-
-  const searchBtn = (e) => {
-    history.push(`/product?search=${name}`);
-    e.preventDefault();
-    setSuggestion(false);
-  };
-
-  const searchComponent = () => {
-    return (
-      <form
-        className="bg-white shadow flex rounded-xl border border-gray-50 focus:border-transparent"
-        onSubmit={searchBtn}
-      >
-        <input
-          className="w-96 rounded-lg focus:outline-none focus:ring-blue-100 focus:ring-4 pl-3 font-semibold text-gray-700 transition duration-300"
-          type="text"
-          placeholder="Search rulox"
-          value={name}
-          onChange={(e) => setName(e.target.value)}
-        />
-        <span className="w-auto flex justify-end items-center text-gray-500 p-1 hover:bg-blue-100 rounded-xl transition duration-300">
-          <i
-            className="material-icons text-2xl cursor-pointer"
-            onClick={searchBtn}
-          >
-            search
-          </i>
-        </span>
-        {name && suggestion ? (
-          <ClickAwayListener onClickAway={handleClickAway}>
-            <div
-              class="z-10 absolute center mt-12 w-96 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 focus:outline-none"
-              role="menu"
-              aria-orientation="vertical"
-              aria-labelledby="options-menu"
-            >
-              <div class="py-1" role="none">
-                {filterData.map((val) => {
-                  return (
-                    <p
-                      className="transition duration-200 font-semibold block px-4 py-2 text-sm text-gray-600 hover:bg-gray-100 hover:text-blue-500 cursor-pointer"
-                      onClick={searchBtn}
-                    >
-                      {val.product_name}
-                    </p>
-                  );
-                })}
-              </div>
-            </div>
-          </ClickAwayListener>
-        ) : null}
-      </form>
     );
   };
 

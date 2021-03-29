@@ -13,6 +13,7 @@ const {
     getFinanceReport,
     getAllUserInfo,
     changeUserBannedStatus,
+    changeNotifAdmin,
   },
 } = require("../controller");
 const express = require("express");
@@ -20,24 +21,26 @@ const {checkAdminToken} = require("../helpers/middleware");
 const {createReport} = require("../controller/adminController");
 const router = express.Router();
 
-router.get("/get/stock-flow", getStockFlow);
-router.get("/get/flow/:id", getStockFlowById);
+router.get("/get/stock-flow", checkAdminToken, getStockFlow);
+router.get("/get/flow/:id", checkAdminToken, getStockFlowById);
 
-router.get("/get/recipe", getRecipe);
-router.patch("/change/recipe/:id", editRecipeStatus);
+router.get("/get/recipe", checkAdminToken, getRecipe);
+router.patch("/change/recipe/:id", checkAdminToken, editRecipeStatus);
 
-router.get("/get/payment-proof", getPaymentImages);
-router.patch("/change/transaction", changeTransactionStatus);
+router.get("/get/payment-proof", checkAdminToken, getPaymentImages);
+router.patch("/change/transaction", checkAdminToken, changeTransactionStatus);
 
-router.get("/users-data", getAllUserInfo);
-router.post("/create-report", createReport);
+router.get("/users-data", checkAdminToken, getAllUserInfo);
+router.post("/create-report", checkAdminToken, createReport);
 router.get("/get-notif", getNotifAdmin);
-router.get("/get-all-length", getAllLength);
-router.get("/finance-report", getFinanceReport);
+router.patch("/read-notif", checkAdminToken, changeNotifAdmin);
+router.get("/get-all-length", checkAdminToken, getAllLength);
+router.get("/finance-report", checkAdminToken, getFinanceReport);
 
-router.patch("/ban-user", changeUserBannedStatus);
+router.patch("/ban-user", checkAdminToken, changeUserBannedStatus);
+
 // PUNYA ADHI
-router.post("/addPayment", addPaymentMethods);
-router.post("/addOrderStatus", addOrderStatus);
+router.post("/addPayment", checkAdminToken, addPaymentMethods);
+router.post("/addOrderStatus", checkAdminToken, addOrderStatus);
 
 module.exports = router;
