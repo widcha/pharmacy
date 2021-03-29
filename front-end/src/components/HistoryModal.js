@@ -3,7 +3,6 @@ import { api_url } from "../helpers";
 import capsules from "../assets/icons/pill2.png";
 
 export const HistoryModal = ({ showModal, toggle, data }) => {
-  console.log(data);
   const renderItems = () => {
     if (data) {
       return (

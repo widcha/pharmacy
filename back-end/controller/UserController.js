@@ -1,7 +1,11 @@
 const models = require("../models");
-const {hashPassword, createJWTToken, transpostPromise} = require("../helpers");
+const {
+  hashPassword,
+  createJWTToken,
+  transpostPromise,
+} = require("../helpers");
 const pify = require("pify");
-const {uploader} = require("../handlers");
+const { uploader } = require("../handlers");
 const fs = require("fs");
 const {
   User_Address,
@@ -11,15 +15,14 @@ const {
   Admin_Notif,
   User_Notif,
 } = require("../models");
-const {Op} = require("sequelize");
-const {emailOne, emailTwo} = require("../helpers/emailTemplate");
-const {createAdminToken} = require("../helpers");
+const { Op } = require("sequelize");
+const { emailOne, emailTwo } = require("../helpers/emailTemplate");
+const { createAdminToken } = require("../helpers");
 
 // PWP-9-10
 const userRegister = async (req, res) => {
   try {
-    const {username, email, password, security_question} = req.body;
-    console.log(security_question);
+    const { username, email, password, security_question } = req.body;
     const encryptedPassword = hashPassword(password);
     const user = await models.User.create({
       user_username: username,
@@ -28,7 +31,7 @@ const userRegister = async (req, res) => {
       user_security_question: security_question,
     });
 
-    const token = createJWTToken({...user});
+    const token = createJWTToken({ ...user });
 
     const mailOptions = {
       from: "Pharma <pwd.pharma@gmail.com>",
@@ -38,19 +41,19 @@ const userRegister = async (req, res) => {
     };
     await transpostPromise(mailOptions);
 
-    return res.send({message: "New user created successfully"});
+    return res.send({ message: "New user created successfully" });
   } catch (err) {
     console.log(err);
-    return res.status(500).send({message: "Register Error"});
+    return res.status(500).send({ message: "Register Error" });
   }
 };
 
 // PWP-9-10 VERIFY EMAIL
 const userVerification = async (req, res) => {
   try {
-    const {user_id} = req.user;
+    const { user_id } = req.user;
     const response = await models.User.update(
-      {user_isverified: 1},
+      { user_isverified: 1 },
       {
         where: {
           user_id,
@@ -58,25 +61,24 @@ const userVerification = async (req, res) => {
       }
     );
 
-    return res.send({message: "Verification success"});
+    return res.send({ message: "Verification success" });
   } catch (err) {
     console.log(err);
-    return res.status(500).send({message: "Verification Error"});
+    return res.status(500).send({ message: "Verification Error" });
   }
 };
 
 // PWP-8-11-12 LOGIN
 const userLogin = async (req, res) => {
   try {
-    const {email, password} = req.body;
-    // console.log(req.body);
+    const { email, password } = req.body;
     const encryptedPassword = hashPassword(password);
     const user = await models.User.findAll({
       where: {
         user_email: email,
         user_password: encryptedPassword,
       },
-      attributes: {exclude: ["createdAt", "updatedAt", "user_password"]},
+      attributes: { exclude: ["createdAt", "updatedAt", "user_password"] },
     });
 
     const fetch_cart1 = await Cart.findAll({
@@ -91,11 +93,11 @@ const userLogin = async (req, res) => {
         },
       },
 
-      attributes: {exclude: ["createdAt", "updatedAt"]},
+      attributes: { exclude: ["createdAt", "updatedAt"] },
       include: [
         {
           model: Product,
-          attributes: {exclude: ["createdAt", "updatedAt"]},
+          attributes: { exclude: ["createdAt", "updatedAt"] },
         },
       ],
     });
@@ -107,23 +109,23 @@ const userLogin = async (req, res) => {
           is_checkout: 0,
         },
       },
-      attributes: {exclude: ["createdAt", "updatedAt"]},
+      attributes: { exclude: ["createdAt", "updatedAt"] },
       include: [
         {
           model: Cart,
           include: [
             {
               model: Product,
-              attributes: {exclude: ["createdAt", "updatedAt"]},
+              attributes: { exclude: ["createdAt", "updatedAt"] },
             },
           ],
-          attributes: {exclude: ["createdAt", "updatedAt"]},
+          attributes: { exclude: ["createdAt", "updatedAt"] },
         },
       ],
     });
 
     if (user[0].user_role_id === 1) {
-      const responseData = {...user[0].dataValues};
+      const responseData = { ...user[0].dataValues };
       const token = createAdminToken(responseData);
       responseData.token = token;
 
@@ -131,7 +133,7 @@ const userLogin = async (req, res) => {
     } else {
       // console.log(user[0].user_id);
       // console.log([...fetch_cart1]);
-      const responseData = {...user[0].dataValues};
+      const responseData = { ...user[0].dataValues };
       const token = createJWTToken(responseData);
       responseData.token = token;
       responseData.cart = [...fetch_cart1, ...fetch_cart2];
@@ -140,17 +142,17 @@ const userLogin = async (req, res) => {
     }
   } catch (err) {
     console.log(err);
-    return res.status(500).send({message: "Login Error"});
+    return res.status(500).send({ message: "Login Error" });
   }
 };
 
 // PWP-14 SEND RESET EMAIL
 const userSendReset = async (req, res) => {
   try {
-    const {email} = req.body;
+    const { email } = req.body;
     const userData = req.user;
 
-    const token = createJWTToken({...userData});
+    const token = createJWTToken({ ...userData });
 
     const mailOptions = {
       from: "Pharma <pwd.pharma@gmail.com>",
@@ -160,18 +162,18 @@ const userSendReset = async (req, res) => {
     };
     await transpostPromise(mailOptions);
 
-    return res.send({message: "Reset password sent"});
+    return res.send({ message: "Reset password sent" });
   } catch (err) {
     console.log(err);
-    return res.status(500).send({message: "Send Reset Email Error"});
+    return res.status(500).send({ message: "Send Reset Email Error" });
   }
 };
 
 // PWP-14 CHANGE PASSWORD
 const userChangePassword = async (req, res) => {
   try {
-    const {user_id} = req.user;
-    const {password} = req.body;
+    const { user_id } = req.user;
+    const { password } = req.body;
     const encryptedPassword = hashPassword(password);
 
     const response = await models.User.update(
@@ -185,17 +187,17 @@ const userChangePassword = async (req, res) => {
       }
     );
 
-    return res.send({message: "Change password success"});
+    return res.send({ message: "Change password success" });
   } catch (err) {
     console.log(err);
-    return res.status(500).send({message: "Change Password Error"});
+    return res.status(500).send({ message: "Change Password Error" });
   }
 };
 
 // PWP-14 CHECK USER VERIFIED
 const userCheck = async (req, res) => {
   try {
-    const {email} = req.body;
+    const { email } = req.body;
 
     const response = await models.User.findAll({
       where: {
@@ -205,23 +207,23 @@ const userCheck = async (req, res) => {
 
     if (response.length !== 0) {
       if (response[0].user_isverified == 1) {
-        return res.send({message: "User is verified"});
+        return res.send({ message: "User is verified" });
       } else if (response[0].user_isverified == 0) {
-        return res.send({message: "User is not verified"});
+        return res.send({ message: "User is not verified" });
       }
     } else {
-      return res.send({message: "Email is not registered"});
+      return res.send({ message: "Email is not registered" });
     }
   } catch (err) {
     console.log(err);
-    return res.status(500).send({message: "Check user error"});
+    return res.status(500).send({ message: "Check user error" });
   }
 };
 
 // PWP-14 CHECK USER SERCURITY QUESTION
 const userSecurityQuestion = async (req, res) => {
   try {
-    const {email, answer} = req.body;
+    const { email, answer } = req.body;
 
     const response = await models.User.findAll({
       where: {
@@ -229,38 +231,37 @@ const userSecurityQuestion = async (req, res) => {
       },
     });
 
-    const token = createJWTToken({...response[0]});
+    const token = createJWTToken({ ...response[0] });
 
     if (response[0].user_security_question === answer) {
-      return res.send({message: token});
+      return res.send({ message: token });
     } else {
-      return res.send({message: "Your answer is wrong"});
+      return res.send({ message: "Your answer is wrong" });
     }
   } catch (err) {
     console.log(err);
-    return res.status(500).send({message: "Security question error"});
+    return res.status(500).send({ message: "Security question error" });
   }
 };
 
 // PWP-47 USER ADDRESS
 const addNewUserAddress = async (req, res) => {
   try {
-    const {id} = req.params;
-    const {user_address} = req.body;
-    console.log(user_address);
+    const { id } = req.params;
+    const { user_address } = req.body;
     await User_Address.create({
       user_address,
       user_id: id,
     });
-    return res.status(200).send({message: "New Address Successfully Added"});
+    return res.status(200).send({ message: "New Address Successfully Added" });
   } catch (err) {
-    return res.status(500).send({message: "Failed to Add New Address"});
+    return res.status(500).send({ message: "Failed to Add New Address" });
   }
 };
 
 const getUserAddress = async (req, res) => {
   try {
-    const {id} = req.params;
+    const { id } = req.params;
     const response = await User_Address.findAll({
       where: {
         user_id: id,
@@ -276,44 +277,44 @@ const getUserAddress = async (req, res) => {
 };
 const editUserAddress = async (req, res) => {
   try {
-    const {id} = req.params;
-    const {user_address} = req.body;
+    const { id } = req.params;
+    const { user_address } = req.body;
     await User_Address.update(
-      {user_address},
+      { user_address },
       {
-        where: {user_address_id: id},
+        where: { user_address_id: id },
       }
     );
-    return res.status(200).send({message: "Address Updated"});
+    return res.status(200).send({ message: "Address Updated" });
   } catch (err) {
     return res
       .status(500)
-      .send({message: "Failed to Update the Selected Address"});
+      .send({ message: "Failed to Update the Selected Address" });
   }
 };
 
 const deleteUserAddress = async (req, res) => {
   try {
-    const {id} = req.params;
+    const { id } = req.params;
     await User_Address.destroy({
-      where: {user_address_id: id},
+      where: { user_address_id: id },
     });
-    return res.status(200).send({message: "Address deleted"});
+    return res.status(200).send({ message: "Address deleted" });
   } catch (err) {
     return res
       .status(500)
-      .send({message: "Failed to Delete the Selected Address"});
+      .send({ message: "Failed to Delete the Selected Address" });
   }
 };
 
 const userAddRecipes = async (req, res) => {
   try {
     const path = "/recipes";
-    const upload = pify(uploader(path, "RCP").fields([{name: "image"}]));
+    const upload = pify(uploader(path, "RCP").fields([{ name: "image" }]));
 
     upload(req, res, async (err) => {
-      const {image} = req.files;
-      const {user_id} = JSON.parse(req.body.data);
+      const { image } = req.files;
+      const { user_id } = JSON.parse(req.body.data);
       const imagepath = image ? `${path}/${image[0].filename}` : null;
 
       const response = await models.Recipes.create({
@@ -341,8 +342,7 @@ const userAddRecipes = async (req, res) => {
 
 const getNotifUser = async (req, res) => {
   try {
-    const {user_id} = req.body;
-    console.log(user_id);
+    const { user_id } = req.body;
 
     const findRes = await User_Notif.findAll({
       where: {
@@ -379,7 +379,7 @@ const getNotifUser = async (req, res) => {
       return res.status(200).send(response);
     }
   } catch (err) {
-    return res.status(500).send({message: "Failed to get user notification"});
+    return res.status(500).send({ message: "Failed to get user notification" });
   }
 };
 
