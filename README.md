@@ -6,4 +6,4 @@ Pharma is a pharmacy website that let customers can order medicine by search a p
 
 # Screenshot
 
-![alt pastaScreenshot](https://i.imgur.com/e78yihR.jpg)
+![alt pastaScreenshot](https://i.imgur.com/7aXBPSa.png)
